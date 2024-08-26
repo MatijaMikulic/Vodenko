@@ -93,12 +93,3 @@ The project includes several MATLAB/Simulink models for simulating the water tan
 
 ## PLC Integration
 The project supports integration with PLCs for industrial applications. The PLC code provided in the `PLC_Code` directory can be used to control actual hardware. Make sure to follow the instructions in the `configurations` folder for proper setup.
-
-## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request for review.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Acknowledgements
-Special thanks to everyone who contributed to the development of this project.
