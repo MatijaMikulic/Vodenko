@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PlcCommunication.Heartbeat">
+    <Position X="12.75" Y="1.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIEAACAgAAAAAAAAAAAAAAAAAAAAIQAgAABAAAA=</HashCode>
+      <FileName>Heartbeat.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_plcCommunicationService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PlcCommunication.PlcCommunicationManager">
+    <Position X="5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABIAAAQAAAAAAAAhAAAAgAAAAAAAABAAAAAAAAAAgA=</HashCode>
+      <FileName>PlcCommunicationManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_plcConfiguration" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PlcCommunication.PlcCommunicationService">
+    <Position X="8.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAACAAAABAIGIAAAAAgEAgAAIAAAABCAAAAAA=</HashCode>
+      <FileName>PlcCommunicationService.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_connectionManager" />
+      <Field Name="_dataAccess" />
+      <Field Name="_heartbeat" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="PlcCommunication.PlcConfiguration">
+    <Position X="1.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAgAgA=</HashCode>
+      <FileName>PlcConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlcCommunication.PlcDataAccess">
+    <Position X="5.25" Y="5.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAgAAAAAAAAgABBBAAAAgAAAAAACAAAAAgAAAAAA=</HashCode>
+      <FileName>PlcDataAccess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlcCommunication.Model.DataBlockMetaData">
+    <Position X="1.5" Y="3.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAEAAAAAAAIAAAAAAAAAAAABA=</HashCode>
+      <FileName>Model\DataBlockMetaData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

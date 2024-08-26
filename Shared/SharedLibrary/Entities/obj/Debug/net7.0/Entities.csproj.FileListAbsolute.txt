@@ -1,0 +1,11 @@
+C:\Diplomski\Shared\SharedLibrary\Entities\bin\Debug\net7.0\Entities.deps.json
+C:\Diplomski\Shared\SharedLibrary\Entities\bin\Debug\net7.0\Entities.dll
+C:\Diplomski\Shared\SharedLibrary\Entities\bin\Debug\net7.0\Entities.pdb
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\Entities.GeneratedMSBuildEditorConfig.editorconfig
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\Entities.AssemblyInfoInputs.cache
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\Entities.AssemblyInfo.cs
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\Entities.csproj.CoreCompileInputs.cache
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\Entities.dll
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\refint\Entities.dll
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\Entities.pdb
+C:\Diplomski\Shared\SharedLibrary\Entities\obj\Debug\net7.0\ref\Entities.dll

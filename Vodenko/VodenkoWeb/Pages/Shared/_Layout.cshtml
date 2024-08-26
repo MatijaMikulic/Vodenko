@@ -1,0 +1,666 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VodenkoWeb</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/VodenkoWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="../../lib/chart.js/chart.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+    <script type="importmap">
+        {
+            "imports": {
+                "chart": "../../lib/chart.js/chart.min.js",
+                "signalr": "https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js",
+                "three":"https://cdn.jsdelivr.net/npm/three@0.137.0/build/three.min.js",
+                "gltf":"https://cdn.jsdelivr.net/npm/three@0.137.0/examples/jsm/loaders/GLTFLoader.js",
+                "orbit":"https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+
+    
+</head>
+<body class="hold-transition sidebar-mini">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-gray-dark navbar-dark">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+            </ul>
+            <div class="navbar-center">
+                <span class="navbar-text" style="color: aliceblue; font-weight: bold; letter-spacing: 8px;">VODENKO</span>
+            </div>
+            <ul class="navbar-nav ml-auto">
+                <!-- Stop Button -->
+                <li class="nav-item">
+                    <a class="nav-link" style="margin-right:5px; color:gold; height:40px" href="#" id="stopButton" title="Stop">
+                        <i class="fas fa-stop-circle">  Force Stop</i>
+                    </a>
+                </li>
+
+                <!-- Request LQR Button -->
+                <li class="nav-item">
+                    <a class="nav-link" style="margin-right:5px; color:lawngreen" href="#" id="requestLQRButton" title="Request LQR">
+                        <i class="fas fa-project-diagram">  LQR</i>
+                    </a>
+                </li>
+
+                <!-- Request Lab Button -->
+                <li class="nav-item">
+                    <a class="nav-link" style="margin-right:100px; color:deepskyblue" href="#" id="requestLabButton" title="Request Lab">
+                        <i class="fas fa-flask">  Lab</i> 
+                    </a>
+                </li>
+
+
+                <li class="nav-item dropdown mr-3">
+                    <a class="nav-link" data-toggle="dropdown" href="#" id="notificationDropdown">
+                        <i class="far fa-bell"></i>
+                        <span class="badge badge-warning navbar-badge" id="notificationCount">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <span class="dropdown-item dropdown-header" id="notificationHeader">0 Notifications</span>
+                        <div class="dropdown-divider"></div>
+                        <div id="notificationList"></div>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item dropdown-footer" data-toggle="modal" data-target="#allNotificationsModal">See All Notifications</a>
+                    </div>
+                </li>
+
+                
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a asp-area="" asp-page="/Index" class="brand-link">
+                <img src="../../dist/img/logo.png" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8;">
+                <span class="brand-text font-weight-bold">Danieli Systec</span>
+            </a>
+            <div class="sidebar">
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="../../dist/img/user.png" class="img-circle elevation-2" alt="User Image">
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">Operator Pages</a>
+                    </div>
+                </div>
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <li class="nav-item mb-3">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>
+                                    Plant Overview
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a asp-area="" asp-page="/Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Live Charts</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="" asp-page="/SystemStatus/Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>System Status</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a asp-area="" asp-page="/Alarms/Index" class="nav-link">
+                                <i class="nav-icon fa fa-bell"></i>
+                                <p>
+                                    Alarms
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a asp-area="" asp-page="/SResponse/Index" class="nav-link">
+                                <ion-icon class="nav-icon" name="bar-chart-outline"></ion-icon>
+                                <p>
+                                    Step Response
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a href="#" class="nav-link">
+                                <ion-icon class="nav-icon" name="build-outline"></ion-icon>
+                                <p>
+                                    Controller Design
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a asp-area="" asp-page="/RLocus/Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Root Locus</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="" asp-page="/LQR/Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>LQR</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-area="" asp-page="/ControllerAnalysis/Index" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Controller Analysis</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a asp-area="" asp-page="/LiveLog/Index" class="nav-link">
+                                <ion-icon class="nav-icon" name="newspaper-outline"></ion-icon>
+                                <p>
+                                    Live Log
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Modal Template -->
+    <!-- Modal Template -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Notification Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="notificationModalBody">
+                    <!-- Full notification message will be displayed here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Notifications Modal Template -->
+
+    <div class="modal fade" id="allNotificationsModal" tabindex="-1" role="dialog" aria-labelledby="allNotificationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="allNotificationsModalLabel">All Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="allNotificationsModalBody" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Notifications will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="../../dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.137.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+
+
+    @RenderSection("Scripts", required: false)
+
+    <script type="text/javascript">
+        $(function () {
+            var notificationHubConnection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+            var pageNumber = 1;
+            var pageSize = 10;
+
+            notificationHubConnection.on("ReceiveNotification", function (notification) {
+                console.log("Received notification:", notification);
+                addNotification(notification); // Mark as new notification
+                updateNotificationCount();
+            });
+
+            async function startHubConnection() {
+                try {
+                    await notificationHubConnection.start();
+                    console.log("SignalR connected.");
+                } catch (err) {
+                    console.error("Error connecting to SignalR:", err.toString());
+                    setTimeout(startHubConnection, 5000); // Retry after 5 seconds
+                }
+            }
+
+            startHubConnection();
+
+            async function addNotification(notification) {
+                console.log("Notification Data:", notification); // Log the notification data
+
+                var notificationClass = !notification.isRead ? 'new-notification' : '';
+
+                // Create the main notification element
+                var notificationElement = document.createElement('a');
+                notificationElement.href = "#";
+                notificationElement.className = `dropdown-item notification-item ${notificationClass}`;
+                notificationElement.dataset.toggle = "modal";
+                notificationElement.dataset.target = "#notificationModal";
+                notificationElement.dataset.id = notification.id;
+                notificationElement.dataset.message = notification.message;
+
+                // Create the icon element
+                var iconElement = document.createElement('i');
+                iconElement.className = "fas fa-envelope mr-2";
+                notificationElement.appendChild(iconElement);
+
+                // Create the message text node
+                var messageText = document.createTextNode(notification.message);
+                notificationElement.appendChild(messageText);
+
+                // Create the timestamp element
+                var timestampElement = document.createElement('span');
+                timestampElement.className = "float-right text-muted text-sm";
+                timestampElement.textContent = new Date(notification.timestamp).toLocaleTimeString();
+                notificationElement.appendChild(timestampElement);
+
+                // Create the divider element
+                var dividerElement = document.createElement('div');
+                dividerElement.className = "dropdown-divider";
+
+                // Append the notification and divider to the list
+                var notificationList = document.getElementById('notificationList');
+                notificationList.prepend(dividerElement);
+                notificationList.prepend(notificationElement);
+                removeExcessNotifications();
+            }
+
+            async function updateNotificationCount() {
+                try {
+                    let response = await fetch("/api/notifications/count");
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    let count = await response.json();
+                    $('#notificationCount').text(count);
+                    $('#notificationHeader').text(`${count} Notifications`);
+                } catch (error) {
+                    console.error("Error fetching notification count:", error);
+                }
+            }
+
+            $('#notificationDropdown').on('click', async function () {
+                loadLatestNotifications();
+            });
+
+            $('#notificationList').on('click', '.notification-item', async function () {
+                var message = $(this).data('message');
+                var id = $(this).data('id');
+
+                // Create a formatted message
+                var formattedMessage = formatNotificationMessage(message);
+                $('#notificationModalBody').html(formattedMessage); // Use .html() to insert HTML
+
+                // Mark notification as read
+                try {
+                    let response = await fetch(`/api/notifications/markAsRead/${id}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "XSRF-TOKEN": $('input:hidden[name="__RequestVerificationToken"]').val()
+                        }
+                    });
+                    if (response.ok) {
+                        $(this).removeClass('new-notification');
+                        updateNotificationCount();
+                    } else {
+                        throw new Error("Network response was not ok");
+                    }
+                } catch (error) {
+                    console.error("Error marking notification as read:", error);
+                }
+            });
+
+            $('#notificationDropdown .dropdown-footer').on('click', function () {
+                $('#allNotificationsModal').modal('show');
+                loadPagedNotifications();
+            });
+
+            $('#loadMoreNotifications').on('click', function () {
+                pageNumber++;
+                loadPagedNotifications();
+            });
+
+            function formatNotificationMessage(message) {
+                // Split the message into key-value pairs
+                var parts = message.split(', ');
+                var formattedMessage = '<div class="notification-detail">';
+
+                // Format each part as a key-value pair with circles for true/false
+                parts.forEach((part, index) => {
+                    var keyValue = part.split(': ');
+                    if (index === 0) {
+                        // Handle the first part separately to retain the initial text
+                        formattedMessage += `${keyValue.join(': ')}<br>`;
+                    } else if (keyValue.length === 2) {
+                        var value = keyValue[1].trim().toLowerCase();
+                        if (value === 'true' || value === 'false') {
+                            var circleClass = value === 'true' ? 'circle-true' : 'circle-false';
+                            formattedMessage += `<span>${keyValue[0]}:</span> <span class="circle ${circleClass}"></span><br>`;
+                        } else {
+                            formattedMessage += `<span>${keyValue[0]}:</span> ${keyValue[1]}<br>`;
+                        }
+                    } else {
+                        formattedMessage += part + '<br>';
+                    }
+                });
+                formattedMessage += '</div>';
+                return formattedMessage;
+            }
+
+            function removeExcessNotifications() {
+                const maxNotifications = 5;
+                const notifications = $('#notificationList .dropdown-item');
+                if (notifications.length > maxNotifications) {
+                    notifications.slice(maxNotifications).remove();
+                }
+            }
+
+            async function loadLatestNotifications() {
+                try {
+                    let response = await fetch("/api/notifications/latest");
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    let notifications = await response.json();
+                    $('#notificationList').empty(); // Clear existing notifications
+                    // Make sure notifications are added in the correct order
+                    notifications.reverse().forEach(notification => addNotification(notification));
+                } catch (error) {
+                    console.error("Error fetching latest notifications:", error);
+                }
+            }
+
+            $('#allNotificationsModal').on('show.bs.modal', function () {
+                $('#allNotificationsModalBody').empty(); // Clear previous content
+                pageNumber = 1; // Reset to the first page
+                loadPagedNotifications();
+            });
+
+            $('#loadMoreNotifications').on('click', function () {
+                pageNumber++;
+                loadPagedNotifications();
+            });
+
+
+
+            updateNotificationCount();
+        });
+
+    </script>
+
+    <script>
+        document.getElementById("stopButton").addEventListener("click", function () {
+            const button = this;
+
+            // Disable the button to prevent multiple clicks
+            button.disabled = true;
+
+            // Add spinner
+            const spinner = document.createElement('div');
+            spinner.classList.add('spinner');
+            button.appendChild(spinner);
+
+            fetch('/api/controlRequest/request-stop', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "XSRF-TOKEN": $('input:hidden[name="__RequestVerificationToken"]').val()
+                }
+            })
+                .then(response => {
+                    // Re-enable the button and remove spinner
+                    button.disabled = false;
+                    spinner.remove();
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Stop request sent!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was an error processing your Stop request.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('Error:', error);
+                });
+        });
+
+        document.getElementById("requestLQRButton").addEventListener("click", function () {
+            const button = this;
+
+            // Disable the button to prevent multiple clicks
+            button.disabled = true;
+
+            // Add spinner
+            const spinner = document.createElement('div');
+            spinner.classList.add('spinner');
+            button.appendChild(spinner);
+
+            fetch('/api/controlRequest/request-control', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "XSRF-TOKEN": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify(false)  // Send a boolean value directly
+            })
+                .then(response => {
+                    // Re-enable the button and remove spinner
+                    button.disabled = false;
+                    spinner.remove();
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'LQR request sent!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was an error processing your LQR request.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('Error:', error);
+                });
+        });
+
+
+        document.getElementById("requestLabButton").addEventListener("click", function () {
+            const button = this;
+
+            // Disable the button to prevent multiple clicks
+            button.disabled = true;
+
+            // Add spinner
+            const spinner = document.createElement('div');
+            spinner.classList.add('spinner');
+            button.appendChild(spinner);
+
+            fetch('/api/controlRequest/request-control', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "XSRF-TOKEN": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify(true)  // Assuming Lab corresponds to autoMode: true
+            })
+                .then(response => {
+                    // Re-enable the button and remove spinner
+                    button.disabled = false;
+                    spinner.remove();
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Lab request sent!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'There was an error processing your Lab request.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('Error:', error);
+                });
+        });
+
+
+    </script>
+    @section scripts
+    {
+        <!-- Here you can place page-specific scripts if necessary -->
+    }
+
+    <style>
+        .notification-item {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .navbar-nav .nav-item .nav-link {
+            position: relative;
+        }
+
+        .navbar-nav .nav-item .navbar-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(20%, -20%);
+            padding: 5px 10px;
+            border-radius: 50%;
+            background-color: red;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-item .fa-bell {
+            font-size: 1.5rem;
+            color: #ffc107;
+        }
+
+        .navbar-nav .nav-item .fa-exclamation-triangle {
+            font-size: 1.5rem;
+            color: darkorange;
+        }
+
+
+        .notification-item {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .new-notification {
+            font-weight: bold;
+            color: blue;
+        }
+
+        .modal-body {
+            white-space: pre-wrap; /* Preserve whitespace and wrap as necessary */
+        }
+
+        .notification-detail {
+            margin-bottom: 5px;
+        }
+
+            .notification-detail span {
+                font-weight: bold;
+            }
+
+        .circle {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .circle-true {
+            background-color: green;
+        }
+
+        .circle-false {
+            background-color: red;
+        }
+    </style>
+</body>
+</html>

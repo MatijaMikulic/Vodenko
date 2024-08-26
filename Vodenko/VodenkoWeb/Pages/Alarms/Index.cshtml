@@ -1,0 +1,248 @@
+﻿@page
+@model VodenkoWeb.Pages.Alarms.IndexModel
+@{
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="font-weight-bold text-uppercase">Alarms</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Alarms</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr style="border: 0; height: 3px; background: linear-gradient(to right, #ff0000, #0000ff); margin-bottom: 10px; margin-left: 15px; margin-right: 15px;">
+
+<!-- Filters -->
+<section class="content ml-5 mr-5">
+    <div class="container-fluid">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">Filter Alarms</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="get">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="dateTimeFromFilter">Date Time From</label>
+                            <input type="datetime-local" id="dateTimeFromFilter" name="DateTimeFromFilter" class="form-control" value="@Model.DateTimeFromFilter?.ToString("yyyy-MM-ddTHH:mm")">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="dateTimeToFilter">Date Time To</label>
+                            <input type="datetime-local" id="dateTimeToFilter" name="DateTimeToFilter" class="form-control" value="@Model.DateTimeToFilter?.ToString("yyyy-MM-ddTHH:mm")">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="alarmCodeIdFilter">Alarm Code ID</label>
+                            <input type="number" id="alarmCodeIdFilter" name="AlarmCodeIdFilter" class="form-control" value="@Model.AlarmCodeIdFilter">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="severityFilter">Severity</label>
+                            <select id="severityFilter" name="SeverityFilter" class="form-control">
+                                <option value="">All</option>
+                                <option value="Warning">Warning</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 offset-md-9 d-flex align-items-end">
+                            <div class="form-check mr-3">
+                                <input class="form-check-input" type="radio" name="FilterEnabled" id="filterEnabled" value="true" checked="@Model.FilterEnabled">
+                                <label class="form-check-label" for="filterEnabled">Enable Filter</label>
+                            </div>
+                            <div class="form-check mr-3">
+                                <input class="form-check-input" type="radio" name="FilterEnabled" id="filterDisabled" value="false" checked="!@Model.FilterEnabled">
+                                <label class="form-check-label" for="filterDisabled">Disable Filter</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Refresh</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main content -->
+<section class="content ml-5 mr-5">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <table id="example" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Alarm Id</th>
+                            <th>Alarm Code</th>
+                            <th>Log Date Time</th>
+                            <th>Description</th>
+                            <th>Comment</th>
+                            <th>Severity</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in Model.Alarms)
+                        {
+                            <tr>
+                                <td>@obj.Id</td>
+                                <td>@obj.AlarmCodeId</td>
+                                <td>@obj.DateTime</td>
+                                <td>@obj.AlarmCode.Description</td>
+                                <td>@obj.Comment</td>
+                                <td>@obj.AlarmCode.Severity</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editModal" data-id="@obj.Id" data-comment="@obj.Comment" data-datetime="@obj.DateTime">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Chart Section -->
+        <div class="card card-info mt-4" style="height:400px;">
+            <div class="card-header">
+                <h3 class="card-title">Alarm Severity Statistics</h3>
+                <div class="card-tools">
+                    <button id="severityChartButton" class="btn btn-tool">Severity Distribution</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="severityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Alarm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="editId">ID:</label>
+                <input type="text" id="editId" name="editId" class="form-control" readonly>
+                <div class="form-group">
+                    <label for="editComment">Comment:</label>
+                    <input type="text" class="form-control" id="editComment">
+                </div>
+                <div class="form-group">
+                    <label for="editDateTime">Date Time:</label>
+                    <input type="datetime-local" class="form-control" id="editDateTime">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="antiForgeryForm" method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(function () {
+            $('#example').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": false,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+
+        $(document).ready(function () {
+            // Function to handle edit button click
+            $('.edit-btn').click(function () {
+                var id = $(this).data('id');
+                var comment = $(this).data('comment');
+                var datetime = $(this).data('datetime');
+
+                // Parse the original date time string (assuming MM/DD/YYYY HH:MM:SS format)
+                var parsedDateTime = new Date(datetime);
+
+                // Format the parsed date time object for datetime-local input (YYYY-MM-DDTHH:mm)
+                var formattedDatetime = parsedDateTime.toISOString().slice(0, 16);
+
+                // Set modal input values
+                $('#editId').val(id);
+                $('#editComment').val(comment);
+                $('#editDateTime').val(formattedDatetime);
+            });
+
+            // Function to update the severity chart
+            function updateSeverityChart() {
+                var severityCounts = {};
+                $('#example tbody tr').each(function () {
+                    var severity = $(this).find('td:eq(5)').text().trim();
+                    if (severity) {
+                        severityCounts[severity] = (severityCounts[severity] || 0) + 1;
+                    }
+                });
+
+                var ctx = document.getElementById('severityChart').getContext('2d');
+                var chartData = {
+                    labels: Object.keys(severityCounts),
+                    datasets: [{
+                        label: 'Count',
+                        data: Object.values(severityCounts),
+                        backgroundColor: ['#dc3545', '#ffc107', '#28a745', '#007bff'],
+                        borderColor: ['#bd2130', '#e0a800', '#218838', '#0056b3'],
+                        borderWidth: 1
+                    }]
+                };
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Alarm Severity Distribution'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Initialize the chart on page load
+            updateSeverityChart();
+        });
+    </script>
+}

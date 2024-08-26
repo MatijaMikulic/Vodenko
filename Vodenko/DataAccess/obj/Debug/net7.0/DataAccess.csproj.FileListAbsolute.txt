@@ -1,0 +1,17 @@
+C:\Diplomski\Vodenko\DataAccess\bin\Debug\net7.0\DataAccess.deps.json
+C:\Diplomski\Vodenko\DataAccess\bin\Debug\net7.0\DataAccess.runtimeconfig.json
+C:\Diplomski\Vodenko\DataAccess\bin\Debug\net7.0\DataAccess.dll
+C:\Diplomski\Vodenko\DataAccess\bin\Debug\net7.0\DataAccess.pdb
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.csproj.AssemblyReference.cache
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.AssemblyInfoInputs.cache
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.AssemblyInfo.cs
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.csproj.CoreCompileInputs.cache
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.dll
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\refint\DataAccess.dll
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.pdb
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.genruntimeconfig.cache
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\ref\DataAccess.dll
+C:\Diplomski\Vodenko\DataAccess\bin\Debug\net7.0\Entities.dll
+C:\Diplomski\Vodenko\DataAccess\bin\Debug\net7.0\Entities.pdb
+C:\Diplomski\Vodenko\DataAccess\obj\Debug\net7.0\DataAccess.csproj.Up2Date

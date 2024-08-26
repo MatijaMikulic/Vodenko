@@ -1,0 +1,628 @@
+﻿@page
+@model VodenkoWeb.Pages.LQR.IndexModel
+@{
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="font-weight-bold text-uppercase">Linear Quadratic Regulator</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Linear Quadratic Regulator</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr style="border: 0; height: 3px; background: linear-gradient(to right, #ff0000, #0000ff); margin-bottom: 10px; margin-left: 15px; margin-right: 15px;">
+
+<form id="antiForgeryForm" method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+<!-- Main content -->
+<section class="content ml-5 mr-5">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="d-flex align-items-center mt-3">
+                    @* <button id="loaddata" class="btn btn-info btn-lg mb-3">Load Process Parameters</button> *@
+                    <div class="d-flex flex-wrap justify-content-center flex-grow-1 ml-3">
+                        <div class="p-3 text-center flex-fill bg-info border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-info-circle text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Adjust LQR Parameters:</strong>
+                            <p class="mt-1 text-white d-none">Use the provided fields to adjust Q and R matrices to design the LQR controller.</p>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-success border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-chart-line text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Analyze Step Response:</strong>
+                            <p class="mt-1 text-white d-none">The step response plot helps you analyze the system's time-domain performance.</p>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-warning border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-wave-square text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Review Control Input:</strong>
+                            <p class="mt-1 text-white d-none">The control input plot helps you understand the control effort required.</p>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-danger border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-cogs text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Send LQR Parameters:</strong>
+                            <p class="mt-1 text-white d-none">Once satisfied with the LQR tuning, send the settings to apply them to your system.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Step Response</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-stepResponse" style="min-height: 250px; height: 350px; max-height: 600px; max-width: 100%;"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <button id="resetZoomBtnStepResponse" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Reset Zoom">
+                                <i class="fas fa-search-minus"></i> Reset Zoom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Control Input</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-step" style="min-height: 250px; height: 350px; max-height: 600px; max-width: 100%;"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <button id="resetZoomBtnControlInput" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Reset Zoom">
+                                <i class="fas fa-search-minus"></i> Reset Zoom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">LQR Matrices</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <p><strong>Matrix Q:</strong> The state weighting matrix used to penalize the deviation of the state variables from their desired values. It is typically a diagonal matrix with positive entries.</p>
+                            <p><strong>Matrix R:</strong> The control weighting matrix used to penalize the use of control effort. It is typically a scalar or a diagonal matrix with positive entries.</p>
+                        </div>
+                        <form id="lqrForm" method="post">
+                            <h4>Matrix Q (4x4)</h4>
+                            <div class="matrix-container">
+                                @for (int i = 0; i < 4; i++)
+                                {
+                                    <div class="matrix-row">
+                                        @for (int j = 0; j < 4; j++)
+                                        {
+                                            int val = 0;
+                                            if (i == j)
+                                            {
+                                                val = 1;
+                                            }
+                                            <input type="text" class="matrix-input" id="q_@(i)_@(j)" value=@val />
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            <h4>Matrix R (1x1)</h4>
+                            <div class="matrix-container">
+                                <div class="matrix-row">
+                                    <input type="text" class="matrix-input" id="r_0_0" value="1" />
+                                </div>
+                            </div>
+
+                            <button type="button" id="submitLQRButton" class="btn btn-primary mt-3">Simulate</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card card-info">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-sliders-h"></i> LQR - Parameters</h3>
+                        <button id="requestControl" type="button" class="btn btn-light btn-lg ml-auto"><i class="fas fa-hand-paper"></i> Request Control</button>
+                    </div>
+                    <div class="card-body text-center">
+                        <form id="pidForm" method="post">
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="displayK1">K<sub>x1</sub> :</label>
+                                    <input type="number" class="form-control" id="displayK1" asp-for="Kx1" readonly>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="displayK2">K<sub>x2</sub> :</label>
+                                    <input type="number" class="form-control" id="displayK2" asp-for="Kx2" readonly>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="displayK3">K<sub>x3</sub> :</label>
+                                    <input type="number" class="form-control" id="displayK3" asp-for="Kx3" readonly>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="displayK4">K<sub>i</sub> :</label>
+                                    <input type="number" class="form-control" id="displayK4" asp-for="Ki" readonly>
+                                </div>
+                            </div>
+                            <button id="sendLQR" type="button" class="btn btn-danger btn-lg mb-3" style="width:240px"><i class="fas fa-paper-plane"></i> Send LQR</button>
+                        </form>
+                    </div>
+                </div>
+
+
+
+                <div class="card-header">
+                    <h3 class="card-title">LQR Parameters</h3>
+                    <div class="card-tools">
+                    </div>
+                </div>
+                <div class="card-body" style="background-color: #d4edda; color: #155724;">
+                    <p>Pressing the button will send the controller parameters (K, K<sub>i</sub>) to the system.</p>
+                    <p>The control law equation for the LQR algorithm with an integral part is given by:</p>
+                    <p style="font-size: 1.5em;">
+                        <code>u<sub>k</sub> = -Kx<sub>k</sub> - K<sub>i</sub> &#8721;<span style="font-size: 0.7em;"></span> e</code>
+                    </p>
+                    <p>where:</p>
+                    <ul>
+                        <li><strong>u(t)</strong>: Control output</li>
+                        <li><strong>x(t)</strong>: State vector</li>
+                        <li><strong>e(t)</strong>: Error signal (setpoint - process variable)</li>
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="container mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-chart-bar"></i> System Performance Metrics</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th><i class="fas fa-ruler"></i> Metric</th>
+                                            <th><i class="fas fa-calculator"></i> Value</th>
+                                            <th><i class="fas fa-tachometer-alt"></i> Unit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><i class="fas fa-hourglass-half"></i> Settling Time [5%]</td>
+                                            <td id="settling-time-value">-</td>
+                                            <td>seconds [s]</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-long-arrow-alt-up"></i> Rise Time</td>
+                                            <td id="rise-time-value">-</td>
+                                            <td>seconds [s]</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-chart-line"></i> Overshoot</td>
+                                            <td id="overshoot-value">-</td>
+                                            <td>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-exclamation-circle"></i> Error</td>
+                                            <td id="error-value">-</td>
+                                            <td>cm</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
+
+    <script>
+        var stepResponseChart, inputSignalChart;
+
+        $(document).ready(function () {
+            $('#submitLQRButton').click(function () {
+                try {
+                    let matrixQ = [];
+                    let matrixR = [];
+
+                    for (let i = 0; i < 4; i++) {
+                        let row = [];
+                        for (let j = 0; j < 4; j++) {
+                            let element = document.getElementById(`q_${i}_${j}`);
+                            row.push(parseFloat(element.value) || 0);
+                        }
+                        matrixQ.push(row);
+                    }
+
+                    let elementR = document.getElementById('r_0_0');
+                    matrixR = [[parseFloat(elementR.value) || 0]];
+
+                    console.log('Matrix Q:', matrixQ);
+                    console.log('Matrix R:', matrixR);
+
+                    if (!matrixQ.length || !matrixR.length) {
+                        alert('Invalid input matrices');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: "/api/ControlSystemAPI/CalculateLQR",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ Q: matrixQ, R: matrixR }),
+                        success: function (response) {
+                            console.log('Response:', response);
+                            $('#displayK1').val(response.kx1.toFixed(5));
+                            $('#displayK2').val(response.kx2.toFixed(5));
+                            $('#displayK3').val(response.kx3.toFixed(5));
+                            $('#displayK4').val(response.ki.toFixed(5));
+
+                            document.getElementById('settling-time-value').textContent = response.settling_time.toFixed(2);
+                            document.getElementById('rise-time-value').textContent = response.rise_time.toFixed(2);
+                            document.getElementById('overshoot-value').textContent = response.overshoot.toFixed(2);
+                            document.getElementById('error-value').textContent = response.error.toFixed(2);
+                            plotStepResponse(response);
+                            plotInputSignal(response);
+                        },
+                        error: function (error) {
+                            console.error('Error:', error);
+                            alert('Error in LQR calculation - Q matrix must be symmetric!');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error during submission:', error);
+                    alert('Error during submission');
+                }
+            });
+
+            $("#sendLQR").click(function (event) {
+                event.preventDefault();
+                var Kx1 = $("#displayK1").val();
+                var Kx2 = $("#displayK2").val();
+                var Kx3 = $("#displayK3").val();
+                var Ki = $("#displayK4").val();
+
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    url: "/LQR/Index?handler=SendlQR",
+                    data: {
+                        Kx1: Kx1,
+                        Kx2: Kx2,
+                        Kx3: Kx3,
+                        Ki: Ki
+                    },
+                    success: function (response) {
+                        console.log("LQR values sent successfully.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'LQR parameters were sent successfully.'
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error while sending LQR values.");
+                    }
+                });
+            });
+
+            $("#requestControl").click(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    url: "/LQR/Index?handler=RequestControl",
+                    success: function (response) {
+                        console.log("Request was successful.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Request control was sent successfully.'
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error while sending request.");
+                    }
+                });
+            });
+        });
+
+        function plotStepResponse(data) {
+            const ctx = document.getElementById('lineChart-stepResponse').getContext('2d');
+            const formattedTime = data.time.map(time => parseFloat(time).toFixed(2));
+
+            if (stepResponseChart) {
+                stepResponseChart.destroy();
+            }
+
+            stepResponseChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: formattedTime,
+                    datasets: [{
+                        label: 'Step Response',
+                        data: data.y,
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'Time [s]'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Response [cm]'
+                            }
+                        }
+                    },
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'xy',
+                                threshold: 100
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                },
+                                pinch: {
+                                    enabled: true,
+                                },
+                                mode: 'xy',
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Step Response'
+                    }
+                }
+            });
+        }
+
+        function plotInputSignal(data) {
+            const ctx = document.getElementById('lineChart-step').getContext('2d');
+            const formattedTime = data.time.map(time => parseFloat(time).toFixed(2));
+
+            if (inputSignalChart) {
+                inputSignalChart.destroy();
+            }
+
+            inputSignalChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: formattedTime,
+                    datasets: [{
+                        label: 'Control Input',
+                        data: data.u,
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'Time [s]'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Control Input [%]'
+                            }
+                        }
+                    },
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'xy'
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'xy'
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Control Input Signal'
+                    }
+                }
+            });
+        }
+
+        // Function to reset the zoom
+        function resetZoom(chart) {
+            chart.resetZoom();
+        }
+
+         // Toggle pan functionality
+    $('#togglePan').click(function () {
+        isPanningEnabled = !isPanningEnabled;
+        updatePanStatus(stepResponseChart, isPanningEnabled);
+        updatePanStatus(inputSignalChart, isPanningEnabled);
+        $(this).toggleClass('active');
+    });
+
+        // Add event listeners for the buttons
+        document.getElementById('resetZoomBtnStepResponse').addEventListener('click', function () {
+            resetZoom(stepResponseChart);
+        });
+
+        document.getElementById('resetZoomBtnControlInput').addEventListener('click', function () {
+            resetZoom(inputSignalChart);
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+    </script>
+
+    <style>
+        .matrix-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .matrix-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        .matrix-input {
+            width: 50px;
+            height: 30px;
+            text-align: center;
+            margin: 2px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+            .matrix-input:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+
+        @@media (max-width: 767.98px) {
+            .content-header, .content, .content .container-fluid {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+        }
+
+        .chart {
+            position: relative;
+            height: 300px;
+        }
+
+        canvas {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+            color: #495057;
+            background-color: #ffffff;
+            border-color: #dee2e6 #dee2e6 #ffffff;
+        }
+
+        .nav-tabs .nav-link {
+            border: 1px solid transparent;
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+            color: #495057;
+            padding: 0.5rem 1rem;
+        }
+
+        .card-primary .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn {
+            margin: 5px 0;
+        }
+
+        .tab-content > .tab-pane {
+            display: block;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .tab-content > .active {
+            height: auto;
+        }
+
+        .instruction-box {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+            .instruction-box:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .instruction-box i {
+                display: block;
+            }
+
+            .instruction-box p.d-none {
+                display: none;
+            }
+    </style>
+}

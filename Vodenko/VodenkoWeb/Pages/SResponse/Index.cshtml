@@ -1,0 +1,932 @@
+﻿@page
+@model VodenkoWeb.Pages.SResponse.IndexModel
+@{
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="font-weight-bold text-uppercase">Step Response</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Step Response</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr style="border: 0; height: 3px; background: linear-gradient(to right, #ff0000, #0000ff); margin-bottom: 10px; margin-left: 15px; margin-right: 15px;">
+
+<!-- Main content -->
+<section class="content ml-5 mr-5">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-md-12 text-center">
+                <div class="d-flex flex-wrap justify-content-center align-items-center mt-3">
+                    <div class="d-flex flex-wrap justify-content-center w-100">
+                        <div class="p-3 text-center flex-fill bg-info border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-info-circle text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Request Control:</strong>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-success border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-cogs text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Adjust Setpoints:</strong>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-warning border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-chart-line text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Monitor Responses:</strong>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-danger border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-calculator text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Calculate Performance:</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mode Selection -->
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                @* <label class="mr-2"><strong>Select Mode:</strong></label>
+                <input type="radio" id="mode-dynamic" name="mode" value="dynamic">
+                <label for="mode-dynamic" class="mr-2">Dynamic Data Collection</label> *@
+                <label class="mr-2"><strong>Upload File:</strong></label>
+                <input type="file" id="file-upload" accept=".xlsx">
+                <button id="upload-file" class="btn btn-primary"><i class="fas fa-upload"></i> Upload File</button>
+            </div>
+        </div>
+        <!-- Toggle Button for Dynamic Mode -->
+        @* <div class="row mb-3" id="dynamic-controls">
+            <div class="col-12 text-center">
+                <button id="toggle-collect" class="btn btn-primary"><i class="fas fa-play"></i> Start Data Collection</button>
+            </div>
+        </div> *@
+        <!-- File Upload for File Mode -->
+        <div class="row mb-3 d-none" id="file-controls">
+            <div class="col-12 text-center">
+                <input type="file" id="file-upload" accept=".xlsx">
+                <button id="upload-file" class="btn btn-primary"><i class="fas fa-upload"></i> Upload File</button>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Valve Openness</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-primary" id="setStart_pv"><i class="fas fa-play"></i> Set Start</button>
+                            <button type="button" class="btn btn-primary" id="setEnd_pv"><i class="fas fa-stop"></i> Set End</button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <div id="lineChart-step" style="min-height: 250px; height: 350px; max-height: 450px; max-width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Inlet Flow</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-primary" id="setStart_if"><i class="fas fa-play"></i> Set Start</button>
+                            <button type="button" class="btn btn-primary" id="setEnd_if"><i class="fas fa-stop"></i> Set End</button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <div id="lineChart-qu" style="min-height: 250px; height: 350px; max-height: 450px; max-width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Tank 2: Water level</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-primary" id="setStart_wl2"><i class="fas fa-play"></i> Set Start</button>
+                            <button type="button" class="btn btn-primary" id="setEnd_wl2"><i class="fas fa-stop"></i> Set End</button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <div id="lineChart-h2" style="min-height: 250px; height: 350px; max-height: 450px; max-width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Tank 1: Water level</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-primary" id="setStart_wl1"><i class="fas fa-play"></i> Set Start</button>
+                            <button type="button" class="btn btn-primary" id="setEnd_wl1"><i class="fas fa-stop"></i> Set End</button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <div id="lineChart-h1" style="min-height: 250px; height: 350px; max-height: 450px; max-width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">
+                <div class="card card-primary mb-5">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-tachometer-alt"></i> Send Setpoint - Valve Openness</h3>
+                        <button id="requestControl" type="button" class="btn btn-light btn-lg ml-auto" style="width:240px"><i class="fas fa-hand-paper"></i> Request Control</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="form-row justify-content-center">
+                                <div class="form-group col-md-6 text-center">
+                                    <label for="editStepIn" class="d-block">Valve openness [%]:</label>
+                                    <input type="number" class="form-control text-center" id="editStepIn">
+                                    <span id="editStepInValidation" class="text-danger"></span>
+                                    @* <label for="editStepFn" class="d-block mt-3">Final valve openness [%]:</label>
+                                    <input type="number" class="form-control text-center" id="editStepFn">
+                                    <span id="editStepFnValidation" class="text-danger"></span> *@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button id="sendStringBtn" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane"></i> Send Setpoint</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <!-- Step Response Analysis Card -->
+                <div class="card  mb-5">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-chart-line"></i> Step Response Analysis</h3>
+                        <button id="requestCalculate" type="button" class="btn btn-success btn-lg ml-auto" style="width:240px;"><i class="fas fa-calculator"></i> Calculate</button>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Tank 1 - Water Level</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-arrow-up"></i> Rise Time: <span id="riseTimeTank1"></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-clock"></i> Peak Time: <span id="peakTimeTank1"></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-chart-line"></i> Gain: <span id="gainTank1"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Tank 2 - Water Level</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-arrow-up"></i> Rise Time: <span id="riseTimeTank2"></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-clock"></i> Peak Time: <span id="peakTimeTank2"></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-chart-line"></i> Gain: <span id="gainTank2"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Inlet Flow</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-arrow-up"></i> Rise Time: <span id="riseTimeiF"></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-clock"></i> Peak Time: <span id="peakTimeiF"></span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-chart-line"></i> Gain: <span id="gainIFlow"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+
+                <!-- /.card -->
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+    <!-- Other form fields -->
+</form>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="module">
+        import "signalr";
+
+        let startSample = null;
+        let endSample = null;
+        let settingStart = false;
+        let settingEnd = false;
+        let dynamicMode = false;
+        let collecting = false;
+        let fileData = [];
+        const windowSize = 8000; // Set the window size
+
+
+        let layout_h2 = {
+            title: 'Tank 2 Water Level',
+            shapes: [],
+            xaxis: {
+                title: 'Sample'
+            },
+            yaxis: {
+                title: 'Value [cm]'
+            },
+            // legend: {
+            //     orientation: "h", // Horizontal orientation for the legend
+            //     x: 0.5, // Center the legend horizontally
+            //     y: -0.2, // Position the legend below the chart
+            //     xanchor: 'center', // Anchor the legend in the center
+            // },
+            // margin: {
+            //     l: 50, // Left margin
+            //     r: 50, // Right margin
+            //     t: 500, // Top margin
+            //     b: 500 // Bottom margin (increased to make space for the legend)
+            // }
+        };
+
+        let trace_h2 = {
+            x: [],
+            y: [],
+            type: 'scatter',
+            //fill: 'tozeroy',  // Fills the area under the curve
+            fillcolor: 'rgba(0, 0, 255, 0.2)',  // Color of the filled area
+            line: {
+                color: 'rgb(0, 0, 255)'  // Color of the line
+            }
+        };
+
+
+        let layout_h1 = {
+            title: 'Tank 1 Water Level',
+            shapes: [],
+            xaxis: {
+                title: 'Sample'
+            },
+            yaxis: {
+                title: 'Value [cm]'
+            }
+        };
+
+        let trace_h1 = {
+            x: [],
+            y: [],
+            type: 'scatter',
+            //fill: 'tozeroy',  // Fills the area under the curve
+            fillcolor: 'rgba(235, 0, 0, 0.2)',  // Color of the filled area
+            line: {
+                color: 'rgb(235, 0, 0)'  // Color of the line
+            }
+        };
+
+        let layout_qu = {
+            title: 'Inlet Flow',
+            shapes: [],
+            xaxis: {
+                title: 'Sample'
+            },
+            yaxis: {
+                title: 'Value [l/min]'
+            }
+
+        };
+
+        let trace_qu = {
+            x: [],
+            y: [],
+            type: 'scatter',
+            //fill: 'tozeroy',  // Fills the area under the curve
+            fillcolor: 'rgba(0, 255, 0, 0.2)',  // Color of the filled area
+            line: {
+                color: 'rgb(0, 255, 0)'  // Color of the line
+            }
+        };
+
+        let layout_pv = {
+            title: 'Valve Openness',
+            shapes: [],
+            xaxis: {
+                title: 'Sample'
+            },
+            yaxis: {
+                title: 'Value [%]'
+            }
+        };
+        
+        let trace_pv = {
+            x: [],
+            y: [],
+            type: 'scatter',
+            //fill: 'tozeroy',  // Fills the area under the curve
+            fillcolor: 'rgba(249, 191, 59, 0.2)',  // Color of the filled area
+            line: {
+                color: 'rgb(249, 191, 59)'  // Color of the line
+            }
+        };
+
+
+        Plotly.newPlot('lineChart-qu', [trace_qu], layout_qu);
+        Plotly.newPlot('lineChart-h1', [trace_h1], layout_h1);
+        Plotly.newPlot('lineChart-h2', [trace_h2], layout_h2);
+        Plotly.newPlot('lineChart-step', [trace_pv], layout_pv);
+
+
+
+        document.getElementById('setStart_pv').addEventListener('click', () => {
+            settingStart = true;
+            settingEnd = false;
+        });
+
+        document.getElementById('setEnd_pv').addEventListener('click', () => {
+            settingStart = false;
+            settingEnd = true;
+        });
+
+        document.getElementById('setStart_wl1').addEventListener('click', () => {
+            settingStart = true;
+            settingEnd = false;
+        });
+
+        document.getElementById('setEnd_wl1').addEventListener('click', () => {
+            settingStart = false;
+            settingEnd = true;
+        });
+
+        document.getElementById('setStart_wl2').addEventListener('click', () => {
+            settingStart = true;
+            settingEnd = false;
+        });
+
+        document.getElementById('setEnd_wl2').addEventListener('click', () => {
+            settingStart = false;
+            settingEnd = true;
+        });
+
+        document.getElementById('setStart_if').addEventListener('click', () => {
+            settingStart = true;
+            settingEnd = false;
+        });
+
+        document.getElementById('setEnd_if').addEventListener('click', () => {
+            settingStart = false;
+            settingEnd = true;
+        });
+
+        document.getElementById('lineChart-step').on('plotly_click', function (data) {
+            const point = data.points[0];
+            const xValue = Math.round(point.x); // Round to nearest integer
+
+            if (settingStart) {
+                startSample = xValue;
+                settingStart = false;
+            } else if (settingEnd) {
+                endSample = xValue;
+                settingEnd = false;
+            }
+
+            updateVerticalLines(layout_qu, 'lineChart-qu');
+            updateVerticalLines(layout_pv, 'lineChart-step');
+            updateVerticalLines(layout_h1, 'lineChart-h1');
+            updateVerticalLines(layout_h2, 'lineChart-h2');
+
+
+        });
+
+        document.getElementById('lineChart-qu').on('plotly_click', function (data) {
+            const point = data.points[0];
+            const xValue = Math.round(point.x); // Round to nearest integer
+
+            if (settingStart) {
+                startSample = xValue;
+                settingStart = false;
+            } else if (settingEnd) {
+                endSample = xValue;
+                settingEnd = false;
+            }
+
+            updateVerticalLines(layout_qu, 'lineChart-qu');
+            updateVerticalLines(layout_pv, 'lineChart-step');
+            updateVerticalLines(layout_h1, 'lineChart-h1');
+            updateVerticalLines(layout_h2, 'lineChart-h2');
+
+
+        });
+
+        document.getElementById('lineChart-h1').on('plotly_click', function (data) {
+            const point = data.points[0];
+            const xValue = Math.round(point.x); // Round to nearest integer
+
+            if (settingStart) {
+                startSample = xValue;
+                settingStart = false;
+            } else if (settingEnd) {
+                endSample = xValue;
+                settingEnd = false;
+            }
+
+            updateVerticalLines(layout_qu, 'lineChart-qu');
+            updateVerticalLines(layout_pv, 'lineChart-step');
+            updateVerticalLines(layout_h1, 'lineChart-h1');
+            updateVerticalLines(layout_h2, 'lineChart-h2');
+
+
+        });
+
+        document.getElementById('lineChart-h2').on('plotly_click', function (data) {
+            const point = data.points[0];
+            const xValue = Math.round(point.x); // Round to nearest integer
+
+            if (settingStart) {
+                startSample = xValue;
+                settingStart = false;
+            } else if (settingEnd) {
+                endSample = xValue;
+                settingEnd = false;
+            }
+
+            updateVerticalLines(layout_qu, 'lineChart-qu');
+            updateVerticalLines(layout_pv, 'lineChart-step');
+            updateVerticalLines(layout_h1, 'lineChart-h1');
+            updateVerticalLines(layout_h2, 'lineChart-h2');
+
+
+        });
+
+
+        function updateVerticalLines(layout, chartId) {
+            layout.shapes = [];
+            if (startSample !== null) {
+                layout.shapes.push({
+                    type: 'line',
+                    x0: startSample,
+                    y0: 0,
+                    x1: startSample,
+                    y1: 1,
+                    xref: 'x',
+                    yref: 'paper',
+                    line: {
+                        color: 'green',
+                        width: 2
+                    }
+                });
+            }
+            if (endSample !== null) {
+                layout.shapes.push({
+                    type: 'line',
+                    x0: endSample,
+                    y0: 0,
+                    x1: endSample,
+                    y1: 1,
+                    xref: 'x',
+                    yref: 'paper',
+                    line: {
+                        color: 'red',
+                        width: 2
+                    }
+                });
+            }
+            Plotly.update(chartId, {}, layout);
+        }
+
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl('/live_data')
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        let collectedData = [];
+        const batchSize = 1000;  // Adjust batch size as needed
+        const maxDataSize = 50000;
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        }
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        connection.on("updateData", function (dataPoints) {
+            // Log dynamic data for debugging
+            if (dynamicMode) {
+
+                //console.log("Received dynamic data:", dataPoints);
+
+                if (!dataPoints) {
+                    console.error("Received dynamicData is undefined or null");
+                    return;
+                }
+
+                // Check if all expected properties exist in dynamicData
+                // const requiredProperties = [
+                //     'sample', 'waterLevelTank2', 'waterLevelTank2Model',
+                //     'waterLevelTank1', 'waterLevelTank1Model',
+                //     'inletFlow', 'inletFlowModel',
+                //     'outletFlow', 'valvePositionFeedback'
+                // ];
+
+                // for (const property of requiredProperties) {
+                //     if (!(property in dataPoints)) {
+                //         console.error(`Property ${property} is missing in dynamicData`);
+                //         return;
+                //     }
+                // }
+
+                Plotly.extendTraces('lineChart-step', {
+                    x: [[dataPoints.sample]],
+                    y: [[dataPoints.valvePositionFeedback]]
+                }, [0]);
+
+                Plotly.extendTraces('lineChart-h1', {
+                    x: [[dataPoints.sample]],
+                    y: [[dataPoints.waterLevelTank1]]
+                }, [0]);
+
+                Plotly.extendTraces('lineChart-h2', {
+                    x: [[dataPoints.sample]],
+                    y: [[dataPoints.waterLevelTank2]]
+                }, [0]);
+
+                Plotly.extendTraces('lineChart-qu', {
+                    x: [[dataPoints.sample]],
+                    y: [[dataPoints.inletFlow]]
+                }, [0]);
+
+                // Keep only the last 'windowSize' points
+                const h2Update = getWindowUpdate('lineChart-h2', windowSize);
+                const h1Update = getWindowUpdate('lineChart-h1', windowSize);
+                const quUpdate = getWindowUpdate('lineChart-qu', windowSize);
+                const pvUpdate = getWindowUpdate('lineChart-step', windowSize);
+
+                Plotly.update('lineChart-h2', h2Update);
+                Plotly.update('lineChart-qu', quUpdate);
+                Plotly.update('lineChart-h1', h1Update);
+                Plotly.update('lineChart-step', pvUpdate);
+
+                if (collecting) {
+                    collectedData.push({
+                        dateTime: dataPoints.dateTime,
+                        waterLevelTank2: dataPoints.waterLevelTank2,
+                        waterLevelTank1: dataPoints.waterLevelTank1,
+                        inletFlow: dataPoints.inletFlow,
+                        valvePositionFeedback: dataPoints.valvePositionFeedback
+                    });
+
+                    if (collectedData.length > maxDataSize) {
+                        collectedData.shift();
+                    }
+                }
+            }
+
+        });
+
+        function getWindowUpdate(chartId, windowSize) {
+            const data = document.getElementById(chartId).data[0];
+            if (data.x.length > windowSize) {
+                const x = data.x.slice(-windowSize);
+                const y = data.y.slice(-windowSize);
+                return { x: [x], y: [y] };
+            }
+            return { x: [data.x], y: [data.y] };
+        }
+
+        // Start the connection.
+        start().then(() => { });
+
+        function getAntiForgeryToken() {
+            return $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+        }
+
+        $("#requestControl").click(function (event) {
+            // Prevent the default form submission
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: "/SResponse/Index?handler=RequestControl",
+                success: function (response) {
+                    // Handle the success response if needed
+                    console.log("Request was successful.");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Request control was sent successfully.'
+                    });
+                },
+                error: function (xhr, status, error) {
+                    // Handle the error response if needed
+                    console.error("Error while sending request.");
+                    console.error("Status: " + status);
+                    console.error("Error: " + error);
+                }
+            });
+        });
+
+        // Function to request calculation
+        $('#requestCalculate').click(function () {
+            let filteredData;
+            if (dynamicMode) {
+                filteredData = collectedData;
+            } else {
+                filteredData = fileData.filter(d => d.sample >= startSample && d.sample <= endSample);
+            }
+            $.ajax({
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: 'http://127.0.0.1:5000/calculate2',  // Adjust the Flask server URL if needed
+                contentType: 'application/json',
+                data: JSON.stringify(filteredData),
+                success: function (response) {
+                    // $('#riseTimeTank1').text(response.riseTimeTank1 + " seconds");
+                    // $('#peakTimeTank1').text(response.peakTimeTank1 + " seconds");
+                    // $('#riseTimeTank2').text(response.riseTimeTank2 + " seconds");
+                    // $('#peakTimeTank2').text(response.peakTimeTank2 + " seconds");
+                    // $('#riseTimeiF').text(response.riseTimeIFlow + " seconds");
+                    // $('#peakTimeiF').text(response.peakTimeIFlow + " seconds");
+                    collectedData = [];
+                    $('#riseTimeTank1').text(response.riseTimeTank1.toFixed(4) + " seconds");
+                    $('#peakTimeTank1').text(response.peakTimeTank1.toFixed(4) + " seconds");
+                    $('#gainTank1').text(response.gainTank1.toFixed(4));
+
+                    $('#riseTimeTank2').text(response.riseTimeTank2.toFixed(4) + " seconds");
+                    $('#peakTimeTank2').text(response.peakTimeTank2.toFixed(4) + " seconds");
+                    $('#gainTank2').text(response.gainTank2.toFixed(4));
+
+                    $('#riseTimeiF').text(response.riseTimeIFlow.toFixed(4) + " seconds");
+                    $('#peakTimeiF').text(response.peakTimeIFlow.toFixed(4) + " seconds");
+                    $('#gainIFlow').text(response.gainIFlow.toFixed(4));
+                },
+                error: function () {
+                    alert('Failed to calculate');
+                }
+            });
+
+        });
+
+        // Function to send setpoint
+        $(document).ready(function () {
+            $('#sendStringBtn').click(function () {
+                const token = getAntiForgeryToken();
+                const initialValveOpenness = $('#editStepIn').val();
+                const finalValveOpenness = 85
+                collectedData = [];
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", token);
+                    },
+                    url: "/SResponse/Index?handler=SendValveSetpoint",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({ Initial: initialValveOpenness, Final: finalValveOpenness }),
+                    success: function (response) {
+                        if (response.success) {
+                            clearGraphs();
+                            $('#editStepInValidation').text("");
+                            $('#editStepFnValidation').text("");
+                            $('#editStepIn').removeClass('is-invalid');
+                            $('#editStepFn').removeClass('is-invalid');
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Setpoint sent successfully.'
+                            });
+                        } else {
+                            $('#editStepInValidation').text("");
+                            $('#editStepFnValidation').text("");
+                            $('#editStepIn').removeClass('is-invalid');
+                            $('#editStepFn').removeClass('is-invalid');
+
+                            response.errors.forEach(function (error) {
+                                if (error.includes("Initial valve openness")) {
+                                    $('#editStepInValidation').text(error);
+                                    $('#editStepIn').addClass('is-invalid');
+                                }
+                                if (error.includes("Final valve openness")) {
+                                    $('#editStepFnValidation').text(error);
+                                    $('#editStepFn').addClass('is-invalid');
+                                }
+                            });
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.errors.join(", ")
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while sending the setpoint.'
+                        });
+                    }
+                });
+            });
+
+            $('#toggle-collect').click(function () {
+                collecting = !collecting;
+                if (collecting) {
+                    collectedData = [];
+                    $(this).html('<i class="fas fa-stop"></i> Stop Data Collection');
+                } else {
+                    $(this).html('<i class="fas fa-play"></i> Start Data Collection');
+                    if (collectedData.length > 0) {
+                        console.log('First Sample:', collectedData[0]);
+                        console.log('Last Sample:', collectedData[collectedData.length - 1]);
+                    } else {
+                        console.log('No data collected.');
+                    }
+                }
+            });
+
+            $('input[name="mode"]').change(function () {
+                if (this.value === 'dynamic') {
+                    startSample = null;
+                    endSample = null;
+
+
+                    updateVerticalLines(layout_h2, 'lineChart-h2');
+
+                    updateVerticalLines(layout_pv, 'lineChart-step');
+                    
+                    updateVerticalLines(layout_h1, 'lineChart-h1');
+
+                    updateVerticalLines(layout_qu, 'lineChart-qu');
+
+
+                    $('#dynamic-controls').removeClass('d-none');
+                    $('#file-controls').addClass('d-none');
+                    dynamicMode = true;
+                    clearGraphs();
+                } else {
+                    $('#dynamic-controls').addClass('d-none');
+                    $('#file-controls').removeClass('d-none');
+                    dynamicMode = false;
+                    clearGraphs();
+                }
+            });
+
+            $('#upload-file').click(function () {
+                const fileInput = document.getElementById('file-upload');
+                if (fileInput.files.length === 0) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    processFileData(jsonData);
+                };
+                reader.readAsArrayBuffer(fileInput.files[0]);
+            });
+
+            function processFileData(data) {
+
+                const allData = data.slice(1).map(row => ({
+                    dateTime: row[8],
+                    waterLevelTank2: row[3],
+                    sample: row[10],
+                    valvePositionFeedback: row[0],
+                    inletFlow: row[1],
+                    waterLevelTank1: row[2],
+                    inletFlowModel: row[4],
+                    waterLevelTank1Model: row[5],
+                    waterLevelTank2Model: row[6],
+                    outletFlow: row[7],
+                    pump: row[9],
+                    target: row[11]
+
+                }));
+
+                const initialTime = data[1][8];
+                //console.log(initialTime);
+
+                //console.log(allData.map(item => (item.dateTime - initialTime)*1000));
+                fileData = data.slice(1).map(row => ({
+                    // dateTime: row[8],
+                    // waterLevelTank2: row[3],
+                    // sample: row[10]
+
+                    dateTime: row[8],
+                    waterLevelTank2: row[3],
+                    waterLevelTank1: row[2],
+                    inletFlow: row[1],
+                    valvePositionFeedback: row[0],
+                    sample: row[10]
+                }));
+
+                const labels = allData.map(item => item.sample);
+                const h2Data = allData.map(item => item.waterLevelTank2);
+                const pvData = allData.map(item => item.valvePositionFeedback);
+                const h1Data = allData.map(item => item.waterLevelTank1);
+                const quData = allData.map(item => item.inletFlow);
+                const targetData = allData.map(item => item.target);
+
+                // Trace for Tank 2 Water Level
+                let trace_h2 = {
+                    x: labels,
+                    y: h2Data,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: {
+                        color: 'rgb(0, 0, 255)' // Blue color for water level
+                    },
+                    name: 'Tank 2 Water Level'
+                };
+
+                // Trace for Target Value
+                let targetTrace = {
+                    x: labels,
+                    y: targetData,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: {
+                        dash: 'dash', // Dashed line
+                        color: 'rgb(255, 0, 0)' // Red color for visibility
+                    },
+                    name: 'Target Value'
+                };
+
+                // Initialize the plot with both traces
+                //Plotly.newPlot('lineChart-h2', [trace_h2, targetTrace], layout_h2);
+
+                Plotly.update('lineChart-h2', { x: [labels], y: [h2Data] });
+
+                Plotly.update('lineChart-step', { x: [labels], y: [pvData] });
+                Plotly.update('lineChart-h1', { x: [labels], y: [h1Data] });
+                Plotly.update('lineChart-qu', { x: [labels], y: [quData] });
+
+            }
+
+            function clearGraphs() {
+                Plotly.update('lineChart-qu', { x: [[]], y: [[]] });
+                Plotly.update('lineChart-step', { x: [[]], y: [[]] });
+                Plotly.update('lineChart-h1', { x: [[]], y: [[]] });
+                Plotly.update('lineChart-h2', { x: [[]], y: [[]] });
+
+            }
+        });
+    </script>
+}

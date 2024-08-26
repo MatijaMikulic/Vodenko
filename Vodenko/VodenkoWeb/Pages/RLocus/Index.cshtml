@@ -1,0 +1,900 @@
+﻿@page
+@model VodenkoWeb.Pages.RLocus.IndexModel
+@{
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="font-weight-bold text-uppercase">Root Locus - Controller Designer</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Root Locus</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr style="border: 0; height: 3px; background: linear-gradient(to right, #ff0000, #0000ff); margin-bottom: 10px; margin-left: 15px; margin-right: 15px;">
+
+<form id="antiForgeryForm" method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+<!-- Main content -->
+<section class="content ml-5 mr-5">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="d-flex align-items-center mt-3">
+                    @* <button id="loaddata" class="btn btn-info btn-lg mb-3">Load Process Parameters</button> *@
+                    <div class="d-flex flex-wrap justify-content-center flex-grow-1 ml-3">
+                        <div class="p-3 text-center flex-fill bg-info border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-info-circle text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Adjust PID Parameters:</strong>
+                            <p class="mt-1 text-white d-none">Use the provided fields to adjust K<sub>p</sub>, K<sub>i</sub>, and K<sub>d</sub> values and observe the changes in the root locus and step response diagrams.</p>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-success border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-chart-line text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Analyze Root Locus:</strong>
+                            <p class="mt-1 text-white d-none">The root locus plot shows how the system poles move as the gain is varied. Ensure the poles are on the left half of the complex plane for stability.</p>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-warning border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-wave-square text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Review Step Response:</strong>
+                            <p class="mt-1 text-white d-none">The step response plot helps you analyze the system's time-domain performance, including settling time, rise time, and overshoot.</p>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-danger border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-cogs text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Send PID Settings:</strong>
+                            <p class="mt-1 text-white d-none">Once satisfied with the PID tuning, send the settings to apply them to your system.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Root Locus Diagram</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="chartContainer" class="chart">
+                            <canvas id="lineChart-rlocus" style="min-height: 250px; height: 300px; max-height: 450px; max-width: 100%;"></canvas>
+                            <div id="loadingSpinner" class="centeredSpinner"></div>
+                        </div>
+                        <div class="mt-3">
+                            <button id="resetZoomBtnRootLocus" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Reset Zoom">
+                                <i class="fas fa-search-minus"></i> Reset Zoom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-info mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">PID Parameters</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="background-color: #d4edda; color: #155724;">
+                        <p><strong>K<sub>p</sub></strong> (Proportional Gain): Determines the reaction to the current error.</p>
+                        <p><strong>K<sub>i</sub></strong> (Integral Gain): Determines the reaction based on the sum of recent errors.</p>
+                        <p><strong>K<sub>d</sub></strong> (Derivative Gain): Determines the reaction based on the rate at which the error has been changing.</p>
+                        <p><strong>Zero Placements:</strong> The positioning of zeros in the transfer function to achieve desired performance characteristics.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Closed-Loop Step Response</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-step" style="min-height: 250px; height: 300px; max-height: 450px; max-width: 100%;"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <button id="resetZoomBtnStepResponse" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Reset Zoom">
+                                <i class="fas fa-search-minus"></i> Reset Zoom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fas fa-chart-bar"></i> System Performance Metrics</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th><i class="fas fa-ruler"></i> Metric</th>
+                                            <th><i class="fas fa-calculator"></i> Value</th>
+                                            <th><i class="fas fa-tachometer-alt"></i> Unit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><i class="fas fa-hourglass-half"></i> Settling Time</td>
+                                            <td id="settling-time-value">-</td>
+                                            <td>seconds [s]</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-long-arrow-alt-up"></i> Rise Time</td>
+                                            <td id="rise-time-value">-</td>
+                                            <td>seconds [s]</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-chart-line"></i> Overshoot</td>
+                                            <td id="overshoot-value">-</td>
+                                            <td>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-exclamation-circle"></i> Error</td>
+                                            <td id="error-value">-</td>
+                                            <td>cm</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card card-primary mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-cogs"></i> PID Design</h3>
+                        <ul class="nav nav-tabs card-header-tabs" id="pidModeTabs" role="tablist" >
+                            <li class="nav-item">
+                                <a class="nav-link active" id="pidMode1-tab" data-toggle="tab" href="#pidMode1" role="tab" aria-controls="pidMode1" aria-selected="true"><i class="fas fa-sliders-h"></i> Gains</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="pidMode2-tab" data-toggle="tab" href="#pidMode2" role="tab" aria-controls="pidMode2" aria-selected="false"><i class="fas fa-map-marker-alt"></i> Zero Placement</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="pidModeTabsContent">
+                            <div class="tab-pane fade show active" id="pidMode1" role="tabpanel" aria-labelledby="pidMode1-tab">
+                                <div class="form-row">
+                                    <div class="form-group col">
+                                        <label for="editKp"><i class="fas fa-tachometer-alt"></i> K<sub>p</sub> :</label>
+                                        <input type="number" class="form-control" id="editKp">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label for="editTi"><i class="fas fa-tachometer-alt"></i> K<sub>i</sub> :</label>
+                                        <input type="number" class="form-control" id="editTi">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label for="editTd"><i class="fas fa-tachometer-alt"></i> K<sub>d</sub> :</label>
+                                        <input type="number" class="form-control" id="editTd">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pidMode2" role="tabpanel" aria-labelledby="pidMode2-tab">
+                                <div class="form-row">
+                                    <div class="form-group col">
+                                        <label for="editZero1"><i class="fas fa-map-pin"></i> Real Zero<sub>1</sub> :</label>
+                                        <input type="number" class="form-control" id="editZero1">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label for="editZero2"><i class="fas fa-map-pin"></i> Real Zero<sub>2</sub> :</label>
+                                        <input type="number" class="form-control" id="editZero2">
+                                    </div>
+                                    <div class="form-group col">
+                                        <label for="editZero3"><i class="fas fa-tachometer-alt"></i> K<sub>d</sub> :</label>
+                                        <input type="number" class="form-control" id="editZero3">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button id="sendStringBtn" class="btn btn-primary btn-lg"><i class="fas fa-play"></i> Simulate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-info mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-sliders-h"></i> PID - Parameters</h3>
+                        <button id="requestControl" type="button" class="btn btn-light btn-lg ml-auto"><i class="fas fa-hand-paper"></i> Request Control</button>
+                    </div>
+                    <div class="card-body text-center">
+                        <form id="pidForm" method="post">
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="displayKp">K<sub>p</sub> :</label>
+                                    <input type="number" class="form-control" id="displayKp" asp-for="Kp" readonly>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="displayKi">K<sub>i</sub> :</label>
+                                    <input type="number" class="form-control" id="displayKi" asp-for="Ki" readonly>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="displayKd">K<sub>d</sub> :</label>
+                                    <input type="number" class="form-control" id="displayKd" asp-for="Kd" readonly>
+                                </div>
+                            </div>
+                            <button id="sendPID" type="button" class="btn btn-danger btn-lg mt-3" style="width:100%;"><i class="fas fa-paper-plane"></i> Send PID</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-info mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">PID Parameters</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="background-color: #d4edda; color: #155724;">
+                        <p>Pressing the button will send the controller parameters (K<sub>p</sub>, K<sub>i</sub>, K<sub>d</sub>) to the system.</p>
+                        <p>The control law equation is given by:</p>
+                        <p><code>u(t) = K<sub>p</sub> e(t) + K<sub>i</sub> ∫e(t)dt + K<sub>d</sub> de(t)/dt</code></p>
+                        <p>where:</p>
+                        <ul>
+                            <li><strong>u(t)</strong>: Control output</li>
+                            <li><strong>e(t)</strong>: Error signal (setpoint - process variable)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Bode plot - Amplitude | Frequency</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-bodea" style="min-height: 250px; height: 300px; max-height: 450px; max-width: 100%;"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <button id="resetZoomBtnBodeA" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Reset Zoom">
+                                <i class="fas fa-search-minus"></i> Reset Zoom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Bode plot - Phase | Frequency</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-bodep" style="min-height: 250px; height: 300px; max-height: 450px; max-width: 100%;"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <button id="resetZoomBtnBodeP" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Reset Zoom">
+                                <i class="fas fa-search-minus"></i> Reset Zoom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-line"></i> Bode Plot Metrics</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th><i class="fas fa-ruler"></i> Metric</th>
+                                        <th><i class="fas fa-calculator"></i> Value</th>
+                                        <th><i class="fas fa-tachometer-alt"></i> Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><i class="fas fa-wave-square"></i> Gain Crossover Frequency</td>
+                                        <td id="gain-cross-freq-value">-</td>
+                                        <td>rad/s</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-exchange-alt"></i> Phase Crossover Frequency</td>
+                                        <td id="phase-cross-freq-value">-</td>
+                                        <td>rad/s</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-signal"></i> Gain Margin</td>
+                                        <td id="gain-margin-value">-</td>
+                                        <td>-</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-angle-double-right"></i> Phase Margin</td>
+                                        <td id="phase-margin-value">-</td>
+                                        <td>degrees</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
+
+    <script>
+        var currentMode;
+        var rootLocusChart; // Declare a variable to store the root locus chart instance
+        var stepResponseChart; // Declare a variable to store the step response chart instance
+        var bodeAmplitudeChart;
+        var bodePhaseChart;
+
+        $(document).ready(function () {
+            currentMode = "mode1";
+            $('#pidMode1-tab').on('click', function () {
+                currentMode = "mode1";
+            });
+
+            $('#pidMode2-tab').on('click', function () {
+                currentMode = "mode2";
+            });
+
+            $("#requestControl").click(function (event) {
+                // Prevent the default form submission
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    url: "/RLocus/Index?handler=RequestControl",
+                    success: function (response) {
+                        // Handle the success response if needed
+                        console.log("Request was successful.");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Request control was sent successfully.'
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error response if needed
+                        console.error("Error while sending request.");
+                        console.error("Status: " + status);
+                        console.error("Error: " + error);
+                    }
+                });
+            });
+
+            $("#sendStringBtn").click(function () {
+                var inputString1 = $("#editKp").val();
+                var inputString2 = $("#editTi").val();
+                var inputString3 = $("#editTd").val();
+
+                var inputString4 = $("#editZero1").val();
+                var inputString5 = $("#editZero2").val();
+                var inputString6 = $("#editZero3").val();
+
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                var requestData = {};
+
+                if (currentMode === "mode1") {
+                    $("#displayKp").val(inputString1).attr("readonly", true);
+                    $("#displayKi").val(inputString2).attr("readonly", true);
+                    $("#displayKd").val(inputString3).attr("readonly", true);
+                    requestData = {
+                        InputStrings: [inputString1, inputString2, inputString3]
+                    };
+                } else if (currentMode === "mode2") {
+                    try {
+                        var zero1 = parseFloat(inputString4);
+                        var zero2 = parseFloat(inputString5);
+                        var zero3 = parseFloat(inputString6);
+
+                        if (isNaN(zero1) || isNaN(zero2) || isNaN(zero3)) {
+                            throw new Error("Invalid input for zeros. Please enter valid numbers.");
+                        }
+
+                        var gains = calculateGainsFromZeros(zero1, zero2, zero3);
+                        $("#displayKp").val(gains.Kp).attr("readonly", true);
+                        $("#displayKi").val(gains.Ki).attr("readonly", true);
+                        $("#displayKd").val(gains.Kd).attr("readonly", true);
+                        requestData = {
+                            InputStrings: [gains.Kp.toString(), gains.Ki.toString(), gains.Kd.toString()]
+                        };
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.message
+                        });
+                        return; // Exit the function to prevent further execution
+                    }
+                }
+
+                // Show the loading spinner
+                $("#loadingSpinner").show();
+
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    url: "/api/ControlSystemAPI/RootLocusPoints",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(requestData),
+                    success: function (response) {
+                        plotRootLocus(response); // Call function to plot root locus
+                        $("#loadingSpinner").hide(); // Hide the loading spinner
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error status: " + status);
+                        console.error("Error details: " + error);
+                        console.error("XHR response: " + xhr.responseText);
+                        //alert("Error while sending string.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Please enter correct PID parameters.'
+                        });
+                        $("#loadingSpinner").hide(); // Hide the loading spinner in case of error
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    url: "/api/ControlSystemAPI/StepResponsePoints",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(requestData),
+                    success: function (response) {
+                        plotStepResponse(response);
+                        document.getElementById('settling-time-value').textContent = response.settling_time.toFixed(2);
+                        document.getElementById('rise-time-value').textContent = response.rise_time.toFixed(2);
+                        document.getElementById('overshoot-value').textContent = response.overshoot.toFixed(2);
+                        document.getElementById('error-value').textContent = response.error.toFixed(2);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error status: " + status);
+                        console.error("Error details: " + error);
+                        console.error("XHR response: " + xhr.responseText);
+                        //alert("Error while sending string.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Please enter correct PID parameters.'
+                        });
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    url: "/api/ControlSystemAPI/BodePoints",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(requestData),
+                    success: function (response) {
+                        plotAmplitude(response);
+                        plotPhase(response);
+                        document.getElementById('gain-cross-freq-value').textContent = response.gain_cross_freq > -1 ? response.gain_cross_freq : '-';
+                        document.getElementById('phase-cross-freq-value').textContent = response.phase_cross_freq > -1 ? response.phase_cross_freq : '-';
+                        document.getElementById('gain-margin-value').textContent = response.gain_margin > -1 ? response.gain_margin : '-';
+                        document.getElementById('phase-margin-value').textContent = response.phase_margin > -1 ? response.phase_margin : '-';
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error status: " + status);
+                        console.error("Error details: " + error);
+                        console.error("XHR response: " + xhr.responseText);
+                        //alert("Error while sending string.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Please enter correct PID parameters.'
+                        });
+                    }
+                });
+
+                $("#sendPID").click(function (event) {
+                    // Prevent the default form submission
+                    event.preventDefault();
+
+                    // Retrieve the PID values
+                    var kp = $("#displayKp").val();
+                    var ki = $("#displayKi").val();
+                    var kd = $("#displayKd").val();
+
+                    // Send the values to the backend using AJAX
+                    $.ajax({
+                        type: "POST",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        url: "/RLocus/Index?handler=SendPID",
+                        data: {
+                            Kp: kp,
+                            Ki: ki,
+                            Kd: kd
+                        },
+                        success: function (response) {
+                            // Handle the success response if needed
+                            console.log("PID values sent successfully.");
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'PID parameters were sent successfully.'
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle the error response if needed
+                            console.error("Error while sending PID values.");
+                            console.error("Status: " + status);
+                            console.error("Error: " + error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Please enter correct PID parameters.'
+                            });
+                        }
+                    });
+                });
+            });
+
+            // Add event listeners for the buttons
+            document.getElementById('resetZoomBtnRootLocus').addEventListener('click', function () {
+                resetZoom(rootLocusChart);
+            });
+
+            document.getElementById('resetZoomBtnStepResponse').addEventListener('click', function () {
+                resetZoom(stepResponseChart);
+            });
+
+            document.getElementById('resetZoomBtnBodeA').addEventListener('click', function () {
+                resetZoom(bodeAmplitudeChart);
+            });
+
+            document.getElementById('resetZoomBtnBodeP').addEventListener('click', function () {
+                resetZoom(bodePhaseChart);
+            });
+        });
+
+        function plotRootLocus(data) {
+            const ctx = document.getElementById('lineChart-rlocus').getContext('2d');
+
+            if (window.rootLocusChart) {
+                window.rootLocusChart.destroy(); // Destroy existing chart instance if it exists
+            }
+
+            var lightColors = [
+                'rgba(255, 178, 102, 1)', // Light Orange
+                'rgba(102, 255, 102, 1)', // Light Green
+                'rgba(204, 153, 255, 1)', // Light Purple
+                'rgba(255, 255, 102, 200)', // Light Yellow
+                'rgba(255, 153, 153, 1)'  // Light Pink
+            ];
+
+            var datasets = Object.keys(data.grouped_locus).map(function (key, index) {
+                var colorIndex = index % lightColors.length;
+                return {
+                    label: `Locus trajectory ${parseInt(key) + 1}`,
+                    data: data.grouped_locus[key].real.map((real, i) => ({ x: real, y: data.grouped_locus[key].imag[i], gain: data.grouped_locus[key].gain[i] })),
+                    borderColor: lightColors[colorIndex],
+                    backgroundColor: lightColors[colorIndex].replace('1)', '0.2)'),
+                    pointRadius: 0, // Set point radius to 0 for line plots
+                    borderWidth: 3, // Reduce border width
+                    fill: false,
+                    showLine: true,
+                    lineTension: 0 // Disable line tension to prevent smoothing
+                };
+            });
+
+            datasets.push({
+                label: 'Poles',
+                data: data.poles_real.map((x, i) => ({ x, y: data.poles_imag[i] })),
+                backgroundColor: 'red',
+                pointRadius: 8, // Reduce point radius for poles
+                pointStyle: 'cross',
+                borderColor: 'red',
+                borderWidth: 2,
+                showLine: false
+            });
+
+            datasets.push({
+                label: 'Zeros',
+                data: data.zeros_real.map((x, i) => ({ x, y: data.zeros_imag[i] })),
+                backgroundColor: 'blue',
+                pointRadius: 6, // Reduce point radius for zeros
+                pointStyle: 'circle',
+                borderColor: 'blue',
+                borderWidth: 1,
+                showLine: false
+            });
+
+            window.rootLocusChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: datasets
+                },
+                options: {
+                    animation: {
+                        duration: 0 // Disable animations
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Real Axis'
+                            },
+                            min: -1,  // Set the minimum limit for the x-axis
+                            max: 0.5    // Set the maximum limit for the x-axis
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Imaginary Axis'
+                            },
+                            min: -1.5,  // Set the minimum limit for the y-axis
+                            max: 1.5    // Set the maximum limit for the y-axis
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'nearest',
+                            intersect: false,
+                            callbacks: {
+                                label: function (context) {
+                                    var point = context.raw;
+                                    var x = point.x.toFixed(2);
+                                    var y = point.y.toFixed(2);
+                                    var gain = point.gain.toFixed(2);
+                                    return `Real: ${x}, Imag: ${y}, Gain: ${gain}`;
+                                }
+                            }
+                        },
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'xy',
+                                threshold: 10 // Minimum distance required for panning
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true, // Enable zooming with the wheel
+                                },
+                                pinch: {
+                                    enabled: true, // Enable zooming with pinch gesture
+                                },
+                                mode: 'xy', // Enable zooming in both directions
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Root Locus, Poles, and Zeros Diagram'
+                    }
+                }
+            });
+        }
+
+        function plotStepResponse(data) {
+            const ctx = document.getElementById('lineChart-step').getContext('2d');
+            const formattedTime = data.time.map(time => parseFloat(time).toFixed(2));
+
+            if (stepResponseChart) {
+                stepResponseChart.destroy(); // Destroy existing chart instance if it exists
+            }
+
+            stepResponseChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: formattedTime, // Assuming data.time contains the time points
+                    datasets: [{
+                        label: 'Step Response',
+                        data: data.response, // Assuming data.response contains the response values
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)', // Optional: Set background color for the area under the line
+                        fill: true // Fill the area under the line
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear', // Use linear scale for time
+                            title: {
+                                display: true,
+                                text: 'Time [s]'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Response [cm]'
+                            }
+                        }
+                    },
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'xy'
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'xy'
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Step Response'
+                    }
+                }
+            });
+        }
+
+        // Function to plot the amplitude using Chart.js
+        // Function to plot the amplitude using Chart.js
+        function plotAmplitude(response) {
+            const formattedFreq = response.frequency.map(frequency => parseFloat(frequency).toFixed(2));
+
+            var data = {
+                labels: formattedFreq,
+                datasets: [{
+                    label: 'Magnitude',
+                    data: response.magnitude,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+            if (bodeAmplitudeChart) {
+                bodeAmplitudeChart.destroy(); // Destroy existing chart instance if it exists
+            }
+            var ctx = document.getElementById('lineChart-bodea').getContext('2d');
+            bodeAmplitudeChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: true,
+                        text: 'Amplitude vs Frequency'
+                    }
+                }
+            });
+        }
+
+        // Function to plot the phase using Chart.js
+        function plotPhase(response) {
+            const formattedFreq = response.frequency.map(frequency => parseFloat(frequency).toFixed(2));
+            var data = {
+                labels: formattedFreq,
+                datasets: [{
+                    label: 'Phase',
+                    data: response.phase,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            };
+            if (bodePhaseChart) {
+                bodePhaseChart.destroy(); // Destroy existing chart instance if it exists
+            }
+            var ctx = document.getElementById('lineChart-bodep').getContext('2d');
+            bodePhaseChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: true,
+                        text: 'Phase vs Frequency'
+                    }
+                }
+            });
+        }
+
+        // Function to reset the zoom
+        function resetZoom(chart) {
+            chart.resetZoom();
+        }
+
+        function calculateGainsFromZeros(z1, z2, Kd) {
+            const Kp = -Kd * (z1 + z2);
+            const Ki = Kd * z1 * z2;
+            return { Kp: Kp, Ki: Ki, Kd: Kd };
+        }
+    </script>
+
+    <style>
+        @@media (max-width: 767.98px) {
+            .content-header, .content, .content .container-fluid {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            .form-row {
+                flex-direction: column;
+            }
+        }
+
+        .instruction-box {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+            .instruction-box:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .instruction-box i {
+                display: block;
+            }
+
+            .instruction-box p.d-none {
+                display: none;
+            }
+
+
+    </style>
+}

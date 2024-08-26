@@ -1,0 +1,332 @@
+﻿@page
+@model VodenkoWeb.Pages.SystemStatus.IndexModel
+@{
+    var provider = Model._modelProvider;
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="font-weight-bold text-uppercase">System Status</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Plant Overview</a></li>
+                    <li class="breadcrumb-item active">System Status</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="gradient-hr">
+
+<section class="content">
+    <div class="container-fluid">
+        <!-- PLC Connection Box -->
+        <div class="card shadow-lg mb-4">
+            <div class="card-header bg-primary">
+                <h3 class="card-title font-weight-bold text-white">PLC Connection</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="text-center">
+                            @if (provider.PlcConnectionStatus.Status.IsConnected)
+                            {
+                                <img id="plcConnectionStatusImage" src="~/dist/img/connected.gif" class="img-fluid rounded shadow-lg mb-3 animated-gif">
+                                <h5 id="plcConnectionStatusText" class="text-success mt-3">Connected</h5>
+                            }
+                            else
+                            {
+                                <img id="plcConnectionStatusImage" src="~/dist/img/disconnected.gif" class="img-fluid rounded shadow-lg mb-3 animated-gif">
+                                <h5 id="plcConnectionStatusText" class="text-danger mt-3">Disconnected</h5>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-lg hover-shadow">
+                            <div class="card-header bg-secondary">
+                                <h3 class="card-title font-weight-bold text-white">PLC Information</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <table class="table table-hover">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Type:</strong></td>
+                                            <td>Siemens S7-Net</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>CPU-Type:</strong></td>
+                                            <td>S7-1500</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>IP-Address:</strong></td>
+                                            <td>192.168.131.171</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Rack:</strong></td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Slot:</strong></td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Status:</strong></td>
+                                            <td id="plcConnectionStatusTableText" class="@(provider.PlcConnectionStatus.Status.IsConnected ? "text-success" : "text-danger")">
+                                                @(provider.PlcConnectionStatus.Status.IsConnected ? "Active" : "Inactive")
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plant Status Box -->
+        <div class="card shadow-lg mb-4">
+            <div class="card-header bg-primary">
+                <h3 class="card-title font-weight-bold text-white">Plant Status</h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center mt-3 mb-5">
+                    <div class="col-md-2 col-sm-4 mb-3">
+                        <div class="info-box shadow hover-shadow">
+                            <span id="iconPumpActive" class="info-box-icon @(provider.PlantStatus.Status.PumpActive ? "bg-success" : "bg-danger")"><i class="fas fa-tint"></i></span>
+                            <div class="info-box-content">
+                                <div id="ledPumpActive" class="led mt-3 @(provider.PlantStatus.Status.PumpActive ? "led-green" : "led-red")"></div>
+                                <p class="mt-2">Pump Active</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 mb-3">
+                        <div class="info-box shadow hover-shadow">
+                            <span id="iconLevelSwitch" class="info-box-icon @(provider.PlantStatus.Status.LevelSwitch ? "bg-success" : "bg-danger")"><i class="fas fa-toggle-on"></i></span>
+                            <div class="info-box-content">
+                                <div id="ledLevelSwitch" class="led mt-3 @(provider.PlantStatus.Status.LevelSwitch ? "led-green" : "led-red")"></div>
+                                <p class="mt-2">Level Switch</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 mb-3">
+                        <div class="info-box shadow hover-shadow">
+                            <span id="iconValveOperatingRange" class="info-box-icon @(provider.PlantStatus.Status.ValveOperatingRange ? "bg-success" : "bg-danger")"><i class="fas fa-arrows-alt"></i></span>
+                            <div class="info-box-content">
+                                <div id="ledValveOperatingRange" class="led mt-3 @(provider.PlantStatus.Status.ValveOperatingRange ? "led-green" : "led-red")"></div>
+                                <p class="">Valve Operating Range</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 mb-3">
+                        <div class="info-box shadow hover-shadow">
+                            <span id="iconTank1Level" class="info-box-icon @(provider.PlantStatus.Status.Tank1Level ? "bg-success" : "bg-danger")"><i class="fas fa-water"></i></span>
+                            <div class="info-box-content">
+                                <div id="ledTank1Level" class="led mt-3 @(provider.PlantStatus.Status.Tank1Level ? "led-green" : "led-red")"></div>
+                                <p class="">Tank 1 critical Level</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 mb-3">
+                        <div class="info-box shadow hover-shadow">
+                            <span id="iconTank2Level" class="info-box-icon @(provider.PlantStatus.Status.Tank2Level ? "bg-success" : "bg-danger")"><i class="fas fa-water"></i></span>
+                            <div class="info-box-content">
+                                <div id="ledTank2Level" class="led mt-3 @(provider.PlantStatus.Status.Tank2Level ? "led-green" : "led-red")"></div>
+                                <p class="mt-2">Tank 2 critical Level</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 mb-3">
+                        <div class="info-box shadow hover-shadow">
+                            <span id="iconSystemReady" class="info-box-icon @(provider.PlantStatus.Status.SystemReady ? "bg-success" : "bg-danger")"><i class="fas fa-cogs"></i></span>
+                            <div class="info-box-content">
+                                <div id="ledSystemReady" class="led mt-3 @(provider.PlantStatus.Status.SystemReady ? "led-green" : "led-red")"></div>
+                                <p class="mt-2">System Ready</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/cache")
+                .build();
+
+            connection.on("updatePlcConnectionStatus", function (status) {
+                updatePlcConnectionStatus(status);
+            });
+
+            connection.on("updateSystemStatus", function (status) {
+                updateSystemStatus(status);
+            });
+
+            connection.start().catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            function updatePlcConnectionStatus(status) {
+                console.log(status);
+                const connectionStatus = status.isConnected ? "Connected" : "Disconnected";
+                const connectionImage = status.isConnected ? "/dist/img/connected.gif" : "/dist/img/disconnected.gif";
+                const connectionClass = status.isConnected ? "text-success" : "text-danger";
+
+                document.getElementById("plcConnectionStatusText").innerText = connectionStatus;
+                document.getElementById("plcConnectionStatusImage").src = connectionImage;
+                document.getElementById("plcConnectionStatusText").className = connectionClass;
+
+                // Update the status in the table
+                const tableStatusElement = document.getElementById("plcConnectionStatusTableText");
+                tableStatusElement.innerText = status.isConnected ? "Active" : "Inactive";
+                tableStatusElement.className = connectionClass;
+            }
+
+            function updateSystemStatus(status) {
+                console.log(status);
+                updateStatus("PumpActive", status.pumpActive);
+                updateStatus("LevelSwitch", status.levelSwitch);
+                updateStatus("ValveOperatingRange", status.valveOperatingRange);
+                updateStatus("Tank1Level", status.tank1Level);
+                updateStatus("Tank2Level", status.tank2Level);
+                updateStatus("SystemReady", status.systemReady);
+            }
+
+            function updateStatus(elementId, isActive) {
+                const ledElement = document.getElementById(`led${elementId}`);
+                const iconElement = document.getElementById(`icon${elementId}`);
+                const ledClass = isActive ? "led-green" : "led-red";
+                const iconClass = isActive ? "bg-success" : "bg-danger";
+
+                ledElement.className = `led mt-3 ${ledClass}`;
+                iconElement.className = `info-box-icon ${iconClass}`;
+            }
+        });
+    </script>
+}
+
+<style>
+    .gradient-hr {
+        border: 0;
+        height: 3px;
+        background: linear-gradient(to right, #ff0000, #0000ff);
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .led {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin: 0 auto;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+        .led:hover {
+            transform: scale(1.1);
+        }
+
+    .led-red {
+        background-color: #ff0000;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    }
+
+    .led-green {
+        background-color: #00ff00;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+    }
+
+    .card {
+        margin-top: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+    .hover-shadow:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .animated-gif {
+        transition: transform 0.3s ease;
+    }
+
+        .animated-gif:hover {
+            transform: scale(1.05);
+        }
+
+    .section-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .breadcrumb {
+        background: none;
+        margin-bottom: 0;
+    }
+
+    .breadcrumb-item a {
+        color: #007bff;
+    }
+
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+
+    .info-box {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 0.25rem;
+        height: 150px; /* fixed height */
+        width: 160px; /* fixed width */
+        text-align: center; /* center the text */
+        flex-direction: column; /* stack elements vertically */
+        justify-content: center; /* center content vertically */
+    }
+
+    .info-box-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        border-radius: 0.25rem;
+        margin-bottom: 10px; /* margin to separate the icon from the LED */
+    }
+
+    .info-box-content {
+        flex: 1;
+        padding: 5px 10px;
+        text-align: center;
+    }
+
+    .info-box-text {
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .info-box-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+</style>

@@ -1,0 +1,11 @@
+C:\Diplomski\Vodenko\ModelProvider\bin\Debug\net7.0\ModelProvider.deps.json
+C:\Diplomski\Vodenko\ModelProvider\bin\Debug\net7.0\ModelProvider.dll
+C:\Diplomski\Vodenko\ModelProvider\bin\Debug\net7.0\ModelProvider.pdb
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.GeneratedMSBuildEditorConfig.editorconfig
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.AssemblyInfoInputs.cache
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.AssemblyInfo.cs
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.csproj.CoreCompileInputs.cache
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.dll
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\refint\ModelProvider.dll
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.pdb
+C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ref\ModelProvider.dll

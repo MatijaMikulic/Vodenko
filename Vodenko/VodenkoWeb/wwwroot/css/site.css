@@ -1,0 +1,213 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+
+.indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: gray;
+    display: inline-block;
+}
+
+.indicator.recording {
+    background-color: red;
+}
+
+.gauge-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 400px;
+    margin: 0 auto;
+}
+
+.gauge-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.led {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 0 auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.led-red {
+    background-color: #ff0000;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+}
+
+.led-green {
+    background-color: #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+}
+
+#chartContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#loadingSpinner {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    z-index: 1000;
+}
+
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+
+    
+}
+
+.instruction-box {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+    .instruction-box:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .instruction-box i {
+        display: block;
+    }
+
+    .instruction-box p.d-none {
+        display: none;
+    }
+
+@@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.card-header .btn-tool:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+}
+
+.model-info, .additional-info, .sensor-actuator-icons {
+    transition: background 0.3s ease;
+}
+
+    .model-info:hover, .additional-info:hover, .sensor-actuator-icons:hover {
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    .sensor-actuator-icons i:hover {
+        color: #f39c12;
+        cursor: pointer;
+        transform: scale(1.2);
+        transition: color 0.3s, transform 0.3s;
+    }
+
+.indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+    .indicator.recording {
+        animation: pulse 1s infinite;
+    }
+
+@keyframes pulse {
+    0% {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    50% {
+        background-color: transparent;
+        border-color: #dc3545;
+    }
+
+    100% {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+}
+
+.btn-transition {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Pulse effect */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Basic button styling */
+.nav-item .nav-link {
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+/* Hover effect: enlarge and change background color */
+.nav-item .nav-link:hover {
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.1); /* Light blue background */
+}
+
+/* Active/click effect: slightly shrink the button */
+.nav-item .nav-link:active {
+    transform: scale(0.95);
+}
+
+

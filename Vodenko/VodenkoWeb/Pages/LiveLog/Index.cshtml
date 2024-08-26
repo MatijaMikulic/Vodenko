@@ -1,0 +1,392 @@
+﻿@page
+@using VodenkoWeb.Model
+@model VodenkoWeb.Pages.LiveLog.IndexModel
+@inject LogBuffer LogBuffer
+@{
+    var latestLogs = LogBuffer.GetLatestData();
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="font-weight-bold text-uppercase">Live Log</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Live Log</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr style="border: 0; height: 3px; background: linear-gradient(to right, #ff0000, #0000ff); margin-bottom: 10px; margin-left: 15px; margin-right: 15px;">
+
+<!-- Main content -->
+<section class="content ml-5 mr-5">
+    <div class="container-fluid">
+        <div class="card card-info" style="width:100%; height:700px;">
+            <div class="card-header">
+                <h3 class="card-title">Live Log</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="filter-container m-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label><input type="checkbox" id="filterError" checked> Error</label>
+                        <label><input type="checkbox" id="filterWarning" checked> Warning</label>
+                        <label><input type="checkbox" id="filterInfo" checked> Info</label>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <label for="filterService" class="mr-2">Service:</label>
+                        <select id="filterService" class="form-control">
+                            <option value="">All</option>
+                            <option value="V3DataMonitoringService">Data Monitoring Service</option>
+                            <option value="V3MathModelOnline">Math Model Online Service</option>
+                            <option value="V3MessageManager">Message Manager Service</option>
+                            <option value="V3SampleData">Sample Data Service</option>
+                            <option value="V3SendPlcData">PLC Send Service</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body log-container" id="logContainer">
+                <div id="logMessages">
+                    <!-- Existing log messages will be displayed here -->
+                    @* Display the logs *@
+                    @foreach (var log in latestLogs)
+                    {
+                        <div class="log-message">
+                            @log
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card mt-4" style="height:400px;">
+            <div class="card-header">
+                <h3 class="card-title">Log Statistics</h3>
+                <div class="card-tools">
+                    <button id="logLevelChartButton" class="btn btn-tool">Log Levels</button>
+                    <button id="serviceChartButton" class="btn btn-tool">Services</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="logChart"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.onload = function () {
+            //var logMessages = JSON.parse(localStorage.getItem("logMessages")) || [];
+
+            var logMessages = @Html.Raw(Json.Serialize(latestLogs));
+            console.log("Latest logs from LogBuffer:", logMessages);
+            // Add logs already on the page to localStorage if not present
+            if (logMessages.length === 0) {
+            @* Convert Razor model data to JS array *@
+                logMessages = @Html.Raw(Json.Serialize(latestLogs));
+                localStorage.setItem("logMessages", JSON.stringify(logMessages));
+            }
+
+            displayLogMessages(logMessages);
+            updateChart(logMessages, 'logLevel');
+            scrollToBottom();
+
+            document.getElementById("filterError").addEventListener("change", applyFilters);
+            document.getElementById("filterWarning").addEventListener("change", applyFilters);
+            document.getElementById("filterInfo").addEventListener("change", applyFilters);
+            document.getElementById("filterService").addEventListener("change", applyFilters);
+            document.getElementById("logLevelChartButton").addEventListener("click", function () {
+                updateChart(logMessages, 'logLevel');
+            });
+            document.getElementById("serviceChartButton").addEventListener("click", function () {
+                updateChart(logMessages, 'service');
+            });
+        };
+
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/logHub")
+            .build();
+
+        connection.on("ReceiveLogMessage", function (message) {
+            var logMessages = JSON.parse(localStorage.getItem("logMessages")) || [];
+            logMessages.push(message);
+            logMessages = logMessages.slice(-150);
+            localStorage.setItem("logMessages", JSON.stringify(logMessages));
+            displayLogMessages(logMessages);
+            updateChart(logMessages, 'logLevel');
+            scrollToBottom();
+        });
+
+        function displayLogMessages(messages) {
+            var logMessagesContainer = document.getElementById("logMessages");
+            logMessagesContainer.innerHTML = ""; // Clear previous messages
+            messages.forEach(function (message) {
+                var logMessageElement = document.createElement("div");
+
+                // Regex to match the service name inside square brackets
+                var serviceNameMatch = message.match(/\[(.*?)\]/);
+                if (serviceNameMatch) {
+                    var serviceName = serviceNameMatch[0];
+                    // Replace service name with styled HTML
+                    message = message.replace(serviceName, `<span class="service-name">${serviceName}</span>`);
+                }
+
+                // Regex to match log levels
+                var logLevelMatch = message.match(/\[(Info|Warning|Error)\]/);
+                if (logLevelMatch) {
+                    var logLevel = logLevelMatch[0];
+                    var logLevelClass = logLevel.substring(1, logLevel.length - 1).toLowerCase();
+                    // Replace log level with styled HTML
+                    message = message.replace(logLevel, `<span class="log-level ${logLevelClass}">${logLevel}</span>`);
+                }
+
+                logMessageElement.innerHTML = message;
+                logMessageElement.classList.add("log-message");
+
+                // Assign CSS class based on log level
+                if (message.includes("[Error]")) {
+                    logMessageElement.classList.add("log-error");
+                } else if (message.includes("[Warning]")) {
+                    logMessageElement.classList.add("log-warning");
+                } else if (message.includes("[Info]")) {
+                    logMessageElement.classList.add("log-info");
+                }
+
+                logMessagesContainer.appendChild(logMessageElement);
+
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            var showError = document.getElementById("filterError").checked;
+            var showWarning = document.getElementById("filterWarning").checked;
+            var showInfo = document.getElementById("filterInfo").checked;
+            var selectedService = document.getElementById("filterService").value;
+
+            var logMessagesContainer = document.getElementById("logMessages");
+            Array.from(logMessagesContainer.children).forEach(function (logMessageElement) {
+                var message = logMessageElement.textContent;
+                var serviceMatch = message.match(/\[(.*?)\]/);
+                var serviceName = serviceMatch ? serviceMatch[1] : '';
+
+                var showElement = true;
+
+                if (logMessageElement.classList.contains("log-error") && !showError) {
+                    showElement = false;
+                } else if (logMessageElement.classList.contains("log-warning") && !showWarning) {
+                    showElement = false;
+                } else if (logMessageElement.classList.contains("log-info") && !showInfo) {
+                    showElement = false;
+                }
+
+                if (selectedService && serviceName !== selectedService) {
+                    showElement = false;
+                }
+
+                logMessageElement.style.display = showElement ? "block" : "none";
+            });
+        }
+
+        function scrollToBottom() {
+            var logContainer = document.getElementById("logContainer");
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        var logChart;
+        function updateChart(messages, chartType) {
+            var ctx = document.getElementById('logChart').getContext('2d');
+
+            if (logChart) {
+                logChart.destroy();
+            }
+
+            if (chartType === 'logLevel') {
+                var errorCount = messages.filter(m => m.includes("[Error]")).length;
+                var warningCount = messages.filter(m => m.includes("[Warning]")).length;
+                var infoCount = messages.filter(m => m.includes("[Info]")).length;
+
+                logChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Error', 'Warning', 'Info'],
+                        datasets: [{
+                            label: 'Count',
+                            data: [errorCount, warningCount, infoCount],
+
+                            backgroundColor: ['#dc3545', '#ffc107', '#28a745', '#007bff'],
+                            borderColor: ['#bd2130', '#e0a800', '#218838', '#0056b3'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                            title: {
+                                display: true,
+                                text: 'Log Message Distribution by Type'
+                            }
+                        }
+                    }
+                });
+            } else if (chartType === 'service') {
+                var serviceCounts = {};
+                messages.forEach(function (message) {
+                    var serviceMatch = message.match(/\[(.*?)\]/);
+                    if (serviceMatch) {
+                        var serviceName = serviceMatch[1];
+                        if (serviceCounts[serviceName]) {
+                            serviceCounts[serviceName]++;
+                        } else {
+                            serviceCounts[serviceName] = 1;
+                        }
+                    }
+                });
+
+                var serviceNames = Object.keys(serviceCounts);
+                var serviceData = Object.values(serviceCounts);
+
+                logChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: serviceNames,
+                        datasets: [{
+                            label: 'Count',
+                            data: serviceData,
+                            backgroundColor: serviceNames.map(() => '#d4edda'),
+                            borderColor: serviceNames.map(() => '#c3e6cb'),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                            title: {
+                                display: true,
+                                text: 'Log Message Distribution by Service'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        connection.start().catch(function (err) {
+            console.error(err.toString());
+        });
+    </script>
+
+    <style>
+        .filter-container {
+            margin-bottom: 15px;
+        }
+
+            .filter-container label {
+                margin-right: 15px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            .filter-container input[type="checkbox"],
+            .filter-container select {
+                margin-right: 5px;
+                margin-left: 5px;
+                border-radius: 4px;
+                border: 1px solid #ced4da;
+                padding: 6px 12px;
+                box-sizing: border-box;
+            }
+
+        .log-container {
+            overflow-y: auto;
+            height: 600px;
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+
+        .log-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .log-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+        }
+
+        .log-info {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        .card-tools button {
+            margin-left: 10px;
+        }
+
+        .service-name {
+            font-weight: bold;
+            color: #6f42c1; /* Purple */
+        }
+
+
+        .log-level {
+            font-weight: bold;
+        }
+
+            .log-level.info {
+                color: green; /* Dark Red */
+            }
+
+            .log-level.warning {
+                color: darkgoldenrod; /* Dark Yellow */
+            }
+
+            .log-level.error {
+                color: red; /* Dark Red */
+            }
+
+    </style>
+}

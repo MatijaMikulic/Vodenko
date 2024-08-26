@@ -1,0 +1,1333 @@
+﻿@page
+@using VodenkoWeb.Model
+@model VodenkoWeb.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    var labels = Model._buffer.Select(x => x.Sample);
+    var data_real_h2 = Model._buffer.Select(x => x.WaterLevelTank2);
+    var data_model_h2 = Model._buffer.Select(x => x.WaterLevelTank2NonLinModel);
+    var data_model_lin_h2 = Model._buffer.Select(x => x.WaterLevelTank2LinModel);
+
+    var data_real_h1 = Model._buffer.Select(x => x.WaterLevelTank1);
+    var data_model_h1 = Model._buffer.Select(x => x.WaterLevelTank1NonLinModel);
+    var data_model_lin_h1 = Model._buffer.Select(x => x.WaterLevelTank1LinModel);
+
+    var data_real_qu = Model._buffer.Select(x => x.InletFlow);
+    var data_model_qu = Model._buffer.Select(x => x.InletFlowNonLinModel);
+    var data_model_lin_qu = Model._buffer.Select(x => x.InletFlowLinModel);
+
+    var data_real_qi = Model._buffer.Select(x => x.OutletFlow);
+
+    var data_target = Model._buffer.Select(x => x.TargetWaterLevelTank2Model);
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 style="font-weight:500;letter-spacing:2px">Live Charts </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Plant Overview</li>
+                    <li class="breadcrumb-item active">Live Charts</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<form id="antiForgeryForm" method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+
+<hr style="border: 0; height: 3px; background: linear-gradient(to right, #ff0000, #0000ff); margin-bottom: 10px; margin-left: 15px; margin-right: 15px;">
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-6">
+                
+                <div class="d-flex flex-wrap justify-content-center w-80">
+                    <div class="p-3 text-center flex-fill bg-info border rounded m-2 shadow-sm instruction-box">
+                        <i class="fas fa-info-circle text-white fa-2x mb-2"></i>
+                        <strong class="d-block text-white">Start/Stop Recording:</strong>
+                    </div>
+                    <div class="p-3 text-center flex-fill bg-success border rounded m-2 shadow-sm instruction-box">
+                        <i class="fas fa-chart-line text-white fa-2x mb-2"></i>
+                        <strong class="d-block text-white">Monitor Water Levels:</strong>
+                    </div>
+                    <div class="p-3 text-center flex-fill bg-warning border rounded m-2 shadow-sm instruction-box">
+                        <i class="fas fa-wave-square text-white fa-2x mb-2"></i>
+                        <strong class="d-block text-white">Analyze Inlet/Outlet Flows:</strong>
+                    </div>
+                    <div class="p-3 text-center flex-fill bg-danger border rounded m-2 shadow-sm instruction-box">
+                        <i class="fas fa-cogs text-white fa-2x mb-2"></i>
+                        <strong class="d-block text-white">Compare Real vs Model Data:</strong>
+                    </div>
+                </div>
+                <div class="text-center mb-3 ml-3">
+                    <div class="d-flex align-items-center mt-3">
+                        <button id="recordButton" class="btn btn-danger btn-lg d-flex align-items-center">
+                            <i class="fas fa-circle mr-2"></i>
+                            <span>Start Recording Data</span>
+                        </button>
+                        
+                        <div id="recordIndicator" class="indicator ml-3"></div>
+
+                        @* <button id="stpButton" class="btn btn-danger btn-lg d-flex align-items-center ml-5">
+                            <span>System Stop</span>
+                        </button> *@
+                    </div>
+                </div>
+                <!-- H2 CHART -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-water mr-2" style="font-size: 24px;"></i>
+                            <h3 class="card-title">Tank 2 - Water level</h3>
+                        </div>
+
+                        <div class="card-tools d-flex align-items-center">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-h2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+
+                <div class="card card-warning">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-water mr-2" style="font-size: 24px;"></i>
+                            <h3 class="card-title">Tank 1 - Water level</h3>
+                        </div>
+
+                        <div class="card-tools d-flex align-items-center">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-h1" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <div class="card card-success">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-tachometer-alt mr-2" style="font-size: 24px;"></i>
+                            <h3 class="card-title">Inlet flow</h3>
+                        </div>
+
+                        <div class="card-tools d-flex align-items-center">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-qu" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-tachometer-alt mr-2" style="font-size: 24px;"></i>
+                            <h3 class="card-title m-0">Outlet flow</h3>
+                        </div>
+                        
+                        <div class="card-tools d-flex align-items-center">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="lineChart-qi" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mt-5">
+
+                    <!-- /.card-header -->
+                    <div class="card-body p-2">
+                        <table class="table table-sm table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px"><i class="fas fa-tag"></i></th>
+                                    <th>Process Variable</th>
+                                    <th>Current Value</th>
+                                    <th style="width: 40px">Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fa fa-water"></i></td>
+                                    <td>Tank 1 - Level</td>
+                                    <td>
+                                        <div class="progress progress-xs">
+                                            <div id="tank1-progress" class="progress-bar bg-danger" style="width: 55%"></div>
+                                        </div>
+                                    </td>
+                                    <td><span id="tank1-badge" class="badge bg-danger">55%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa fa-water"></i></td>
+                                    <td>Tank 2 - Level</td>
+                                    <td>
+                                        <div class="progress progress-xs">
+                                            <div id="tank2-progress" class="progress-bar bg-warning" style="width: 70%"></div>
+                                        </div>
+                                    </td>
+                                    <td><span id="tank2-badge" class="badge bg-warning">70%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-tachometer-alt"></i></td>
+                                    <td>Inlet flow</td>
+                                    <td>
+                                        <div class="progress progress-xs">
+                                            <div id="inletFlow-progress" class="progress-bar bg-primary" style="width: 30%"></div>
+                                        </div>
+                                    </td>
+                                    <td><span id="inletFlow-badge" class="badge bg-primary">30%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-tachometer-alt"></i></td>
+                                    <td>Outlet flow</td>
+                                    <td>
+                                        <div class="progress progress-xs">
+                                            <div id="outletFlow-progress" class="progress-bar bg-success" style="width: 90%"></div>
+                                        </div>
+                                    </td>
+                                    <td><span id="outletFlow-badge" class="badge bg-success">90%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-sliders-h"></i></td>
+                                    <td>Valve Position</td>
+                                    <td>
+                                        <div class="progress progress-xs">
+                                            <div id="vp-progress" class="progress-bar bg-warning" style="width: 90%"></div>
+                                        </div>
+                                    </td>
+                                    <td><span id="vp-badge" class="badge bg-warning">90%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <div class="card shadow-lg" style="background-color: #2c3e50; border-radius: 10px; overflow: hidden;">
+                    <div class="card-header d-flex align-items-center justify-content-between" style="background-color: #34495e; color: white; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 10px 20px;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-cube mr-2" style="font-size: 24px;"></i>
+                            <h3 class="card-title m-0">Plant 3D Model</h3>
+                        </div>
+                        <div class="card-tools d-flex align-items-center">
+                            <button type="button" class="btn btn-tool mr-2" id="refresh-button" style="color: white;">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool mr-2 toggle-button" data-target=".model-info" style="color: white;">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool mr-2 toggle-button" data-target=".additional-info" style="color: white;">
+                                <i class="fas fa-info"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool mr-2 toggle-button" data-target=".sensor-actuator-icons" style="color: white;">
+                                <i class="fas fa-cogs"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" style="color: white;">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body position-relative" style="background-color: #34495e; padding: 20px;">
+                        <div id="model-container" style="min-height: 250px; height: 600px; max-height: 600px; max-width: 100%; background-color: #ecf0f1; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                        </div>
+                        <div class="model-info" style="position: absolute; top: 10px; left: 10px; color: #ecf0f1; background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)); padding: 10px; border-radius: 5px; animation: fadeIn 2s;">
+                            <p class="mb-0"><strong>Model Info:</strong></p>
+                            <p class="mb-0">Tank 1 height: <span id="tank1-info">40 cm</span></p>
+                            <p class="mb-0">Tank 2 height: <span id="tank2-info">40 cm</span></p>
+                            <p class="mb-0">Tank 3 height: <span id="tank3-info">30 cm</span></p>
+                        </div>
+                        <div class="additional-info" style="position: absolute; bottom: 10px; left: 10px; color: #ecf0f1; background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)); padding: 10px; border-radius: 5px; animation: fadeIn 2s;">
+                            <p class="mb-0"><strong>Components:</strong></p>
+                            <p class="mb-0"><strong>TCR-02T CONTROL ELECTRICAL ACTUATOR</strong>: <br />Precisely controls valve positions in automation systems.</p>
+                            <p class="mb-0"><strong>LSP 05X Potentiometric Level Transmitter</strong>: <br /> Measures liquid levels using a potentiometric principle.</p>
+                            <p class="mb-0"><strong>SM6004 Magnetic-Inductive Flow Meter</strong>: <br /> Measures flow rate of conductive liquids using magnetic induction.</p>
+                        </div>
+                        <div class="sensor-actuator-icons" style="position: absolute; top: 10px; right: 10px; color: #ecf0f1; background: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)); padding: 10px; border-radius: 5px; display: flex; flex-direction: column; align-items: center; animation: fadeIn 2s;">
+                            <i class="fas fa-cogs" title="TCR-02T Control Electrical Actuator" style="font-size: 24px; margin: 5px;"></i>
+                            <i class="fas fa-water" title="LSP 05X Potentiometric Level Transmitter" style="font-size: 24px; margin: 5px;"></i>
+                            <i class="fas fa-tachometer-alt" title="SM6004 Magnetic-Inductive Flow Meter" style="font-size: 24px; margin: 5px;"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Model Data Comparison Table -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Model Data Comparison</h3>
+                    </div>
+                    <div class="card-body p-2">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Real Data</th>
+                                    <th>Model Data</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fas fa-water"></i> Tank 1: Water Level</td>
+                                    <td id="model-tank1-real">@data_real_h1.LastOrDefault()</td>
+                                    <td id="model-tank1-model">@data_model_h1.LastOrDefault()</td>
+                                    <td id="model-tank1-error">@Math.Abs(data_real_h1.LastOrDefault() - data_model_h1.LastOrDefault())</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-water"></i> Tank 2: Water Level</td>
+                                    <td id="model-tank2-real">@data_real_h2.LastOrDefault()</td>
+                                    <td id="model-tank2-model">@data_model_h2.LastOrDefault()</td>
+                                    <td id="model-tank2-error">@Math.Abs(data_real_h2.LastOrDefault() - data_model_h2.LastOrDefault())</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-tachometer-alt"></i> Inlet Flow</td>
+                                    <td id="model-inletFlow-real">@data_real_qu.LastOrDefault()</td>
+                                    <td id="model-inletFlow-model">@data_model_qu.LastOrDefault()</td>
+                                    <td id="model-inletFlow-error">@Math.Abs(data_real_qu.LastOrDefault() - data_model_qu.LastOrDefault())</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-tachometer-alt"></i> Outlet Flow</td>
+                                    <td id="model-outletFlow-real">@data_real_qi.LastOrDefault()</td>
+                                    <td id="model-outletFlow-model">N/A</td>
+                                    <td id="model-outletFlow-error">N/A</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Real-time Statistics -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Real-time Data</h3>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div class="p-3 bg-primary text-white rounded shadow-sm">
+                                    <i class="fas fa-water fa-2x mb-2"></i>
+                                    <h5>Tank 1 Level</h5>
+                                    <p id="realtime-tank1-value" class="mb-0">0 cm</p>
+                                    <p id="realtime-tank1-percentage" class="mb-0">0%</p>
+                                    <p id="realtime-tank1-timestamp" class="mb-0">Last updated: N/A</p>
+                                    <p id="realtime-tank1-trend" class="mb-0"><i class="fas fa-minus"></i> Stable</p>
+                                    @* <p id="realtime-tank1-min" class="mb-0">Min: N/A</p>
+                                    <p id="realtime-tank1-max" class="mb-0">Max: N/A</p>
+                                    <p id="realtime-tank1-avg" class="mb-0">Avg: N/A</p> *@
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="p-3 bg-info text-white rounded shadow-sm">
+                                    <i class="fas fa-water fa-2x mb-2"></i>
+                                    <h5>Tank 2 Level</h5>
+                                    <p id="realtime-tank2-value" class="mb-0">0 cm</p>
+                                    <p id="realtime-tank2-percentage" class="mb-0">0%</p>
+                                    <p id="realtime-tank2-timestamp" class="mb-0">Last updated: N/A</p>
+                                    <p id="realtime-tank2-trend" class="mb-0"><i class="fas fa-minus"></i> Stable</p>
+                                    @* <p id="realtime-tank2-min" class="mb-0">Min: N/A</p>
+                                    <p id="realtime-tank2-max" class="mb-0">Max: N/A</p>
+                                    <p id="realtime-tank2-avg" class="mb-0">Avg: N/A</p> *@
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="p-3 bg-success text-white rounded shadow-sm">
+                                    <i class="fas fa-tachometer-alt fa-2x mb-2"></i>
+                                    <h5>Inlet Flow</h5>
+                                    <p id="realtime-inletFlow-value" class="mb-0">0 L/min</p>
+                                    <p id="realtime-inletFlow-percentage" class="mb-0">0%</p>
+                                    <p id="realtime-inletFlow-timestamp" class="mb-0">Last updated: N/A</p>
+                                    <p id="realtime-inletFlow-trend" class="mb-0"><i class="fas fa-minus"></i> Stable</p>
+                                    @* <p id="realtime-inletFlow-min" class="mb-0">Min: N/A</p>
+                                    <p id="realtime-inletFlow-max" class="mb-0">Max: N/A</p>
+                                    <p id="realtime-inletFlow-avg" class="mb-0">Avg: N/A</p> *@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Prediction Accuracy -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Model Prediction Accuracy</h3>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div class="p-3 bg-warning text-white rounded shadow-sm">
+                                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                    <h5>Tank 1 Accuracy</h5>
+                                    <p id="accuracy-tank1" class="mb-0">90%</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="p-3 bg-danger text-white rounded shadow-sm">
+                                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                    <h5>Tank 2 Accuracy</h5>
+                                    <p id="accuracy-tank2" class="mb-0">85%</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="p-3 bg-primary text-white rounded shadow-sm">
+                                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                    <h5>Inlet Flow Accuracy</h5>
+                                    <p id="accuracy-inletFlow" class="mb-0">80%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4" style="display:none">
+        <div class="card-header">
+            <h3 class="card-title">Adjust Water Levels</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="tank1-slider">Tank 1 Water Level (%)</label>
+                <input type="range" id="tank1-slider" min="0" max="100" value="55" class="form-control-range">
+                <span id="tank1-slider-value" class="badge badge-secondary">55%</span>
+            </div>
+            <div class="form-group">
+                <label for="tank2-slider">Tank 2 Water Level (%)</label>
+                <input type="range" id="tank2-slider" min="0" max="100" value="70" class="form-control-range">
+                <span id="tank2-slider-value" class="badge badge-secondary">70%</span>
+            </div>
+            <div class="form-group">
+                <label for="tank3-slider">Tank 3 Water Level (%)</label>
+                <input type="range" id="tank3-slider" min="0" max="100" value="70" class="form-control-range">
+                <span id="tank3-slider-value" class="badge badge-secondary">70%</span>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+@section Scripts {
+
+    <script>
+        let isRecording = false;
+
+        document.getElementById('recordButton').addEventListener('click', function () {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        });
+
+        function getAntiForgeryToken() {
+            return $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+        }
+
+        function startRecording() {
+            $.ajax({
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", getAntiForgeryToken());
+                },
+                url: '@Url.Page("/Index", "StartRecording")',
+                headers: {
+                    'RequestVerificationToken': getAntiForgeryToken()
+                },
+                success: function (response) {
+                    isRecording = true;
+                    const recordButton = document.getElementById('recordButton');
+                    recordButton.innerHTML = '<i class="fas fa-stop-circle mr-2"></i><span>Stop Recording Data</span>';
+                    recordButton.classList.remove('btn-danger');
+                    recordButton.classList.add('btn-success', 'btn-transition');
+                    document.getElementById('recordIndicator').classList.add('recording');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Recording started successfully.',
+                        toast: true,
+                        position: 'center',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#333', // Dark background
+                        color: '#fff' // White text
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to start recording.',
+                        toast: true,
+                        position: 'center',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#333', // Dark background
+                        color: '#fff' // White text
+                    });
+                }
+            });
+        }
+
+        $('#stpButton').click(function () {
+            $.ajax({
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: '@Url.Page("/Index", "RequestStop")',
+                success: function (response) {
+                    // Handle the success response if needed
+                    console.log("Request was successful.");
+                    // Swal.fire({
+                    //     icon: 'success',
+                    //     title: 'Success',
+                    //     text: 'Request control was sent successfully.'
+                    // });
+                },
+                error: function (xhr, status, error) {
+                    // Handle the error response if needed
+                    console.error("Error while sending request.");
+                    console.error("Status: " + status);
+                    console.error("Error: " + error);
+                }
+            });
+
+        });
+
+        function stopRecording() {
+            $.ajax({
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", getAntiForgeryToken());
+                },
+                url: '@Url.Page("/Index", "StopRecording")',
+                headers: {
+                    'RequestVerificationToken': getAntiForgeryToken()
+                },
+                success: function (response) {
+                    isRecording = false;
+                    const recordButton = document.getElementById('recordButton');
+                    recordButton.innerHTML = '<i class="fas fa-circle mr-2"></i><span>Start Recording Data</span>';
+                    recordButton.classList.remove('btn-success');
+                    recordButton.classList.add('btn-danger', 'btn-transition');
+                    document.getElementById('recordIndicator').classList.remove('recording');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Data saved to ' + response.filePath,
+                        toast: true,
+                        position: 'center',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#333', // Dark background
+                        color: '#fff' // White text
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to stop recording.',
+                        toast: true,
+                        position: 'center',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#333', // Dark background
+                        color: '#fff' // White text
+                    });
+                }
+            });
+        }
+    </script>
+
+    <script id="data" type="application/json">
+        @Json.Serialize(
+    new
+    {
+        labels,
+        limit = Model._buffer.MaxCapacity.GetValueOrDefault(10),
+        url = "/live_data",
+        datasets = new object[]
+        {
+            new
+            {
+                label = "Actual H2",
+                data = data_real_h2,
+                fill = false,
+                borderColor = "rgb(75, 192, 192)",
+                tension = 0.1,
+                backgroundColor = "rgba(75, 192, 192,0.4)",
+
+            },
+            new
+            {
+                label = "Nonlinear Model H2",
+                data = data_model_h2,
+                fill = false,
+                borderColor = "rgb(255, 99, 132)",
+                tension = 0.1
+            },
+            new
+            {
+                label = "Linear Model H2",
+                data = data_model_lin_h2,
+                fill = false,
+                borderColor = "rgb(150, 50, 130)",
+                tension = 0.1
+            },
+            new{
+                label = "Target",
+                data = data_target,
+                fill = false,
+                borderColor = "rgb(255,0,0)",
+                borderDash = new int[] { 5, 5 }
+            }
+        }
+    })
+    </script>
+    <script id="data-h1" type="application/json">
+        @Json.Serialize(
+    new
+    {
+        labels,
+        limit = Model._buffer.MaxCapacity.GetValueOrDefault(10),
+        url = "/live_data",
+        datasets = new object[]
+        {
+            new
+            {
+                label = "Actual H1",
+                data = data_real_h1,
+                fill = false,
+                borderColor = "rgb(75, 192, 192)",
+                tension = 0.1,
+                backgroundColor= "rgba(255, 192, 192,0.4)"
+
+            },
+            new
+            {
+                label = "Nonlinear Model H1",
+                data = data_model_h1,
+                fill = false,
+                borderColor = "rgb(255, 99, 132)",
+                tension = 0.1
+
+            },
+            new
+            {
+                label = "Linear Model H1",
+                data = data_model_lin_h1,
+                fill = false,
+                borderColor = "rgb(150, 50, 130)",
+                tension = 0.1
+            }
+        }
+    })
+    </script>
+    <script id="data-qu" type="application/json">
+        @Json.Serialize(
+    new
+    {
+        labels,
+        limit = Model._buffer.MaxCapacity.GetValueOrDefault(10),
+        url = "/live_data",
+        datasets = new object[]
+        {
+            new
+            {
+                label = "Actual Inlet Flow",
+                data = data_real_qu,
+                fill = false,
+                borderColor = "rgb(75, 192, 192)",
+                tension = 0.1,
+                backgroundColor= "rgba(0, 255, 0,0.4)"
+
+            },
+            new
+            {
+                label = "Nonlinear Model Inlet Flow",
+                data = data_model_qu,
+                fill = false,
+                borderColor = "rgb(255, 99, 132)",
+                tension = 0.1
+            },
+            new
+            {
+                label = "Linear Model Inlet Flow",
+                data = data_model_lin_qu,
+                fill = false,
+                borderColor = "rgb(150, 50, 130)",
+                tension = 0.1
+            }
+        }
+    })
+    </script>
+    <script id="data-qi" type="application/json">
+        @Json.Serialize(
+        new
+        {
+            labels,
+            limit = Model._buffer.MaxCapacity.GetValueOrDefault(10),
+            url = "/live_data",
+            datasets = new object[]
+            {
+                new
+                {
+                    label = "Actual Outlet Flow",
+                    data = data_real_qi,
+                fill = false,
+                    borderColor = "rgb(75, 192, 192)",
+                    tension = 0.1,
+                    backgroundColor = "rgba(75, 192, 192,0.4)"
+
+                }
+            }
+        })
+
+       
+
+    </script>
+
+
+    @* <script defer src="~/js/index.js" type="module"></script> *@
+
+    <script>
+        // JavaScript code without import statements
+        const data_h2 = JSON.parse(document.getElementById('data').innerHTML);
+        const data_h1 = JSON.parse(document.getElementById('data-h1').innerHTML);
+        const data_qu = JSON.parse(document.getElementById('data-qu').innerHTML);
+        const data_qi = JSON.parse(document.getElementById('data-qi').innerHTML);
+
+        const ctx_h2 = document.getElementById('lineChart-h2').getContext('2d');
+        const ctx_h1 = document.getElementById('lineChart-h1').getContext('2d');
+        const ctx_qu = document.getElementById('lineChart-qu').getContext('2d');
+        const ctx_qi = document.getElementById('lineChart-qi').getContext('2d');
+
+        const lineChart_h2 = new Chart(ctx_h2, {
+            type: 'line',
+            data: data_h2,
+            options: {
+                tooltips: { enabled: false },
+                hover: { mode: null },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        suggestedMax: 10,
+                        suggestedMin: 1,
+                        title: {
+                            display: true,
+                            text: 'Water Level (cm)'
+                        }
+                    }
+                }
+            }
+        });
+
+        const lineChart_h1 = new Chart(ctx_h1, {
+            type: 'line',
+            data: data_h1,
+            options: {
+                tooltips: { enabled: false },
+                hover: { mode: null },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Sample'
+                        }
+                    },
+                    y: {
+                        suggestedMax: 10,
+                        suggestedMin: 1,
+                        title: {
+                            display: true,
+                            text: 'Water Level (cm)'
+                        }
+                    }
+                }
+            }
+        });
+
+        const lineChart_qu = new Chart(ctx_qu, {
+            type: 'line',
+            data: data_qu,
+            options: {
+                tooltips: { enabled: false },
+                hover: { mode: null },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Sample'
+                        }
+                    },
+                    y: {
+                        suggestedMax: 25,
+                        suggestedMin: 1,
+                        title: {
+                            display: true,
+                            text: 'Flow Rate (L/min)'
+                        }
+                    }
+                }
+            }
+        });
+
+        const lineChart_qi = new Chart(ctx_qi, {
+            type: 'line',
+            data: data_qi,
+            options: {
+                tooltips: { enabled: false },
+                hover: { mode: null },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Sample'
+                        }
+                    },
+                    y: {
+                        suggestedMax: 25,
+                        suggestedMin: 1,
+                        title: {
+                            display: true,
+                            text: 'Flow Rate (L/min)'
+                        }
+                    }
+                }
+            }
+        });
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(data_h2.url)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        }
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        // Variables to store previous values for trend calculation
+        let prevTank1Level = null;
+        let prevTank2Level = null;
+        let prevInletFlow = null;
+
+        // Variables to store historical min and max values
+        let minTank1Level = Infinity;
+        let maxTank1Level = -Infinity;
+        let minTank2Level = Infinity;
+        let maxTank2Level = -Infinity;
+        let minInletFlow = Infinity;
+        let maxInletFlow = -Infinity;
+
+        // Variables for additional statistics
+        let sumTank1Level = 0;
+        let sumTank2Level = 0;
+        let sumInletFlow = 0;
+        let countTank1Level = 0;
+        let countTank2Level = 0;
+        let countInletFlow = 0;
+
+        connection.on("updateData", function (dataPoints) {
+            // Log dynamic data for debugging
+            //console.log("Received dynamic data:", dataPoints);
+
+            if (!dataPoints) {
+                console.error("Received dynamicData is undefined or null");
+                return;
+            }
+
+            // Check if all expected properties exist in dynamicData
+            const requiredProperties = [
+                'sample', 'waterLevelTank2', 'waterLevelTank2NonLinModel',
+                'waterLevelTank1', 'waterLevelTank1NonLinModel',
+                'inletFlow', 'inletFlowNonLinModel',
+                'outletFlow', 'valvePositionFeedback'
+            ];
+
+            for (const property of requiredProperties) {
+                if (!(property in dataPoints)) {
+                    console.error(`Property ${property} is missing in dynamicData`);
+                    return;
+                }
+            }
+
+            updateChart(lineChart_h2, dataPoints.sample, dataPoints.waterLevelTank2, dataPoints.waterLevelTank2NonLinModel, dataPoints.waterLevelTank2LinModel, dataPoints.targetWaterLevelTank2Model);
+            updateChart(lineChart_h1, dataPoints.sample, dataPoints.waterLevelTank1, dataPoints.waterLevelTank1NonLinModel, dataPoints.waterLevelTank1LinModel);
+            updateChart(lineChart_qu, dataPoints.sample, dataPoints.inletFlow,       dataPoints.inletFlowNonLinModel,       dataPoints.inletFlowLinModel);
+            updateChart(lineChart_qi, dataPoints.sample, dataPoints.outletFlow);
+
+            // Update progress bars and badges
+            const tank1Percentage = calculatePercentage(dataPoints.waterLevelTank1, 40); // Assuming max value is 40 cm
+            updateProgressAndBadge("tank1", tank1Percentage);
+
+            const tank2Percentage = calculatePercentage(dataPoints.waterLevelTank2, 40); // Assuming max value is 40 cm
+            updateProgressAndBadge("tank2", tank2Percentage);
+
+            updateWaterLevel(tank1Percentage, tank2Percentage);
+
+            const inletFlowPercentage = calculatePercentage(dataPoints.inletFlow, 25); // Assuming max value is 10
+            updateProgressAndBadge("inletFlow", inletFlowPercentage);
+
+            const outletFlowPercentage = calculatePercentage(dataPoints.outletFlow, 25); // Assuming max value is 10
+            updateProgressAndBadge("outletFlow", outletFlowPercentage);
+
+            const valvePositionPercentage = calculatePercentage(dataPoints.valvePositionFeedback, 100); // Assuming max value is 10
+            updateProgressAndBadge("vp", valvePositionPercentage);
+
+            // Update real-time statistics
+            updateRealTimeStatistics(dataPoints);
+
+            // Update model prediction accuracy
+            updateModelPredictionAccuracy(dataPoints);
+
+            // Update Model Data Comparison Table
+            updateModelDataComparison(dataPoints);
+        });
+
+        function updateWaterLevel(tank1Percentage, tank2Percentage) {
+            const tank1Slider = document.getElementById('tank1-slider');
+            const tank1SliderValue = document.getElementById('tank1-slider-value');
+            tank1Slider.value = tank1Percentage;
+            tank1SliderValue.innerText = `${tank1Percentage}%`;
+
+            const tank2Slider = document.getElementById('tank2-slider');
+            const tank2SliderValue = document.getElementById('tank2-slider-value');
+            tank2Slider.value = tank2Percentage;
+            tank2SliderValue.innerText = `${tank2Percentage}%`;
+
+            tank1Slider.dispatchEvent(new Event('input'));
+            tank2Slider.dispatchEvent(new Event('input'));
+        }
+
+        function calculatePercentage(currentValue, maxValue) {
+            return Math.round((Math.abs(currentValue) / maxValue) * 100);
+        }
+
+        function updateProgressAndBadge(id, percentage) {
+            const progressElement = document.getElementById(`${id}-progress`);
+            const badgeElement = document.getElementById(`${id}-badge`);
+            progressElement.style.width = `${percentage}%`;
+            badgeElement.textContent = `${percentage}%`;
+        }
+
+        function updateChart(chart, label, realData, modelData = null, modelLinData = null, target =null) {
+            chart.data.labels.push(label);
+            chart.data.datasets[0].data.push(realData);
+            if (modelData !== null) {
+                chart.data.datasets[1].data.push(modelData);
+            }
+            if(modelLinData!== null && modelLinData !== -1 ){
+                chart.data.datasets[2].data.push(modelLinData);
+            }
+            if (target !== null && target !== -1) {
+                chart.data.datasets[3].data.push(target);
+            }
+            
+            if (chart.data.labels.length > 200) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+                if (modelData !== null) {
+                    chart.data.datasets[1].data.shift();
+                }
+                if (modelLinData !== null && modelLinData !== -1) {
+                    chart.data.datasets[2].data.shift();
+                }
+                if (target !== null && target !== -1) {
+                    chart.data.datasets[3].data.shift();
+                }
+            }
+            chart.update('none');
+        }
+        const CHANGE_THRESHOLD = 0.5;
+        function updateRealTimeStatistics(dataPoints) {
+            const currentTimestamp = new Date().toLocaleTimeString();
+
+            // Update current values
+            document.getElementById('realtime-tank1-value').innerText = `${dataPoints.waterLevelTank1.toFixed(2)} cm`;
+            document.getElementById('realtime-tank1-percentage').innerText = `${calculatePercentage(dataPoints.waterLevelTank1, 40)}%`;
+
+            document.getElementById('realtime-tank2-value').innerText = `${dataPoints.waterLevelTank2.toFixed(2)} cm`;
+            document.getElementById('realtime-tank2-percentage').innerText = `${calculatePercentage(dataPoints.waterLevelTank2, 40)}%`;
+
+            document.getElementById('realtime-inletFlow-value').innerText = `${dataPoints.inletFlow.toFixed(2)} L/min`;
+            document.getElementById('realtime-inletFlow-percentage').innerText = `${calculatePercentage(dataPoints.inletFlow, 35)}%`;
+
+            // Update timestamps
+            document.getElementById('realtime-tank1-timestamp').innerText = `Last updated: ${currentTimestamp}`;
+            document.getElementById('realtime-tank2-timestamp').innerText = `Last updated: ${currentTimestamp}`;
+            document.getElementById('realtime-inletFlow-timestamp').innerText = `Last updated: ${currentTimestamp}`;
+
+            // Update trend indicators
+            updateTrendIndicator('realtime-tank1-trend', prevTank1Level, dataPoints.waterLevelTank1NonLinModel);
+            updateTrendIndicator('realtime-tank2-trend', prevTank2Level, dataPoints.waterLevelTank2NonLinModel);
+            updateTrendIndicator('realtime-inletFlow-trend', prevInletFlow, dataPoints.inletFlowNonLinModel);
+
+            // Update historical min/max values
+            // minTank1Level = updateMinMax('realtime-tank1-min', 'realtime-tank1-max', dataPoints.waterLevelTank1, minTank1Level, maxTank1Level);
+            // minTank2Level = updateMinMax('realtime-tank2-min', 'realtime-tank2-max', dataPoints.waterLevelTank2, minTank2Level, maxTank2Level);
+            // minInletFlow = updateMinMax('realtime-inletFlow-min', 'realtime-inletFlow-max', dataPoints.inletFlow, minInletFlow, maxInletFlow);
+
+            // Update additional statistics
+            sumTank1Level += dataPoints.waterLevelTank1;
+            sumTank2Level += dataPoints.waterLevelTank2;
+            sumInletFlow += dataPoints.inletFlow;
+            countTank1Level++;
+            countTank2Level++;
+            countInletFlow++;
+
+            const avgTank1Level = sumTank1Level / countTank1Level;
+            const avgTank2Level = sumTank2Level / countTank2Level;
+            const avgInletFlow = sumInletFlow / countInletFlow;
+            
+
+            // document.getElementById('realtime-tank1-avg').innerText = `Avg: ${avgTank1Level.toFixed(2)} cm`;
+            // document.getElementById('realtime-tank2-avg').innerText = `Avg: ${avgTank2Level.toFixed(2)} cm`;
+            // document.getElementById('realtime-inletFlow-avg').innerText = `Avg: ${avgInletFlow.toFixed(2)} L/min`;
+
+            // Store current values as previous for the next update
+            prevTank1Level = dataPoints.waterLevelTank1;
+            prevTank2Level = dataPoints.waterLevelTank2;
+            prevInletFlow = dataPoints.inletFlow;
+        }
+
+        function updateTrendIndicator(elementId, prevValue, currentValue) {
+            const trendElement = document.getElementById(elementId);
+            if (prevValue === null) {
+                trendElement.innerHTML = `<i class="fas fa-minus" style="color: gold;"></i> Stable`;
+            } else if (currentValue > prevValue) {
+                trendElement.innerHTML = `<i class="fas fa-arrow-up" style="color: lime;"></i> Increasing`;
+            } else if (currentValue < prevValue) {
+                trendElement.innerHTML = `<i class="fas fa-arrow-down" style="color: orange;"></i> Decreasing`;
+            } else {
+                trendElement.innerHTML = `<i class="fas fa-arrow-right" style="color: gold;"></i> Stable`;
+            }
+        }
+
+        // function updateMinMax(minElementId, maxElementId, currentValue, minValue, maxValue) {
+        //     const newMinValue = Math.min(minValue, currentValue);
+        //     const newMaxValue = Math.max(maxValue, currentValue);
+        //     document.getElementById(minElementId).innerText = `Min: ${newMinValue.toFixed(2)} cm`;
+        //     document.getElementById(maxElementId).innerText = `Max: ${newMaxValue.toFixed(2)} cm`;
+        //     return [newMinValue, newMaxValue];
+        // }
+
+        function updateModelPredictionAccuracy(dataPoints) {
+            const tank1Accuracy = calculateAccuracy(dataPoints.waterLevelTank1, dataPoints.waterLevelTank1NonLinModel);
+            const tank2Accuracy = calculateAccuracy(dataPoints.waterLevelTank2, dataPoints.waterLevelTank2NonLinModel);
+            const inletFlowAccuracy = calculateAccuracy(dataPoints.inletFlow, dataPoints.inletFlowNonLinModel);
+
+            document.getElementById('accuracy-tank1').innerText = `${tank1Accuracy.toFixed(2)}%`;
+            document.getElementById('accuracy-tank2').innerText = `${tank2Accuracy.toFixed(2)}%`;
+            document.getElementById('accuracy-inletFlow').innerText = `${inletFlowAccuracy.toFixed(2)}%`;
+        }
+
+        function calculateAccuracy(realValue, modelValue) {
+            return 100 - Math.abs((realValue - modelValue) / realValue * 100);
+        }
+
+        function updateModelDataComparison(dataPoints) {
+            document.getElementById('model-tank1-real').innerText = `${dataPoints.waterLevelTank1.toFixed(2)} cm`;
+            document.getElementById('model-tank1-model').innerText = `${dataPoints.waterLevelTank1NonLinModel.toFixed(2)} cm`;
+            document.getElementById('model-tank1-error').innerText = `${Math.abs(dataPoints.waterLevelTank1 - dataPoints.waterLevelTank1NonLinModel).toFixed(2)} cm`;
+
+            document.getElementById('model-tank2-real').innerText = `${dataPoints.waterLevelTank2.toFixed(2)} cm`;
+            document.getElementById('model-tank2-model').innerText = `${dataPoints.waterLevelTank2NonLinModel.toFixed(2)} cm`;
+            document.getElementById('model-tank2-error').innerText = `${Math.abs(dataPoints.waterLevelTank2 - dataPoints.waterLevelTank2NonLinModel).toFixed(2)} cm`;
+
+            document.getElementById('model-inletFlow-real').innerText = `${dataPoints.inletFlow.toFixed(2)} l/min`;
+            document.getElementById('model-inletFlow-model').innerText = `${dataPoints.inletFlowNonLinModel.toFixed(2)} l/min`;
+            document.getElementById('model-inletFlow-error').innerText = `${Math.abs(dataPoints.inletFlow - dataPoints.inletFlowNonLinModel).toFixed(2)} l/min`;
+
+            document.getElementById('model-outletFlow-real').innerText = `${dataPoints.outletFlow.toFixed(2)} l/min`;
+            document.getElementById('model-outletFlow-model').innerText = `N/A`;
+            document.getElementById('model-outletFlow-error').innerText = `N/A`;
+        }
+
+        // Start the connection.
+        start().then(() => { });
+    </script>
+
+
+
+    <script type="module">
+        import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
+        import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
+        import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+
+
+        const container = document.getElementById('model-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x787878);
+
+        const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.01, 1000);
+        camera.position.z = -4.62;
+        camera.position.y = 4.185;
+        camera.position.x = -5.40;
+
+        let object;
+        let controls;
+
+        let desiredPosition_tankWater3;
+
+        const initialWaterHeightTank1 = 2.9;
+        let finalWaterHeightTank1 = 1.2;
+        const offsetX_tankWater1 = 0;
+        const offsetZ_tankWater1 = 0.5;
+        const offsetY_tankWater1 = 2 + initialWaterHeightTank1 / 2;
+
+        const initialWaterHeightTank2 = 2.9;
+        let finalWaterHeightTank2 = 1.0;
+        const offsetX_tankWater2 = 0;
+        const offsetZ_tankWater2 = -0.5;
+        const offsetY_tankWater2 = 2 + initialWaterHeightTank2 / 2;
+
+        const initialWaterHeightTank3 = 1;
+        let finalWaterHeightTank3 = 1.0;
+        const offsetX_tankWater3 = 0;
+        const offsetZ_tankWater3 = 0;
+        const offsetY_tankWater3 = initialWaterHeightTank3 / 2;
+
+        const waterMaterial1 = new THREE.MeshPhongMaterial({
+            color: 0x0000ff,
+            transparent: true,
+            opacity: 0.5,
+            shininess: 100,
+            reflectivity: 0.6,
+            refractionRatio: 0.98
+        });
+
+        const waterMaterial2 = new THREE.MeshPhongMaterial({
+            color: 0x0000aa,
+            transparent: true,
+            opacity: 0.5,
+            shininess: 100,
+            reflectivity: 0.6,
+            refractionRatio: 0.98
+        });
+
+        const cubeGeometry1 = new THREE.BoxGeometry(1.93, initialWaterHeightTank1, 0.97);
+        const tankWater1 = new THREE.Mesh(cubeGeometry1, waterMaterial1);
+        const cubeGeometry2 = new THREE.BoxGeometry(1.93, initialWaterHeightTank2, 0.97);
+        const tankWater2 = new THREE.Mesh(cubeGeometry2, waterMaterial2);
+        const cubeGeometry3 = new THREE.BoxGeometry(1.93, initialWaterHeightTank3, 0.97 * 2);
+        const tankWater3 = new THREE.Mesh(cubeGeometry3, waterMaterial1);
+
+        let desiredPosition_tankWater1;
+        let desiredPosition_tankWater2;
+
+        const loader = new GLTFLoader();
+        loader.load(
+            '/dist/3D_model/maketa.glb',
+            function (glb) {
+                object = glb.scene;
+                const modelInitialPosition = object.position.clone();
+
+                desiredPosition_tankWater1 = modelInitialPosition.clone();
+                desiredPosition_tankWater1.y += offsetY_tankWater1;
+                desiredPosition_tankWater1.x += offsetX_tankWater1;
+                desiredPosition_tankWater1.z += offsetZ_tankWater1;
+                tankWater1.position.copy(desiredPosition_tankWater1);
+
+                desiredPosition_tankWater2 = modelInitialPosition.clone();
+                desiredPosition_tankWater2.y += offsetY_tankWater2;
+                desiredPosition_tankWater2.x += offsetX_tankWater2;
+                desiredPosition_tankWater2.z += offsetZ_tankWater2;
+                tankWater2.position.copy(desiredPosition_tankWater2);
+
+                desiredPosition_tankWater3 = modelInitialPosition.clone();
+                desiredPosition_tankWater3.y += offsetY_tankWater3; // Adjust Y position based on height change
+                desiredPosition_tankWater3.x += offsetX_tankWater3; // Move the cube on X-axis by offsetX units
+                desiredPosition_tankWater3.z += offsetZ_tankWater3; // Move the cube on Z-axis by offsetZ units
+                tankWater3.position.copy(desiredPosition_tankWater3);
+
+
+                scene.add(object);
+                scene.add(tankWater1);
+                scene.add(tankWater2);
+                scene.add(tankWater3);
+
+
+                object.layers.set(0);
+                tankWater1.layers.set(1);
+                camera.layers.enable(1);
+            },
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            function (error) {
+                console.error(error);
+            }
+        );
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        const topLight = new THREE.DirectionalLight(0xffffff, 0.7);
+        topLight.position.set(600, 600, 600);
+        topLight.castShadow = true;
+        scene.add(topLight);
+
+        const topLight2 = new THREE.DirectionalLight(0xffffff, 0.6);
+        topLight2.position.set(700, 700, -700);
+        topLight2.castShadow = true;
+        scene.add(topLight2);
+
+        const topLight3 = new THREE.DirectionalLight(0xffffff, 0.5);
+        topLight3.position.set(-20, 10, 0);
+        topLight3.castShadow = true;
+        scene.add(topLight3);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+
+        export function updateWaterLevel(tank, percentage) {
+            if (tank === 1) {
+                finalWaterHeightTank1 = (percentage / 100) * initialWaterHeightTank1;
+                console.log(`Tank 1 water level updated to: ${percentage}%`);
+            } else if (tank === 2) {
+                finalWaterHeightTank2 = (percentage / 100) * initialWaterHeightTank2;
+                console.log(`Tank 2 water level updated to: ${percentage}%`);
+            }
+        }
+
+        function observeProgressElement(id, tank) {
+            const progressElement = document.getElementById(`${id}-progress`);
+
+            const observer = new MutationObserver((mutationsList) => {
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                        const widthPercentage = parseFloat(progressElement.style.width);
+                        Console.log(widthPercentage);
+                        if (!isNaN(widthPercentage)) {
+                            updateWaterLevel(tank, widthPercentage);
+                        }
+                    }
+                }
+            });
+
+            observer.observe(progressElement, { attributes: true });
+        }
+
+
+        document.getElementById('tank1-slider').addEventListener('input', function (event) {
+            const value = event.target.value;
+            document.getElementById('tank1-slider-value').textContent = value + '%';
+            updateWaterLevel(1, value);
+        });
+
+        document.getElementById('tank2-slider').addEventListener('input', function (event) {
+            const value = event.target.value;
+            document.getElementById('tank2-slider-value').textContent = value + '%';
+            updateWaterLevel(2, value);
+        });
+
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+
+
+            if (finalWaterHeightTank1 >= 0 && finalWaterHeightTank1 <= initialWaterHeightTank1) {
+                tankWater1.scale.y = finalWaterHeightTank1 / initialWaterHeightTank1;
+                tankWater1.position.y = desiredPosition_tankWater1.y + ((tankWater1.scale.y * initialWaterHeightTank1 - initialWaterHeightTank1) / 2);
+            }
+
+            if (finalWaterHeightTank2 >= 0 && finalWaterHeightTank2 <= initialWaterHeightTank2) {
+                tankWater2.scale.y = finalWaterHeightTank2 / initialWaterHeightTank2;
+                tankWater2.position.y = desiredPosition_tankWater2.y + ((tankWater2.scale.y * initialWaterHeightTank2 - initialWaterHeightTank2) / 2);
+            }
+
+
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        animate();
+
+    </script>
+
+    <style>
+         
+    </style>
+
+    <script>
+        document.getElementById('refresh-button').addEventListener('click', function() {
+            location.reload();
+        });
+
+        document.querySelectorAll('.toggle-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const target = document.querySelector(this.getAttribute('data-target'));
+                if (target) {
+                    target.classList.toggle('d-none');
+                }
+            });
+        });
+    </script>
+}

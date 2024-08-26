@@ -1,0 +1,585 @@
+﻿@page
+@model VodenkoWeb.Pages.ControllerAnalysis.IndexModel
+@{
+    ViewData["Title"] = "Controller Analysis";
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="font-weight-bold text-uppercase">Controller Analysis</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Controller Analysis</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr style="border: 0; height: 3px; background: linear-gradient(to right, #ff0000, #0000ff); margin-bottom: 10px; margin-left: 15px; margin-right: 15px;">
+
+<!-- Main content -->
+<section class="content ml-5 mr-5">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="d-flex align-items-center mt-3">
+                    <div class="d-flex flex-wrap justify-content-center flex-grow-1 ml-3">
+                        <div class="p-3 text-center flex-fill bg-primary border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-wave-square text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Send Reference Setpoint:</strong>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-success border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-chart-line text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Check Step Response:</strong>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-warning border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-calculator text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">Perform Calculations:</strong>
+                        </div>
+                        <div class="p-3 text-center flex-fill bg-danger border rounded m-2 shadow-sm instruction-box">
+                            <i class="fas fa-tachometer-alt text-white fa-2x mb-2"></i>
+                            <strong class="d-block text-white">View Performance Metrics:</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Mode Selection -->
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                @* <label class="mr-2"><strong>Select Mode:</strong></label>
+                <input type="radio" id="mode-dynamic" name="mode" value="dynamic" checked>
+                <label for="mode-dynamic" class="mr-2">Dynamic Data Collection</label>
+                <input type="radio" id="mode-file" name="mode" value="file">
+                <label for="mode-file">File Upload</label> *@
+                <label class="mr-2"><strong>Upload File:</strong></label>
+                <input type="file" id="file-upload" accept=".xlsx">
+                <button id="upload-file" class="btn btn-primary"><i class="fas fa-upload"></i> Upload File</button>
+            </div>
+        </div>
+        <!-- Toggle Button for Dynamic Mode -->
+        @* <div class="row mb-3" id="dynamic-controls">
+            <div class="col-12 text-center">
+                <button id="toggle-collect" class="btn btn-primary"><i class="fas fa-play"></i> Start Data Collection</button>
+            </div>
+        </div> *@
+        <!-- File Upload for File Mode -->
+        <div class="row mb-3 d-none" id="file-controls">
+            <div class="col-12 text-center">
+                <input type="file" id="file-upload" accept=".xlsx">
+                <button id="upload-file" class="btn btn-primary"><i class="fas fa-upload"></i> Upload File</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Step Response - Tank 2 Water Level</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-secondary" id="setStart"><i class="fas fa-play"></i> Set Start</button>
+                            <button type="button" class="btn btn-secondary" id="setEnd"><i class="fas fa-stop"></i> Set End</button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="lineChart-stepResponse" style="min-height: 250px; height: 350px; max-height: 450px; max-width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Valve Openness</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-secondary" id="setStart_pv"><i class="fas fa-play"></i> Set Start</button>
+                            <button type="button" class="btn btn-secondary" id="setEnd_pv"><i class="fas fa-stop"></i> Set End</button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="lineChart-step" style="min-height: 250px; height: 350px; max-height: 450px; max-width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card card-primary mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-tachometer-alt"></i> Send Setpoint</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center">
+                            <div class="form-group">
+                                <label for="editH2" class="text-center d-block">Level H<sub>2</sub> Setpoint [cm] :</label>
+                                <input type="number" class="form-control text-center" id="editH2" style="width:200px; margin: 0 auto;">
+                                <span id="validationMessage" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button id="sendStringBtn" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Setpoint</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 mx-auto">
+                <div class="container mb-5">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h2 class="card-title"><i class="fas fa-chart-bar"></i> System Performance Metrics</h2>
+                            <button id="requestCalculate" type="button" class="btn btn-success btn-lg ml-auto" style="width:240px;"><i class="fas fa-calculator"></i> Calculate</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th><i class="fas fa-ruler"></i> Metric</th>
+                                            <th><i class="fas fa-calculator"></i> Value</th>
+                                            <th><i class="fas fa-tachometer-alt"></i> Unit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><i class="fas fa-hourglass-half"></i> Settling Time [5%]</td>
+                                            <td id="settling-time-value">-</td>
+                                            <td>seconds [s]</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-long-arrow-alt-up"></i> Rise Time</td>
+                                            <td id="rise-time-value">-</td>
+                                            <td>seconds [s]</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-chart-line"></i> Overshoot</td>
+                                            <td id="overshoot-value">-</td>
+                                            <td>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fas fa-exclamation-circle"></i> Error</td>
+                                            <td id="error-value">-</td>
+                                            <td>cm</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+    <!-- Other form fields -->
+</form>
+
+@section Scripts {
+    <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.9/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        let startSample = null;
+        let endSample = null;
+        let settingStart = false;
+        let settingEnd = false;
+        let dynamicMode = false;
+        let collecting = false;
+        let collectedData = [];
+        let fileData = [];
+        const maxDataSize = 50000;
+        const windowSize = 3000; // Set the window size
+
+        let layout_h2 = {
+            title: 'Step Response - Tank 2 Water Level',
+            shapes: [],
+            xaxis: {
+                title: 'Sample'
+            },
+            yaxis: {
+                title: 'Value [cm]'
+            }
+        };
+
+        let layout_pv = {
+            title: 'Valve Openness',
+            shapes: [],
+            xaxis: {
+                title: 'Sample'
+            },
+            yaxis: {
+                title: 'Value [%]'
+            }
+        };
+
+        Plotly.newPlot('lineChart-stepResponse', [{ x: [], y: [], type: 'scatter' }], layout_h2);
+        Plotly.newPlot('lineChart-step', [{ x: [], y: [], type: 'scatter' }], layout_pv);
+
+        document.getElementById('setStart').addEventListener('click', () => {
+            settingStart = true;
+            settingEnd = false;
+        });
+
+        document.getElementById('setEnd').addEventListener('click', () => {
+            settingStart = false;
+            settingEnd = true;
+        });
+
+        document.getElementById('setStart_pv').addEventListener('click', () => {
+            settingStart = true;
+            settingEnd = false;
+        });
+
+        document.getElementById('setEnd_pv').addEventListener('click', () => {
+            settingStart = false;
+            settingEnd = true;
+        });
+
+
+
+        document.getElementById('lineChart-stepResponse').on('plotly_click', function (data) {
+            const point = data.points[0];
+            const xValue = Math.round(point.x); // Round to nearest integer
+
+            if (settingStart) {
+                startSample = xValue;
+                settingStart = false;
+            } else if (settingEnd) {
+                endSample = xValue;
+                settingEnd = false;
+            }
+
+            updateVerticalLines(layout_h2, 'lineChart-stepResponse');
+            updateVerticalLines(layout_pv, 'lineChart-step');
+
+        });
+
+        document.getElementById('lineChart-step').on('plotly_click', function (data) {
+            const point = data.points[0];
+            const xValue = Math.round(point.x); // Round to nearest integer
+
+            if (settingStart) {
+                startSample = xValue;
+                settingStart = false;
+            } else if (settingEnd) {
+                endSample = xValue;
+                settingEnd = false;
+            }
+
+            updateVerticalLines(layout_h2, 'lineChart-stepResponse');
+            updateVerticalLines(layout_pv, 'lineChart-step');
+        });
+
+        function updateVerticalLines(layout, chartId) {
+            layout.shapes = [];
+            if (startSample !== null) {
+                layout.shapes.push({
+                    type: 'line',
+                    x0: startSample,
+                    y0: 0,
+                    x1: startSample,
+                    y1: 1,
+                    xref: 'x',
+                    yref: 'paper',
+                    line: {
+                        color: 'green',
+                        width: 2
+                    }
+                });
+            }
+            if (endSample !== null) {
+                layout.shapes.push({
+                    type: 'line',
+                    x0: endSample,
+                    y0: 0,
+                    x1: endSample,
+                    y1: 1,
+                    xref: 'x',
+                    yref: 'paper',
+                    line: {
+                        color: 'red',
+                        width: 2
+                    }
+                });
+            }
+            Plotly.update(chartId, {}, layout);
+        }
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl('/live_data')
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        }
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        connection.on("updateData", function (dataPoints) {
+            if (dynamicMode) {
+                if (!dataPoints) {
+                    console.error("Received dynamicData is undefined or null");
+                    return;
+                }
+
+                const requiredProperties = [
+                    'sample', 'waterLevelTank2', 'valvePositionFeedback'
+                ];
+
+                for (const property of requiredProperties) {
+                    if (!(property in dataPoints)) {
+                        console.error(`Property ${property} is missing in dynamicData`);
+                        return;
+                    }
+                }
+
+                Plotly.extendTraces('lineChart-stepResponse', {
+                    x: [[dataPoints.sample]],
+                    y: [[dataPoints.waterLevelTank2]]
+                }, [0]);
+
+                Plotly.extendTraces('lineChart-step', {
+                    x: [[dataPoints.sample]],
+                    y: [[dataPoints.valvePositionFeedback]]
+                }, [0]);
+
+                // Keep only the last 'windowSize' points
+                const h2Update = getWindowUpdate('lineChart-stepResponse', windowSize);
+                const pvUpdate = getWindowUpdate('lineChart-step', windowSize);
+
+                Plotly.update('lineChart-stepResponse', h2Update);
+                Plotly.update('lineChart-step', pvUpdate);
+
+                if (collecting) {
+                    collectedData.push({
+                        dateTime: dataPoints.dateTime,
+                        waterLevelTank2: dataPoints.waterLevelTank2,
+                        sample: dataPoints.sample
+                    });
+
+                    if (collectedData.length > maxDataSize) {
+                        collectedData.shift();
+                    }
+                }
+            }
+        });
+
+        function getWindowUpdate(chartId, windowSize) {
+            const data = document.getElementById(chartId).data[0];
+            if (data.x.length > windowSize) {
+                const x = data.x.slice(-windowSize);
+                const y = data.y.slice(-windowSize);
+                return { x: [x], y: [y] };
+            }
+            return { x: [data.x], y: [data.y] };
+        }
+
+        start().then(() => { });
+
+        function getAntiForgeryToken() {
+            return $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+        }
+
+        $('#requestCalculate').click(function () {
+            let filteredData;
+            if (dynamicMode) {
+                filteredData = collectedData;
+            } else {
+                filteredData = fileData.filter(d => d.sample >= startSample && d.sample <= endSample);
+            }
+            $.ajax({
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                url: 'http://127.0.0.1:5000/calculate',
+                contentType: 'application/json',
+                data: JSON.stringify(filteredData),
+                success: function (response) {
+                    $('#settling-time-value').text(response.settling_time.toFixed(2));
+                    $('#rise-time-value').text(response.rise_time.toFixed(2));
+                    $('#overshoot-value').text(response.overshoot.toFixed(2));
+                    $('#error-value').text(response.error.toFixed(2));
+                },
+                error: function () {
+                    alert('Failed to calculate');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('#sendStringBtn').click(function () {
+                const token = getAntiForgeryToken();
+                const h2Setpoint = $('#editH2').val();
+                console.log("H2 Setpoint: ", h2Setpoint);
+                console.log("Anti-Forgery Token: ", token);
+                collectedData = [];
+
+                $.ajax({
+                    type: "POST",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN", token);
+                    },
+                    url: "/ControllerAnalysis/Index?handler=SendH2Setpoint",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify({ H2Setpoint: parseFloat(h2Setpoint) }),
+                    success: function (response) {
+                        if (response.success) {
+                            console.log("Setpoint sent successfully.");
+                            $('#validationMessage').text("");
+                            $('#editH2').removeClass('is-invalid');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Setpoint sent successfully.'
+                            });
+                        } else {
+                            console.log("Failed to send setpoint.");
+                            $('#validationMessage').text(response.errors.join(", "));
+                            $('#editH2').addClass('is-invalid');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to send setpoint: ' + response.errors.join(", ")
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error occurred while sending setpoint:", error);
+                        console.log("Status: ", status);
+                        console.log("XHR: ", xhr);
+                        $('#validationMessage').text("An error occurred while sending the setpoint.");
+                        $('#editH2').addClass('is-invalid');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while sending the setpoint.'
+                        });
+                    }
+                });
+            });
+
+            $('#toggle-collect').click(function () {
+                collecting = !collecting;
+                if (collecting) {
+                    collectedData = [];
+                    $(this).html('<i class="fas fa-stop"></i> Stop Data Collection');
+                } else {
+                    $(this).html('<i class="fas fa-play"></i> Start Data Collection');
+                    if (collectedData.length > 0) {
+                        console.log('First Sample:', collectedData[0]);
+                        console.log('Last Sample:', collectedData[collectedData.length - 1]);
+                    } else {
+                        console.log('No data collected.');
+                    }
+                }
+            });
+
+            $('input[name="mode"]').change(function () {
+                if (this.value === 'dynamic') {
+                    startSample = null;
+                    endSample = null;
+
+
+                    updateVerticalLines(layout_h2, 'lineChart-stepResponse');
+
+                updateVerticalLines(layout_pv, 'lineChart-step');
+
+                    $('#dynamic-controls').removeClass('d-none');
+                    $('#file-controls').addClass('d-none');
+                    dynamicMode = true;
+                    clearGraphs();
+                } else {
+                    $('#dynamic-controls').addClass('d-none');
+                    $('#file-controls').removeClass('d-none');
+                    dynamicMode = false;
+                    clearGraphs();
+                }
+            });
+
+            $('#upload-file').click(function () {
+                const fileInput = document.getElementById('file-upload');
+                if (fileInput.files.length === 0) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    processFileData(jsonData);
+                };
+                reader.readAsArrayBuffer(fileInput.files[0]);
+            });
+
+            function processFileData(data) {
+                allData = data.slice(1).map(row => ({
+                    dateTime: row[8],
+                    waterLevelTank2: row[3],
+                    sample: row[10],
+                    valvePositionFeedback:row[0],
+                    inletFlow : row[1],
+                    waterLevelTank1: row[2],
+                    inletFlowModel: row[4],
+                    waterLevelTank1Model: row[5],
+                    waterLevelTank2Model: row[6],
+                    outletFlow: row[7],
+                    pump:row[9]
+
+                }));
+
+                fileData = data.slice(1).map(row => ({
+                    dateTime: row[8],
+                    waterLevelTank2: row[3],
+                    sample: row[10]
+                }));
+
+                const labels = allData.map(item => item.sample);
+                const h2Data = allData.map(item => item.waterLevelTank2);
+                const pvData = allData.map(item => item.valvePositionFeedback);
+
+                Plotly.update('lineChart-stepResponse', { x: [labels], y: [h2Data] });
+                Plotly.update('lineChart-step', { x: [labels], y: [pvData] });
+            }
+
+            function clearGraphs() {
+                Plotly.update('lineChart-stepResponse', { x: [[]], y: [[]] });
+                Plotly.update('lineChart-step', { x: [[]], y: [[]] });
+            }
+        });
+    </script>
+}
+
+
+
