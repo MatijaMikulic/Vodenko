@@ -10,9 +10,7 @@ Vodenko is a project focused on the development and implementation of an advance
 - [Usage](#usage)
 - [MATLAB/Simulink Models](#matlabsimulink-models)
 - [PLC Integration](#plc-integration)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
+
 
 ## Features
 - **Advanced Control Algorithms**: Implementation of PID, LQR, and adaptive control algorithms.
@@ -23,34 +21,32 @@ Vodenko is a project focused on the development and implementation of an advance
 
 ## Project Structure
 ```
-Vodenko/
+Diplomski/
+├── Vodenko/                    # Main application folder
+│   ├── DataAccess/             # Data access layer
+│   ├── ModelProvider/          # Provides models for the application
+│   ├── VodenkoWeb/             # Web interface for the application
 │
-├── Matlab_Simulink/       # MATLAB and Simulink models for system simulation
-│   ├── models/
-│   ├── scripts/
-│   └── results/
+├── Shared/                     # Shared resources or libraries
 │
-├── PLC_Code/              # PLC program and configuration files
-│   ├── main_program/
-│   ├── configurations/
-│   └── diagnostics/
+├── scripts/                    # Scripts for various utilities
+│   ├── matlab-math_model/      # MATLAB models related to the project
+│   └── python-odbc/            # Python scripts for fetching data from db (results of rls)
 │
-├── Data/                  # Datasets and logs from the system
-│   ├── raw_data/
-│   ├── processed_data/
-│   └── logs/
+├── CommunicationL1L2/          # Communication services layer
+│   ├── Common/                 # Common libraries or utilities
+│   ├── DataAccess/             # Data access for communication layer
+│   ├── Libraries/              # Libraries for communication services
+│   ├── Shared/                 # Shared components with other services
+│   ├── WindowsServices/        # Windows services related to communication
 │
-└── Docs/                  # Documentation and reports
-    ├── user_manual/
-    ├── technical_specifications/
-    └── diagrams/
-```
+├── API/                        # API for programmatic access
+│   └── app.py                  # Main API script
 
 ## Installation
 
 ### Prerequisites
 - **MATLAB**: Ensure that you have MATLAB installed with Simulink support.
-- **PLC Software**: Required to interface with the PLC hardware (e.g., TIA Portal for Siemens PLCs).
 - **Git**: To clone the repository.
 - **Rabbit MQ** : Required for message sending.
 
