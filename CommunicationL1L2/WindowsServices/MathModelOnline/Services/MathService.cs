@@ -189,11 +189,6 @@ namespace MathModelOnline.Services
             {
                 ReinitializeModel(h1Filtered, h2Filtered, quFiltered, xvFiltered, data);
 
-                //h1Window.Clear();
-                //h2Window.Clear();
-                //quWindow.Clear();
-                //uWindow. Clear();
-
                 prevH1 = h1Filtered;
                 prevH2 = h2Filtered;
                 prevQu = quFiltered;
@@ -332,10 +327,6 @@ namespace MathModelOnline.Services
                 _dcCalculations.Reinitialize(_stateSpaceLinearModel);
                 _dcCalculations.CalculateDiscreteFormZOH();
                 var result = DiscreteContinuousConverter.CalculateDiscreteFormZOH(_stateSpaceLinearModel.A, _stateSpaceLinearModel.B, SamplingTime * rlsSample);
-                var initialTheta = Vector<double>.Build.Dense(new double[] { 
-                    result.Ad[1, 1], result.Ad[1, 2], result.Ad[2, 1], result.Ad[2,2], result.Ad[1,0]
-                   });
-                _rls.Theta = initialTheta;
             }
             else
             {
