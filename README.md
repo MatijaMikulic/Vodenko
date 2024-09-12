@@ -10,8 +10,8 @@ Vodenko is a project focused on the development and implementation of an advance
 - [Usage](#usage)
 - [MATLAB/Simulink Models](#matlabsimulink-models)
 - [PLC Integration](#plc-integration)
-- [Images] (#Images)
-- [3D model] (#3D-model)
+- [Images](#Images)
+- [3D model](#3D-model)
 
 
 ## Features
