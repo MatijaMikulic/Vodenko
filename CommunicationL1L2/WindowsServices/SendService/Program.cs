@@ -3,68 +3,61 @@ using DataAccess.Repositories;
 using MessageBroker.Common;
 using MessageBroker.Common.Configurations;
 using MessageBroker.Common.Producer;
-using MessageManagerService.Constants;
-using MessageManagerService.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PlcCommunication;
+using SendManagerService.Services;
 using SharedResources;
-using Topshelf;
-using Unity;
+using TaskLog.Contracts;
 
-namespace MessageManagerService
+namespace SendManagerService
 {
     internal class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            IConfiguration configuration = ConfigurationMng.GetConfiguration();
-
-            var container = new UnityContainer();
-            var rabbitMqConfig = BindOptions<RabbitMqConfiguration>(configuration, "RabbitMqConfiguration");
-            var plcConfig = BindOptions<PlcConfiguration>(configuration, "PlcConfiguration");
-            var sendConfig = BindOptions<RabbitMqModelSettings>(configuration, "RabbitMqModelSenderConfig");
-            var db = BindOptions<DBConfiguration>(configuration, "Dapper");
-
-            container.RegisterInstance<IOptions<PlcConfiguration>>(Options.Create(plcConfig));
-            container.RegisterInstance<IOptions<RabbitMqConfiguration>>(Options.Create(rabbitMqConfig));
-            container.RegisterInstance<IOptions<RabbitMqModelSettings>>(Options.Create(sendConfig));
-            container.RegisterInstance<IOptions<DBConfiguration>>(Options.Create(db));
-
-            container.RegisterType<DatabaseRepositories, DatabaseRepositories>();
-            container.RegisterType<PlcCommunicationService, PlcCommunicationService>();
-            container.RegisterType<IRabbitMqService, RabbitMqService>();
-            container.RegisterType<IProducerConsumer, RabbitMqProducerConsumer>();
-            container.RegisterInstance<SService>(
-                new SService(container.Resolve<IProducerConsumer>(),container.Resolve<PlcCommunicationService>(), container.Resolve<DatabaseRepositories>()));
-
-            var exitCode = HostFactory.Run(x =>
-            {
-
-                x.Service<SService>(s =>
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(cfg =>
                 {
-                    s.ConstructUsing(service => container.Resolve<SService>());
-                    s.WhenStarted(async service => await service.Start());
-                    s.WhenStopped(service => service.Stop());
-                });
+                    cfg.AddConfiguration(ConfigurationMng.GetConfiguration());
+                })
+                .ConfigureServices((ctx, services) =>
+                {
+                    IConfiguration configuration = ctx.Configuration;
 
-                x.RunAsLocalSystem();
-                x.SetServiceName(SendInfo.ServiceName);
-                x.SetDisplayName(SendInfo.DisplayName);
-                x.SetDescription(SendInfo.Description);
-                x.StartAutomatically();
+                    // 1) PLC‐communication library
+                    services.AddPlcCommunication(
+                        plc => configuration.GetSection("PlcConfiguration").Bind(plc),
+                        builder => configuration.GetSection("PlcLibrarySettings").Bind(builder)
+                    );
 
-            });
+                    // 2) RabbitMQ and DB options
+                    services.Configure<RabbitMqConfiguration>(
+                        configuration.GetSection("RabbitMqConfiguration"));
+                    services.Configure<RabbitMqModelSettings>(
+                        configuration.GetSection("RabbitMqModelSenderConfig"));
+                    services.Configure<DBConfiguration>(
+                        configuration.GetSection("Dapper"));
 
-            int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode());
-            Environment.ExitCode = exitCodeValue;
-        }
-        private static T BindOptions<T>(IConfiguration configuration, string sectionName) where T : class, new()
-        {
-            var section = configuration.GetSection(sectionName);
-            var options = new T();
-            configuration.Bind(sectionName, options);
-            return options;
+                    // 3) Services and repositories
+                    services.AddSingleton<DatabaseRepositories>();
+                    services.AddSingleton<IRabbitMqService, RabbitMqService>();
+                    services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
+                    
+
+                    // 4) Core manager service
+                    services.AddSingleton<ILogger, ConsoleLogger>();    
+                    services.AddSingleton<SendManager>();
+                    services.AddHostedService<SendHostedService>();
+                })
+                .UseWindowsService()
+                .UseSystemd()
+                .UseConsoleLifetime()
+                .Build();
+
+            await host.RunAsync();
         }
     }
+}
 }

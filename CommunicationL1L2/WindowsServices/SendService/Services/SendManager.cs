@@ -1,56 +1,114 @@
-﻿using SharedLibrary.Entities;
-using DataAccess.Repositories;
+﻿using DataAccess.Repositories;
 using MessageBroker.Common.Producer;
-using MessageManagerService.Constants;
 using MessageModel.Model.DataBlockModel;
 using MessageModel.Model.Messages;
-using MessageModel.Utilities;
-using PlcCommunication;
-using PlcCommunication.Constants;
 using S7.Net;
 using SharedResources.Constants;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
+using PlcCommunication.Interfaces;
+using TaskLog.Contracts;
+using SendManagerService.Constants;
 
-namespace MessageManagerService.Services
+namespace SendManagerService.Services
 {
     /// <summary>
     /// Service responsible for managing messages from the database, writing them to the PLC, and logging activities.
     /// </summary>
-    public class SService
+    public class SendManager
     {
         private readonly IProducerConsumer _producerConsumer; // RabbitMQ producer-consumer interface
-        private readonly PlcCommunicationService _plcCommunicationService; // PLC communication service
+        private readonly IConnectionManager _connectionManager;
+        private readonly IPlcDataAccess _dataAccess;
         private readonly DatabaseRepositories _databaseRepositories; // Database repositories
-        private readonly System.Timers.Timer _timer; // Timer for periodic operations
+        private readonly ILogger _log;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SService"/> class.
+        /// Initializes a new instance of the <see cref="SendManager"/> class.
         /// </summary>
-        /// <param name="producerConsumer">The RabbitMQ producer-consumer interface.</param>
-        /// <param name="plcCommunicationService">The PLC communication service.</param>
+        /// <param name="producerConsumer">The RabbitMQ producer-consumer interface</param>
+        /// <param name="connectionManager">An interface for plc communication</param>
+        /// <param name="dataAccess">An interface for retrieving/sending data to plc</param>
         /// <param name="databaseRepositories">The database repositories.</param>
-        public SService(IProducerConsumer producerConsumer, PlcCommunicationService plcCommunicationService, DatabaseRepositories databaseRepositories)
+        public SendManager(
+            IProducerConsumer producerConsumer,
+            IConnectionManager connectionManager,
+            IPlcDataAccess dataAccess,
+            DatabaseRepositories databaseRepositories,
+            ILogger logger)
         {
             _producerConsumer = producerConsumer;
-            _plcCommunicationService = plcCommunicationService;
+            _connectionManager = connectionManager;
             _databaseRepositories = databaseRepositories;
+            _dataAccess = dataAccess;
+            _log = logger;
 
-            _timer = new System.Timers.Timer(1000) { AutoReset = true };
-            _timer.Elapsed += TimerElapsed;
         }
+
+        /// <inheritdoc cref="RunAsync"/>
+        public Task RunAsync(CancellationToken ct) => RunInternalAsync(ct);
 
         /// <summary>
         /// Handles the timer elapsed event to process new messages from the database.
         /// </summary>
-        private async void TimerElapsed(object? sender, ElapsedEventArgs e)
+        private async Task RunInternalAsync(CancellationToken cancellationToken)
         {
-            var result = await _databaseRepositories.MessageRepository.GetNewMessages(0);
+
+            // 1) Start PLC communication
+            try
+            {
+                _connectionManager.Open();
+            }
+            catch (Exception ex)
+            {
+                _log.Log(new L2L2_LogMessage(
+                    SendInfo.ServiceName,
+                    $"Initial PLC open failed: {ex.Message}",
+                    Severity.Warning, 1));
+            }
+            _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
+
+            // 2) Start RabbitMQ
+            await _producerConsumer.OpenCommunication(SendInfo.ServiceName).ConfigureAwait(false);
+
+            if (_producerConsumer.IsConnected())
+            {
+                _producerConsumer.SendMessage(
+                    MessageRouting.LoggerRoutingKey,
+                    new L2L2_LogMessage(
+                        SendInfo.ServiceName,
+                        "Data Monitoring Service started",
+                        Severity.Info, 1));
+            }
+
+            var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
+            try
+            {
+                while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    try
+                    {
+                        await ProcessBatchAsync().ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Log(new L2L2_LogMessage(
+                            SendInfo.ServiceName,
+                            $"PollOnceAsync failed: {ex.Message}",
+                            Severity.Error,
+                            1));
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // normal shutdown
+            }  
+        }
+
+        private async Task ProcessBatchAsync()
+        {
+            var result = await _databaseRepositories.MessageRepository.GetNewMessages(0).ConfigureAwait(false);
 
             foreach (var message in result)
             {
@@ -71,14 +129,13 @@ namespace MessageManagerService.Services
                     await _databaseRepositories.MessageRepository.UpdateAsync(message);
                     try
                     {
-                        UpdatePlcCounters(DataBlockInfo.L2L1_DBIds.SetpointDB);
-                        _plcCommunicationService.DataAccess.WriteToDB(l2L1_SetPoint);
+                        _dataAccess.WriteContent(l2L1_SetPoint);
 
                         if (_producerConsumer.IsConnected())
                         {
                             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                                 new L2L2_LogMessage(SendInfo.ServiceName,
-                                $"Successfully wrote new setpoint message to PLC DB [{DataBlockInfo.L2L1_DBIds.SetpointDB}]: " +
+                                $"Successfully wrote new setpoint message to PLC." +
                                 $"Message Content: {l2L1_SetPoint.TargetH2Level}, {l2L1_SetPoint.pvInitialValue}, {l2L1_SetPoint.pvFinalValue}, " +
                                 $"{l2L1_SetPoint.Mode}",
                                 Severity.Info, 1));
@@ -91,7 +148,7 @@ namespace MessageManagerService.Services
                         {
                             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                                 new L2L2_LogMessage(SendInfo.ServiceName,
-                                $"Failed to write new setpoint message to PLC DB [{DataBlockInfo.L2L1_DBIds.SetpointDB}]: " +
+                                $"Failed to write new setpoint message to PLC DB." +
                                 $"Message Content: {l2L1_SetPoint.TargetH2Level}, {l2L1_SetPoint.pvInitialValue}, {l2L1_SetPoint.pvFinalValue}, " +
                                 $"{l2L1_SetPoint.Mode}",
                                 Severity.Error, 1));
@@ -121,14 +178,13 @@ namespace MessageManagerService.Services
                     await _databaseRepositories.MessageRepository.UpdateAsync(message);
                     try
                     {
-                        UpdatePlcCounters(DataBlockInfo.L2L1_DBIds.CntParamsDB);
-                        _plcCommunicationService.DataAccess.WriteToDB(l2l1_ControllerParameters);
+                        _dataAccess.WriteContent(l2l1_ControllerParameters);
 
                         if (_producerConsumer.IsConnected())
                         {
                             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                                 new L2L2_LogMessage(SendInfo.ServiceName,
-                                $"Successfully wrote new controller parameters message to PLC DB [{DataBlockInfo.L2L1_DBIds.CntParamsDB}]: " +
+                                $"Successfully wrote new controller parameters message to PLC DB. " +
                                 $"Message Content: {l2l1_ControllerParameters.Method}, {l2l1_ControllerParameters.Proportional}, {l2l1_ControllerParameters.Integral}, " +
                                 $"{l2l1_ControllerParameters.Derivative}, {l2l1_ControllerParameters.K1}, {l2l1_ControllerParameters.K2}, {l2l1_ControllerParameters.K3}, " +
                                 $"{l2l1_ControllerParameters.K4}",
@@ -142,7 +198,7 @@ namespace MessageManagerService.Services
                         {
                             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                                 new L2L2_LogMessage(SendInfo.ServiceName,
-                                $"Failed to write new controller parameters message to PLC DB [{DataBlockInfo.L2L1_DBIds.CntParamsDB}]: " +
+                                $"Failed to write new controller parameters message to PLC DB. " +
                                 $"Message Content: {l2l1_ControllerParameters.Method}, {l2l1_ControllerParameters.Proportional}, {l2l1_ControllerParameters.Integral}, " +
                                 $"{l2l1_ControllerParameters.Derivative}, {l2l1_ControllerParameters.K1}, {l2l1_ControllerParameters.K2}, {l2l1_ControllerParameters.K3}, " +
                                 $"{l2l1_ControllerParameters.K4}",
@@ -166,14 +222,13 @@ namespace MessageManagerService.Services
                     await _databaseRepositories.MessageRepository.UpdateAsync(message);
                     try
                     {
-                        UpdatePlcCounters(DataBlockInfo.L2L1_DBIds.RequestCntDB);
-                        _plcCommunicationService.DataAccess.WriteToDB(l2L1_RequestControl);
+                        _dataAccess.WriteContent(l2L1_RequestControl);
 
                         if (_producerConsumer.IsConnected())
                         {
                             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                                 new L2L2_LogMessage(SendInfo.ServiceName,
-                                $"Successfully wrote new request control message to PLC DB [{DataBlockInfo.L2L1_DBIds.RequestCntDB}]: " +
+                                $"Successfully wrote new request control message to PLC DB. " +
                                 $"Message Content: {l2L1_RequestControl.RequestAutoMode}",
                                 Severity.Info, 1));
                         }
@@ -185,31 +240,13 @@ namespace MessageManagerService.Services
                         {
                             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                                 new L2L2_LogMessage(SendInfo.ServiceName,
-                                $"Failed to write new request control message to PLC DB [{DataBlockInfo.L2L1_DBIds.RequestCntDB}]: " +
+                                $"Failed to write new request control message to PLC DB. " +
                                 $"Message Content: {l2L1_RequestControl.RequestAutoMode}",
                                 Severity.Error, 1));
                         }
                     }
                 }
                 #endregion
-            }
-        }
-
-        /// <summary>
-        /// Starts the SService, establishing communication with the PLC and RabbitMQ, and starts the timer.
-        /// </summary>
-        public async Task Start()
-        {
-            _plcCommunicationService.Start();
-
-            _timer.Start();
-            await _producerConsumer.OpenCommunication();
-            if (_producerConsumer.IsConnected())
-            {
-                _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
-                new L2L2_LogMessage(SendInfo.ServiceName,
-                "Send Service has started.",
-                Severity.Info, 1));
             }
         }
 
@@ -223,7 +260,6 @@ namespace MessageManagerService.Services
                 "Send Service has stopped!",
                 Severity.Warning, 1));
 
-            _plcCommunicationService.Dispose();
             _producerConsumer.Dispose();
         }
 
@@ -270,17 +306,20 @@ namespace MessageManagerService.Services
             return false;
         }
 
-        /// <summary>
-        /// Updates the PLC counters for a specific message ID.
-        /// </summary>
-        /// <param name="messageId">The message ID to update counters for.</param>
-        public void UpdatePlcCounters(int messageId)
+        private void OnPlcConnectionChanged(object? sender, bool isUp)
         {
-            var changeCounter = _plcCommunicationService.DataAccess.ReadChangeCounter(messageId);
-            _plcCommunicationService.DataAccess.UpdateChangeCounter(messageId, ++changeCounter);
+            var sev = isUp ? Severity.Info : Severity.Warning;
+            var text = isUp ? "PLC connected" : "PLC disconnected";
 
-            var auxCounter = _plcCommunicationService.DataAccess.ReadAuxiliaryCounter(messageId);
-            _plcCommunicationService.DataAccess.UpdateAuxCounter(messageId, ++auxCounter);
+            if (_producerConsumer != null && _producerConsumer.IsConnected())
+            {
+                _producerConsumer.SendMessage(
+                    MessageRouting.GeneralDataRoutingKey,
+                    new L2L2_PlcConnectionStatus(isUp, 1));
+            }
+            _log.Log(new L2L2_LogMessage(
+                SendInfo.ServiceName,
+                text, sev, 1));
         }
     }
 }

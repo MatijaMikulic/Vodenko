@@ -28,18 +28,6 @@
         /// </summary>
         Task<IReadOnlyList<DataBlockMetaData>> ReadMetaDataAsync();
 
-        /// <summary>Read the change‐counter (header) for a given DB.</summary>
-        ushort ReadChangeCounter(ushort dataBlockId);
-
-        /// <summary>Read the auxiliary‐counter (footer) for a given DB.</summary>
-        ushort ReadAuxiliaryCounter(ushort dataBlockId);
-
-        /// <summary>Update the change‐counter (header) for a given DB.</summary>
-        void UpdateChangeCounter(ushort dataBlockId, ushort value);
-
-        /// <summary>Update the auxiliary‐counter (footer) for a given DB.</summary>
-        void UpdateAuxiliaryCounter(ushort dataBlockId, ushort value);
-
         // ─── Write back a full POCO to its DB at ContentStart ───────────
         /// <summary>
         /// Write a model instance back to the PLC at the configured ContentStart offset.

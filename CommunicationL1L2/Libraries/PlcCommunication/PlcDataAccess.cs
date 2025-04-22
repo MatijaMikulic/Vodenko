@@ -1,5 +1,6 @@
 ﻿using MessageModel.Model.Messages;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using PlcCommunication.Interfaces;
 using PlcCommunication.Model;
 using S7.Net;
@@ -63,32 +64,9 @@ namespace PlcCommunication
         public IReadOnlyList<DataBlockMetaData> ReadMetaData()
         {
             // build DataItem lists
-            var changes = _cfgs.Select(c => new DataItem
-            {
-                DataType = DataType.DataBlock,
-                DB = c.Id,
-                StartByteAdr = c.ChangeCounterStart,
-                VarType = VarType.Word,
-                Count = 1
-            }).ToList();
-
-            var pointers = _cfgs.Select(c => new DataItem
-            {
-                DataType = DataType.DataBlock,
-                DB = c.Id,
-                StartByteAdr = c.BufferPointerStart,
-                VarType = VarType.Word,
-                Count = 1
-            }).ToList();
-
-            var auxs = _cfgs.Select(c => new DataItem
-            {
-                DataType = DataType.DataBlock,
-                DB = c.Id,
-                StartByteAdr = c.AuxCounterStart,
-                VarType = VarType.Word,
-                Count = 1
-            }).ToList();
+            var changes = BuildDataItem(cfg => cfg.ChangeCounterStart);
+            var pointers = BuildDataItem(cfg => cfg.BufferPointerStart);
+            var auxs = BuildDataItem(cfg => cfg.AuxCounterStart);
 
             // single‐shot reads
             SafeExecute(() => _connectionManager.PlcInstance.ReadMultipleVars(changes));
@@ -116,32 +94,9 @@ namespace PlcCommunication
         /// <inheritdoc />
         public async Task<IReadOnlyList<DataBlockMetaData>> ReadMetaDataAsync()
         {
-            var changes = _cfgs.Select(c => new DataItem
-            {
-                DataType = DataType.DataBlock,
-                DB = c.Id,
-                StartByteAdr = c.ChangeCounterStart,
-                VarType = VarType.Word,
-                Count = 1
-            }).ToList();
-
-            var pointers = _cfgs.Select(c => new DataItem
-            {
-                DataType = DataType.DataBlock,
-                DB = c.Id,
-                StartByteAdr = c.BufferPointerStart,
-                VarType = VarType.Word,
-                Count = 1
-            }).ToList();
-
-            var auxs = _cfgs.Select(c => new DataItem
-            {
-                DataType = DataType.DataBlock,
-                DB = c.Id,
-                StartByteAdr = c.AuxCounterStart,
-                VarType = VarType.Word,
-                Count = 1
-            }).ToList();
+            var changes = BuildDataItem(cfg => cfg.ChangeCounterStart);
+            var pointers = BuildDataItem(cfg => cfg.BufferPointerStart);
+            var auxs = BuildDataItem(cfg => cfg.AuxCounterStart);
 
             // fire off all three reads in parallel
             var taskChange = SafeExecuteAsync(() => _connectionManager.PlcInstance.ReadMultipleVarsAsync(changes));
@@ -171,8 +126,8 @@ namespace PlcCommunication
                 .ToList();
         }
 
-        /// <inheritdoc />
-        public ushort ReadChangeCounter(ushort dbId)
+        /// <summary>Read the change‐counter (header) for a given DB.</summary>
+        private ushort ReadChangeCounter(ushort dbId)
         {
             var cfg = FindConfig(dbId);
             return SafeExecute(() =>
@@ -184,8 +139,8 @@ namespace PlcCommunication
             });
         }
 
-        /// <inheritdoc />
-        public ushort ReadAuxiliaryCounter(ushort dbId)
+        /// <summary>Read the auxiliary‐counter (footer) for a given DB.</summary>
+        private ushort ReadAuxiliaryCounter(ushort dbId)
         {
             var cfg = FindConfig(dbId);
             return SafeExecute(() =>
@@ -197,8 +152,8 @@ namespace PlcCommunication
             });
         }
 
-        /// <inheritdoc />
-        public void UpdateChangeCounter(ushort dbId, ushort value)
+        /// <summary>Update the change‐counter (header) for a given DB.</summary>
+        private void UpdateChangeCounter(ushort dbId, ushort value)
         {
             var cfg = FindConfig(dbId);
 
@@ -209,8 +164,8 @@ namespace PlcCommunication
                     value));
         }
 
-        /// <inheritdoc />
-        public void UpdateAuxiliaryCounter(ushort dbId, ushort value)
+        /// <summary>Update the auxiliary‐counter (footer) for a given DB.</summary>
+        private void UpdateAuxiliaryCounter(ushort dbId, ushort value)
         {
             var cfg = FindConfig(dbId);
             SafeExecute(() =>
@@ -227,12 +182,20 @@ namespace PlcCommunication
             // 1) find the DB config whose ModelType matches this instance
             var cfg = _cfgs.FirstOrDefault(c => c.ModelType == model.GetType());
 
-            // 2) write the class at ContentStart
+            // 2) Update change counter
+            ushort chValue = ReadChangeCounter(cfg.Id);
+            UpdateChangeCounter(cfg.Id, ++chValue);
+              
+            // 3) write the class at ContentStart
             SafeExecute(() =>
                 _connectionManager.PlcInstance.WriteClass(
                     model, 
                     cfg.Id, 
                     cfg.ContentStart));
+
+            // 4) Update aux counter
+            ushort auxValue = ReadAuxiliaryCounter(cfg.Id);
+            UpdateAuxiliaryCounter(cfg.Id, ++auxValue);
         }
 
         /// <summary>
@@ -283,5 +246,15 @@ namespace PlcCommunication
         }
         private int ComputeOffset(DataBlockConfig cfg, ushort ptr)
             => cfg.ContentStart + cfg.Offset * (ptr - 1);
+
+        private List<DataItem> BuildDataItem(Func<DataBlockConfig, int> offsetSelector) =>
+            _cfgs.Select(c => new DataItem
+            {
+                DataType = DataType.DataBlock,
+                DB = c.Id,
+                StartByteAdr = offsetSelector(c),
+                VarType = VarType.Word,
+                Count = 1
+            }).ToList();
     }
 }

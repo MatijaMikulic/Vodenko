@@ -7,7 +7,7 @@ namespace PlcCommunication
     /// <summary>
     /// Provides functionality related to creating a PLC instance and connection.
     /// </summary>
-    public class PlcConnectionManager : IConnectionManager
+    public class PlcConnectionManager : IConnectionManager, IDisposable
     {
         private readonly Plc _plc;
         private volatile bool _lastKnownState;
@@ -72,6 +72,12 @@ namespace PlcCommunication
             {
                 return false;
             }
+        }
+
+        public void Dispose()
+        {
+            _plc.Close();
+            ConnectionStatusChanged = null;
         }
     }
 }

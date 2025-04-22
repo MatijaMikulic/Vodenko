@@ -1,51 +1,66 @@
-﻿using MessageBroker.Common.Producer;
-using MessageManagerService.Constants;
-using MessageModel.Model.DataBlockModel;
-using MessageModel.Model.Messages;
-using MessageModel.Utilities;
-using PlcCommunication;
-using SharedResources.Constants;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using MessageManagerService.Constants;
 namespace MessageManagerService.Services
 {
+    using MessageBroker.Common.Producer;
+    using MessageModel.Model.DataBlockModel;
+    using MessageModel.Model.Messages;
+    using MessageModel.Utilities;
+    using PlcCommunication.Interfaces;
+    using SharedResources.Constants;
+    using TaskLog.Contracts;
+
     /// <summary>
     /// Service responsible for managing messages from PLC and routing them via RabbitMQ.
     /// </summary>
-    public class MMService
+    public class MessageManager
     {
-        private readonly IProducerConsumer _producerConsumer;              // RabbitMQ producer-consumer interface
-        private readonly PlcCommunicationService _plcCommunicationService; // PLC communication service
+        private readonly IProducerConsumer _producerConsumer;            
+        private readonly IConnectionManager _connectionManager;
+        private readonly IPlcDataAccess _dataAccess;
+        private readonly ILogger _log;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MMService"/> class.
+        /// Initializes a new instance of the <see cref="MessageManager"/> class.
         /// </summary>
         /// <param name="producerConsumer">The RabbitMQ producer-consumer interface.</param>
-        /// <param name="plcCommunicationService">The PLC communication service.</param>
-        public MMService(IProducerConsumer producerConsumer, PlcCommunicationService plcCommunicationService)
+        /// <param name="connectionManager">The plc communication interface.</param>
+        /// <param name="plcDataAccess">The data access interface.</param>
+        public MessageManager(
+            IProducerConsumer producerConsumer, 
+            IConnectionManager connectionManager, 
+            IPlcDataAccess plcDataAccess,
+            ILogger log)
         {
-            _producerConsumer = producerConsumer;
-            _plcCommunicationService = plcCommunicationService;
+            this._producerConsumer = producerConsumer;
+            this._connectionManager = connectionManager;
+            this._dataAccess = plcDataAccess;
+            this._log = log;    
         }
 
         /// <summary>
         /// Starts the MMService, establishing communication with the PLC and RabbitMQ.
         /// </summary>
-        public async Task Start()
+        public async Task RunAsync(CancellationToken cancellationToken)
         {
-            // Start PLC communication
-            _plcCommunicationService.Start();
+            // 1) Start PLC communication
+            try
+            {
+                _connectionManager.Open();
+            }
+            catch (Exception ex)
+            {
+                _log.Log(new L2L2_LogMessage(
+                    MessageManagerInfo.ServiceName,
+                    $"Initial PLC open failed: {ex.Message}",
+                    Severity.Warning, 1));
+            }
+            _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
 
-            // Open RabbitMQ communication
+            // 2) Open RabbitMQ communication
             await _producerConsumer.OpenCommunication(MessageManagerInfo.ServiceName);
             _producerConsumer.PurgeQueue(MessageRouting.DataQueue);
 
-            // Send start message to RabbitMQ
+            // 3) Send start message to RabbitMQ
             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                 new L2L2_LogMessage(
                     MessageManagerInfo.ServiceName,
@@ -60,18 +75,17 @@ namespace MessageManagerService.Services
 
                 if (message is L2L2_DataBlockHeader m)
                 {
-                    // Reads content of buffer element (stucture)
-                    var data = _plcCommunicationService.DataAccess.ReadDBContent(m.DB, m.BufferPointer);
-
-                    await HandleDataAsync(data);
+                    var data = _dataAccess.ReadContent(m.DB, m.BufferPointer);
+                    await HandleDataAsync(data, cancellationToken);
                 }
             });
+
         }
 
         /// <summary>
         /// Handles the data read from the PLC by routing it to the appropriate RabbitMQ queue.
         /// </summary>
-        private async Task HandleDataAsync(object data)
+        private async Task HandleDataAsync(object data, CancellationToken cancellationToken)
         {
             switch (data)
             {
@@ -106,7 +120,6 @@ namespace MessageManagerService.Services
             {
                 processData.ProcessData.InletFlow = processData.ProcessData.InletFlow * (1000 / 60.0f);
                 processData.ProcessData.OutletFlow = processData.ProcessData.OutletFlow * (1000 / 60.0f);
-                //Console.WriteLine($"Received new message: {processData.ProcessData.Sample}, {processData.ProcessData.WaterLevelTank2}, {processData.ProcessData.WaterLevelTank1}, {processData.ProcessData.IsPumpActive}, {processData.ProcessData.TargetWaterLevelTank2}: \t [{processData.ProcessData.GetDateTime().ToString("yyyy-MM-dd HH:mm:ss.fff")}] ");
                
                 _producerConsumer.SendMessage(routingKey, processData);
             }
@@ -116,26 +129,14 @@ namespace MessageManagerService.Services
             }
             else if (message is L2L2_ControllerParams controllerParams)
             {
-                //Console.WriteLine($"{controllerParams.ControllerParams.Proportional}, " +
-                //    $"{controllerParams.ControllerParams.Integral}," +
-                //    $"{controllerParams.ControllerParams.Derivative}, " +
-                //    $"{controllerParams.ControllerParams.Method}, {controllerParams.ControllerParams.K1}" +
-                //    $"{controllerParams.ControllerParams.K2}, {controllerParams.ControllerParams.K3}, {controllerParams.ControllerParams.K4}");
                 _producerConsumer.SendMessage(routingKey, controllerParams);
             }
             else if (message is L2L2_ControlMode controlMode)
             {
-                //Console.WriteLine($"{controlMode.ControlMode.ControlMode}");
                 _producerConsumer.SendMessage(routingKey, controlMode);
             }
             else if (message is L2L2_SystemStatus systemStatus)
             {
-                //Console.WriteLine
-                //   ($"{systemStatus.SystemStatus.IsProportionalValveActive}, " +
-                //    $"{systemStatus.SystemStatus.IsPumpActive}, " +
-                //    $"{systemStatus.SystemStatus.IsLowLevelSwitchActive}, " +
-                //    $"{systemStatus.SystemStatus.IsTank1CrtiticalLevel}," +
-                //    $" {systemStatus.SystemStatus.IsTank2CrtiticalLevel}");
                 _producerConsumer.SendMessage(routingKey, systemStatus);
             }
         }
@@ -152,8 +153,23 @@ namespace MessageManagerService.Services
                 Severity.Warning, 1));
 
             // Dispose services
-            _plcCommunicationService.Dispose();
             _producerConsumer.Dispose();
+        }
+
+        private void OnPlcConnectionChanged(object? sender, bool isUp)
+        {
+            var sev = isUp ? Severity.Info : Severity.Warning;
+            var text = isUp ? "PLC connected" : "PLC disconnected";
+
+            if (_producerConsumer != null && _producerConsumer.IsConnected())
+            {
+                _producerConsumer.SendMessage(
+                    MessageRouting.GeneralDataRoutingKey,
+                    new L2L2_PlcConnectionStatus(isUp, 1));
+            }
+            _log.Log(new L2L2_LogMessage(
+                MessageManagerInfo.ServiceName,
+                text, sev, 1));
         }
     }
 }
