@@ -1,0 +1,41 @@
+# ── All build and IDE artifacts ────────────────────────────────
+# Ignore any bin/ or obj/ folder anywhere
+**/bin/**
+**/obj/**
+
+# VS workspace, caches, and editor tooling
+**/.vs/**
+**/*.vsidx
+**/*.dtbcache*
+**/*.futdcache*
+**/*.dgspec.json
+**/GeneratedMSBuildEditorConfig.editorconfig
+**/*.backup.json
+**/*.AssemblyAttributes.cs
+
+# NuGet/MSBuild generated files
+**/*.nuget.g.props
+**/*.nuget.g.targets
+**/project.assets.json
+
+# User‑specific settings
+*.suo
+*.user
+*.userosscache
+*.VC.db
+DocumentLayout*.json
+
+# ── IDE folders ────────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── Logs, test results ─────────────────────────────────────────
+*.log
+TestResults/
+*.trx
+
+# ── Misc ───────────────────────────────────────────────────────
+node_modules/
+*.vsix
+.env
+docker-compose.override.yml

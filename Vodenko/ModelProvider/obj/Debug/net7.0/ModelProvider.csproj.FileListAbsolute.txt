@@ -9,3 +9,15 @@ C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.dll
 C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\refint\ModelProvider.dll
 C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.pdb
 C:\Diplomski\Vodenko\ModelProvider\obj\Debug\net7.0\ref\ModelProvider.dll
+C:\Dev\Vodenko\Vodenko\ModelProvider\bin\Debug\net7.0\ModelProvider.deps.json
+C:\Dev\Vodenko\Vodenko\ModelProvider\bin\Debug\net7.0\ModelProvider.dll
+C:\Dev\Vodenko\Vodenko\ModelProvider\bin\Debug\net7.0\ModelProvider.pdb
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.GeneratedMSBuildEditorConfig.editorconfig
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.AssemblyInfoInputs.cache
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.AssemblyInfo.cs
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.csproj.CoreCompileInputs.cache
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.sourcelink.json
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.dll
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\refint\ModelProvider.dll
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ModelProvider.pdb
+C:\Dev\Vodenko\Vodenko\ModelProvider\obj\Debug\net7.0\ref\ModelProvider.dll
