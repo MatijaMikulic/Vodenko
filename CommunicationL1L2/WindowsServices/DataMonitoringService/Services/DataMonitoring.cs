@@ -1,10 +1,10 @@
 ﻿using DataMonitoringService.Constants;
-using SharedResources.Constants;
 using MessageBroker.Common.Producer;
 using MessageModel.Model.Messages;
 using TaskLog.Contracts;
 using PlcCommunication.Model;
 using PlcCommunication.Interfaces;
+using SharedResources.Constants;
 
 namespace DataMonitoringService.Services
 {
