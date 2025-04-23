@@ -788,12 +788,18 @@
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
-          "DataAccess.dll": {}
+          "DataAccess.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       },
       "Entities/1.0.0": {
         "runtime": {
-          "Entities.dll": {}
+          "Entities.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       },
       "MessageBroker.Common/1.0.0": {
@@ -803,7 +809,10 @@
           "RabbitMQ.Client": "6.8.1"
         },
         "runtime": {
-          "MessageBroker.Common.dll": {}
+          "MessageBroker.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       },
       "MessageModel/1.0.0": {
@@ -813,12 +822,18 @@
           "S7netplus": "0.20.0"
         },
         "runtime": {
-          "MessageModel.dll": {}
+          "MessageModel.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       },
       "ModelProvider/1.0.0": {
         "runtime": {
-          "ModelProvider.dll": {}
+          "ModelProvider.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }

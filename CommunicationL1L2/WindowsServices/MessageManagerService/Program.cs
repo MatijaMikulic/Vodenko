@@ -1,65 +1,61 @@
 ﻿using MessageBroker.Common;
 using MessageBroker.Common.Configurations;
 using MessageBroker.Common.Producer;
-using MessageManagerService.Constants;
 using MessageManagerService.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PlcCommunication;
 using SharedResources;
-using Topshelf;
-using Unity;
+using TaskLog.Contracts;
 
 namespace MessageManagerService
 {
     internal class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            IConfiguration configuration = ConfigurationMng.GetConfiguration();
-
-            var container = new UnityContainer();
-            var rabbitMqConfig = BindOptions<RabbitMqConfiguration>(configuration, "RabbitMqConfiguration");
-            var plcConfig = BindOptions<PlcConfiguration>(configuration, "PlcConfiguration");
-            var sendConfig = BindOptions<RabbitMqModelSettings>(configuration, "RabbitMqModelSenderConfig");
-
-            container.RegisterInstance<IOptions<PlcConfiguration>>(Options.Create(plcConfig));
-            container.RegisterInstance<IOptions<RabbitMqConfiguration>>(Options.Create(rabbitMqConfig));
-            container.RegisterInstance<IOptions<RabbitMqModelSettings>>(Options.Create(sendConfig));
-
-            container.RegisterType<PlcCommunicationService, PlcCommunicationService>();
-            container.RegisterType<IRabbitMqService, RabbitMqService>();
-            container.RegisterType<IProducerConsumer, RabbitMqProducerConsumer>();
-            container.RegisterInstance<MMService>(
-                new MMService(container.Resolve<IProducerConsumer>(),container.Resolve<PlcCommunicationService>()));
-
-            var exitCode = HostFactory.Run(x =>
-            {
-
-                x.Service<MMService>(s =>
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(cfg => ConfigurationMng.GetConfiguration())
+                .ConfigureServices((ctx, services) =>
                 {
-                    s.ConstructUsing(service => container.Resolve<MMService>());
-                    s.WhenStarted(async service => await service.Start());
-                    s.WhenStopped(service => service.Stop());
-                });
+                    IConfiguration configuration = ctx.Configuration;
 
-                x.RunAsLocalSystem();
-                x.SetServiceName(MessageManagerInfo.ServiceName);
-                x.SetDisplayName(MessageManagerInfo.DisplayName);
-                x.SetDescription(MessageManagerInfo.Description);
-                x.StartAutomatically();
+                    // 1)  PLC‑communication library
+                    services.AddPlcCommunication(
+                        plc => configuration
+                            .GetSection("PlcConfiguration")
+                            .Bind(plc),
+                        builder =>
+                        {
+                            configuration
+                                .GetSection("PlcLibrarySettings")
+                                .Bind(builder);
 
-            });
+                            //builder.DisableHeartbeat();
+                        }
+                    );
 
-            int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode());
-            Environment.ExitCode = exitCodeValue;
-        }
-        private static T BindOptions<T>(IConfiguration configuration, string sectionName) where T : class, new()
-        {
-            var section = configuration.GetSection(sectionName);
-            var options = new T();
-            configuration.Bind(sectionName, options);
-            return options;
+                    // 2)  RabbitMQ options + abstractions
+                    services.Configure<RabbitMqConfiguration>(
+                        configuration.GetSection("RabbitMqConfiguration"));
+                    services.Configure<RabbitMqModelSettings>(
+                        configuration.GetSection("RabbitMqModelSenderConfig"));
+
+                    services.AddSingleton<IRabbitMqService, RabbitMqService>();
+                    services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
+
+                    // 3)  Logging
+                    services.AddSingleton<ILogger, ConsoleLogger>();
+                    services.AddSingleton<MessageManager>();
+                    services.AddHostedService<MMHostedService>();
+                })
+                .UseWindowsService()   // no‑op if not running as service
+                .UseSystemd()          // no‑op on Windows / when not under systemd
+                .UseConsoleLifetime()  // falls back to CTRL‑C friendly console when not a service
+                .Build();
+
+            await host.RunAsync();
         }
     }
 }

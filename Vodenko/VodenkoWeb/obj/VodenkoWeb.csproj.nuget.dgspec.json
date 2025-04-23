@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Diplomski\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj": {}
+    "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj": {}
   },
   "projects": {
-    "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj": {
+    "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj",
+        "projectUniqueName": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj",
         "projectName": "MessageBroker.Common",
-        "projectPath": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj",
+        "projectPath": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj",
         "packagesPath": "C:\\Users\\matij\\.nuget\\packages\\",
-        "outputPath": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\obj\\",
+        "outputPath": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,8 +33,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj": {
-                "projectPath": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj"
+              "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj": {
+                "projectPath": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj"
               }
             }
           }
@@ -48,7 +48,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net7.0": {
@@ -74,23 +75,37 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj": {
+    "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj",
+        "projectUniqueName": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj",
         "projectName": "MessageModel",
-        "projectPath": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj",
+        "projectPath": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageModel\\MessageModel.csproj",
         "packagesPath": "C:\\Users\\matij\\.nuget\\packages\\",
-        "outputPath": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageModel\\obj\\",
+        "outputPath": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageModel\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -123,7 +138,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net7.0": {
@@ -153,23 +169,37 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\Entities.csproj": {
+    "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\Entities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\Entities.csproj",
+        "projectUniqueName": "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\Entities.csproj",
         "projectName": "Entities",
-        "projectPath": "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\Entities.csproj",
+        "projectPath": "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\Entities.csproj",
         "packagesPath": "C:\\Users\\matij\\.nuget\\packages\\",
-        "outputPath": "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\obj\\",
+        "outputPath": "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -202,7 +232,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net7.0": {
@@ -218,23 +249,37 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Diplomski\\Vodenko\\DataAccess\\DataAccess.csproj": {
+    "C:\\Dev\\Vodenko\\Vodenko\\DataAccess\\DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Diplomski\\Vodenko\\DataAccess\\DataAccess.csproj",
+        "projectUniqueName": "C:\\Dev\\Vodenko\\Vodenko\\DataAccess\\DataAccess.csproj",
         "projectName": "DataAccess",
-        "projectPath": "C:\\Diplomski\\Vodenko\\DataAccess\\DataAccess.csproj",
+        "projectPath": "C:\\Dev\\Vodenko\\Vodenko\\DataAccess\\DataAccess.csproj",
         "packagesPath": "C:\\Users\\matij\\.nuget\\packages\\",
-        "outputPath": "C:\\Diplomski\\Vodenko\\DataAccess\\obj\\",
+        "outputPath": "C:\\Dev\\Vodenko\\Vodenko\\DataAccess\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -256,8 +301,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\Entities.csproj": {
-                "projectPath": "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\Entities.csproj"
+              "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\Entities.csproj": {
+                "projectPath": "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\Entities.csproj"
               }
             }
           }
@@ -271,7 +316,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net7.0": {
@@ -307,23 +353,37 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Diplomski\\Vodenko\\ModelProvider\\ModelProvider.csproj": {
+    "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\ModelProvider.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Diplomski\\Vodenko\\ModelProvider\\ModelProvider.csproj",
+        "projectUniqueName": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\ModelProvider.csproj",
         "projectName": "ModelProvider",
-        "projectPath": "C:\\Diplomski\\Vodenko\\ModelProvider\\ModelProvider.csproj",
+        "projectPath": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\ModelProvider.csproj",
         "packagesPath": "C:\\Users\\matij\\.nuget\\packages\\",
-        "outputPath": "C:\\Diplomski\\Vodenko\\ModelProvider\\obj\\",
+        "outputPath": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -356,7 +416,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net7.0": {
@@ -372,23 +433,37 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Diplomski\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj": {
+    "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj",
+        "projectUniqueName": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj",
         "projectName": "VodenkoWeb",
-        "projectPath": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj",
+        "projectPath": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\VodenkoWeb.csproj",
         "packagesPath": "C:\\Users\\matij\\.nuget\\packages\\",
-        "outputPath": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\obj\\",
+        "outputPath": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -410,17 +485,17 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj": {
-                "projectPath": "C:\\Diplomski\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj"
+              "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj": {
+                "projectPath": "C:\\Dev\\Vodenko\\CommunicationL1L2\\Libraries\\MessageBroker.Common\\MessageBroker.Common.csproj"
               },
-              "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\Entities.csproj": {
-                "projectPath": "C:\\Diplomski\\Shared\\SharedLibrary\\Entities\\Entities.csproj"
+              "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\Entities.csproj": {
+                "projectPath": "C:\\Dev\\Vodenko\\Shared\\SharedLibrary\\Entities\\Entities.csproj"
               },
-              "C:\\Diplomski\\Vodenko\\DataAccess\\DataAccess.csproj": {
-                "projectPath": "C:\\Diplomski\\Vodenko\\DataAccess\\DataAccess.csproj"
+              "C:\\Dev\\Vodenko\\Vodenko\\DataAccess\\DataAccess.csproj": {
+                "projectPath": "C:\\Dev\\Vodenko\\Vodenko\\DataAccess\\DataAccess.csproj"
               },
-              "C:\\Diplomski\\Vodenko\\ModelProvider\\ModelProvider.csproj": {
-                "projectPath": "C:\\Diplomski\\Vodenko\\ModelProvider\\ModelProvider.csproj"
+              "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\ModelProvider.csproj": {
+                "projectPath": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\ModelProvider.csproj"
               }
             }
           }
@@ -434,7 +509,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net7.0": {
@@ -474,6 +550,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[7.0.20, 7.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -482,7 +576,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }
