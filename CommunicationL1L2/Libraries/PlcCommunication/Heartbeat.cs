@@ -1,68 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Hosting;
+using PlcCommunication.Interfaces;
 
 namespace PlcCommunication
 {
     ///<summary>
-    /// Represents a heartbeat mechanism connectivity checks and automatic reconnection.
+    /// Periodically checks the PLC connection and re‑opens if needed.
+    /// Fires ConnectionStatusChanged via IConnectionManager.RefreshState().
     ///</summary>
-    public class Heartbeat
+    public class Heartbeat : IHeartbeat, IDisposable
     {
-        private static readonly TimeSpan DefaultInterval = TimeSpan.FromSeconds(2);
-        private System.Threading.Timer? _timer;
-        private TimeSpan _interval = DefaultInterval;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly IConnectionManager _conn;
+        private readonly Timer _timer;
+        private readonly TimeSpan _interval;
 
-        ///<summary>
-        /// Initializes a new instance of the Heartbeat class with the provided PLC communication service.
-        ///</summary>
-        ///<param name="plcCommunicationService">The PLC communication service.</param>
-        public Heartbeat()
+        public Heartbeat(IConnectionManager c, TimeSpan interval)
         {
-            _cancellationTokenSource = new CancellationTokenSource();
+            _conn = c;
+            _interval = interval;
+            _timer = new Timer(_ => Tick(), null, Timeout.Infinite, Timeout.Infinite);
         }
+        public void Start() => _timer.Change(_interval, _interval);
+        public void Stop() => _timer.Change(Timeout.Infinite, Timeout.Infinite);
 
-        ///<summary>
-        /// Starts the heartbeat mechanism.
-        ///</summary>
-        public void Start(Func<bool> checkConnection, Action attemptReconnection)
+        private void Tick()
         {
-            _timer = new Timer(state => SendHeartbeat(checkConnection, attemptReconnection), null, _interval, Timeout.InfiniteTimeSpan);
+            if (!_conn.Ping())
+                _conn.Open();
+            _conn.RefreshState();
         }
+        public void Dispose() => _timer.Dispose();
+    }
 
-        ///<summary>
-        /// Sends a heartbeat to the PLC.
-        ///</summary>
-        ///<param name="state">An object containing application-specific information.</param>
-        private void SendHeartbeat(Func<bool> checkConnection, Action attemptReconnection)
-        {
-            if (_cancellationTokenSource.IsCancellationRequested)
-            {
-                return;
-            }
-
-            bool isConnected = checkConnection();
-
-            if (!isConnected)
-            {
-                attemptReconnection();
-            }
-
-            _timer?.Change(_interval, Timeout.InfiniteTimeSpan);
-        }
-
-        ///<summary>
-        /// Stops the heartbeat mechanism.
-        ///</summary>
-        public void Stop() 
-        {
-            _cancellationTokenSource.Cancel();
-            _timer?.Dispose();
-        }
+    public class HeartbeatHostedService : IHostedService
+    {
+        private readonly IHeartbeat _hb;
+        public HeartbeatHostedService(IHeartbeat hb) => _hb = hb;
+        public Task StartAsync(CancellationToken _) { _hb.Start(); return Task.CompletedTask; }
+        public Task StopAsync(CancellationToken _) { _hb.Stop(); return Task.CompletedTask; }
     }
 }

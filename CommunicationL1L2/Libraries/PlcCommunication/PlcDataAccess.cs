@@ -1,313 +1,260 @@
-﻿using MessageModel.Model.DataBlockModel;
-using PlcCommunication.Constants;
+﻿using MessageModel.Model.Messages;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
+using PlcCommunication.Interfaces;
 using PlcCommunication.Model;
 using S7.Net;
 using S7.Net.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
+using System.Net.Sockets;
 namespace PlcCommunication
 {
     /// <summary>
     /// Provides access and operations for reading and writing data to PLC Data blocks.
     /// </summary>
-    public class PlcDataAccess
+    public class PlcDataAccess : IPlcDataAccess
     {
-        private readonly Plc _plc;
-
-        private readonly List<DataItem> _changeCounters;
-        private readonly List<DataItem> _auxCounters;
-        private readonly List<DataItem> _bufferPointers;
+        private readonly IList<DataBlockConfig> _cfgs;
+        private readonly IConnectionManager _connectionManager;
 
         /// <summary>
         /// Initializes a new instance of the PlcDataAccess class.
         /// </summary>
-        /// <param name="plc">The PLC object used for communication.</param>
-        public PlcDataAccess(Plc plc)
+        /// <param name="connectionManager"></param>
+        /// <param name="options"></param>
+        public PlcDataAccess(
+            IConnectionManager connectionManager,
+            IOptions<PlcCommunicationOptions> options)
         {
-            _plc = plc;
-            _changeCounters = InitializeDataItems(DataBlockInfo.L1L2_DBIds.ChangeCounterStartByte);
-            _auxCounters    = InitializeDataItems(DataBlockInfo.L1L2_DBIds.AuxCounterStartByte);
-            _bufferPointers = InitializeDataItems(DataBlockInfo.L1L2_DBIds.BufferPointerStartByte);
+            this._cfgs = options.Value.DataBlocks;
+            this._connectionManager = connectionManager;
         }
-        private List<DataItem> InitializeDataItems(Dictionary<int, int> startBytes)
+
+        // ─── GENERIC ───────────────────────────────────────────────
+        /// <inheritdoc />
+        public TModel ReadContent<TModel>(ushort dbId, ushort ptr)
+             where TModel : new()
         {
-            return startBytes.Select(pair => new DataItem
+            var cfg = _cfgs.FirstOrDefault(c => c.Id == dbId);
+            return SafeExecute(() =>
             {
-                Count = 1,
-                DataType = DataType.DataBlock,
-                DB = pair.Key,
-                StartByteAdr = pair.Value,
-                VarType = VarType.Word
-            }).ToList();
+                int offset = ComputeOffset(cfg, ptr);
+                var inst = new TModel();
+                _connectionManager.PlcInstance.ReadClass(inst, dbId, offset);
+                return inst;
+            });
+        }
+        // ─── DYNAMIC ────────────────────────────────────────────────
+        /// <inheritdoc />
+        public object ReadContent(ushort dbId, ushort ptr)
+        {
+            var cfg = _cfgs.FirstOrDefault(c => c.Id == dbId);
+            return SafeExecute(() =>
+            {
+                int offset = ComputeOffset(cfg, ptr);
+                var inst = Activator.CreateInstance(cfg.ModelType)
+                           ?? throw new InvalidOperationException(
+                                $"Could not create instance of {cfg.ModelType.Name}");
+                _connectionManager.PlcInstance.ReadClass(inst, dbId, offset);
+                return inst;
+            });
         }
 
-        /// <summary>
-        /// Reads data from the PLC based on specified parameters.
-        /// </summary>
-        /// <param name="dataType">The data type to be read.</param>
-        /// <param name="db">The data block number.</param>
-        /// <param name="startByte">The starting byte address.</param>
-        /// <param name="type">The variable type.</param>
-        /// <param name="varCount">The number of variables to read.</param>
-        /// <returns>The read data from the PLC.</returns>
-        public object? Read(DataType dataType, int db, int startByte, VarType type, int varCount)
+        // ─── METADATA ───────────────────────────────────────────────
+        /// <inheritdoc />
+        public IReadOnlyList<DataBlockMetaData> ReadMetaData()
         {
-            return _plc.Read(dataType, db, startByte, type, varCount);
-        }
-        /// <summary>
-        /// Reads and processes multiple data items from the PLC to create a list of DataBlockMetaData.
-        /// </summary>
-        /// <returns>A list of DataBlockMetaData objects containing processed PLC data.</returns>
-        public List<DataBlockMetaData> ReadDBMetaData()
-        {
-            List<DataBlockMetaData> result = new List<DataBlockMetaData>();
+            // build DataItem lists
+            var changes = BuildDataItem(cfg => cfg.ChangeCounterStart);
+            var pointers = BuildDataItem(cfg => cfg.BufferPointerStart);
+            var auxs = BuildDataItem(cfg => cfg.AuxCounterStart);
 
-            _plc.ReadMultipleVars(_changeCounters);
-            _plc.ReadMultipleVars(_bufferPointers);
-            _plc.ReadMultipleVars(_auxCounters);
+            // single‐shot reads
+            SafeExecute(() => _connectionManager.PlcInstance.ReadMultipleVars(changes));
+            SafeExecute(() => _connectionManager.PlcInstance.ReadMultipleVars(pointers));
+            SafeExecute(() => _connectionManager.PlcInstance.ReadMultipleVars(auxs));
 
-            result = _changeCounters.Zip(_auxCounters, _bufferPointers)
-                       .Select(tuple => new DataBlockMetaData(
-                           (ushort)tuple.First.Value,
-                           (ushort)tuple.Second.Value,
-                           (ushort)tuple.Third.Value,
-                           (ushort)tuple.Item1.DB
-                       ))
-                       .ToList();
-
-            return result;
-        }
-
-        /// <summary>
-        /// Reads and processes multiple data items asynchronously from the PLC to create a list of DataBlockMetaData.
-        /// </summary>
-        /// <returns>A list of DataBlockMetaData objects containing processed PLC data.</returns>
-        public async Task<List<DataBlockMetaData>> ReadDBMetaDataAsync()
-        {
-            List<DataBlockMetaData> result = new List<DataBlockMetaData>();
-
-            Task<List<DataItem>> changeCountersTask = _plc.ReadMultipleVarsAsync(_changeCounters);
-            Task<List<DataItem>> bufferPointersTask = _plc.ReadMultipleVarsAsync(_bufferPointers);
-            Task<List<DataItem>> auxCountersTask    = _plc.ReadMultipleVarsAsync(_auxCounters);
-
-            await Task.WhenAll(changeCountersTask, bufferPointersTask, auxCountersTask);
-
-            List<DataItem> changeCounters = changeCountersTask.Result;
-            List<DataItem> bufferPointers = bufferPointersTask.Result;
-            List<DataItem> auxCounters    = auxCountersTask.Result;
-
-            var res = changeCounters
-                .Zip(auxCounters, (changeCounter, auxCounter) => new { changeCounter, auxCounter })
-                .Zip(bufferPointers, (combined, bufferPointer) => new DataBlockMetaData(
-                    (ushort)combined.changeCounter.Value,
-                    (ushort)combined.auxCounter.Value,
-                    (ushort)bufferPointer.Value,
-                    (ushort)combined.changeCounter.DB))
+            // zip into metadata
+            return changes
+                .Zip(pointers, (ch, pt) => (ch, pt))
+                .Zip(auxs, (cp, au) => (cp.ch, cp.pt, au))
+                .Select(tuple => {
+                    ushort dbId = (ushort)tuple.ch.DB;
+                    var cfg = _cfgs.Single(c => c.Id == dbId);
+                    return new DataBlockMetaData(
+                        changeCounter: (ushort)tuple.ch.Value!,
+                        auxiliaryCounter: (ushort)tuple.au.Value!,
+                        bufferPointer: (ushort)tuple.pt.Value!,
+                        dB: dbId,
+                        bufferSize: cfg.Size
+                    );
+                })
                 .ToList();
+        }
 
-            return res;
+        /// <inheritdoc />
+        public async Task<IReadOnlyList<DataBlockMetaData>> ReadMetaDataAsync()
+        {
+            var changes = BuildDataItem(cfg => cfg.ChangeCounterStart);
+            var pointers = BuildDataItem(cfg => cfg.BufferPointerStart);
+            var auxs = BuildDataItem(cfg => cfg.AuxCounterStart);
+
+            // fire off all three reads in parallel
+            var taskChange = SafeExecuteAsync(() => _connectionManager.PlcInstance.ReadMultipleVarsAsync(changes));
+            var taskPointer = SafeExecuteAsync(() => _connectionManager.PlcInstance.ReadMultipleVarsAsync(pointers));
+            var taskAux = SafeExecuteAsync(() => _connectionManager.PlcInstance.ReadMultipleVarsAsync(auxs));
+
+            await Task.WhenAll(taskChange, taskPointer, taskAux).ConfigureAwait(false);
+
+            var ch = await taskChange;
+            var pt = await taskPointer;
+            var au = await taskAux;
+
+            return ch
+                .Zip(pt, (c, p) => (c, p))
+                .Zip(au, (cp, a) => (cp.c, cp.p, a))
+                .Select(tuple => {
+                    ushort dbId = (ushort)tuple.c.DB;
+                    var cfg = _cfgs.Single(c => c.Id == dbId);
+                    return new DataBlockMetaData(
+                        changeCounter: (ushort)tuple.c.Value,
+                        auxiliaryCounter: (ushort)tuple.a.Value,
+                        bufferPointer: (ushort)tuple.p.Value,
+                        dB: dbId,
+                        bufferSize: cfg.Size
+                    );
+                })
+                .ToList();
+        }
+
+        /// <summary>Read the change‐counter (header) for a given DB.</summary>
+        private ushort ReadChangeCounter(ushort dbId)
+        {
+            var cfg = FindConfig(dbId);
+            return SafeExecute(() =>
+            {
+                var raw = _connectionManager.PlcInstance.Read(DataType.DataBlock, dbId,
+                                     cfg.ChangeCounterStart, VarType.Word, 1);
+                if (raw is null) throw new InvalidOperationException();
+                return Convert.ToUInt16(raw);
+            });
+        }
+
+        /// <summary>Read the auxiliary‐counter (footer) for a given DB.</summary>
+        private ushort ReadAuxiliaryCounter(ushort dbId)
+        {
+            var cfg = FindConfig(dbId);
+            return SafeExecute(() =>
+            {
+                var raw = _connectionManager.PlcInstance.Read(DataType.DataBlock, dbId,
+                                     cfg.AuxCounterStart, VarType.Word, 1);
+                if (raw is null) throw new InvalidOperationException();
+                return Convert.ToUInt16(raw);
+            });
+        }
+
+        /// <summary>Update the change‐counter (header) for a given DB.</summary>
+        private void UpdateChangeCounter(ushort dbId, ushort value)
+        {
+            var cfg = FindConfig(dbId);
+
+            SafeExecute(() =>
+                _connectionManager.PlcInstance.Write(DataType.DataBlock,
+                    dbId,
+                    cfg.ChangeCounterStart,
+                    value));
+        }
+
+        /// <summary>Update the auxiliary‐counter (footer) for a given DB.</summary>
+        private void UpdateAuxiliaryCounter(ushort dbId, ushort value)
+        {
+            var cfg = FindConfig(dbId);
+            SafeExecute(() =>
+                _connectionManager.PlcInstance.Write(
+                    DataType.DataBlock,
+                    dbId,
+                    cfg.AuxCounterStart,
+                    value));
+        }
+
+        /// <inheritdoc />
+        public void WriteContent(object model)
+        {
+            // 1) find the DB config whose ModelType matches this instance
+            var cfg = _cfgs.FirstOrDefault(c => c.ModelType == model.GetType());
+
+            // 2) Update change counter
+            ushort chValue = ReadChangeCounter(cfg.Id);
+            UpdateChangeCounter(cfg.Id, ++chValue);
+              
+            // 3) write the class at ContentStart
+            SafeExecute(() =>
+                _connectionManager.PlcInstance.WriteClass(
+                    model, 
+                    cfg.Id, 
+                    cfg.ContentStart));
+
+            // 4) Update aux counter
+            ushort auxValue = ReadAuxiliaryCounter(cfg.Id);
+            UpdateAuxiliaryCounter(cfg.Id, ++auxValue);
         }
 
         /// <summary>
-        /// Reads buffer element from Data block
+        /// Helper to look up the DataBlockConfig or throw if missing.
         /// </summary>
-        /// <returns>A PlcData object containing buffer element.</returns>
-        public PlcData ReadDBContent(ushort dataBlock, ushort bufferPointer)
+        private DataBlockConfig FindConfig(ushort dbId)
+            => _cfgs.SingleOrDefault(c => c.Id == dbId)
+               ?? throw new ArgumentException($"No DataBlockConfig for DB {dbId}");
+
+        private T SafeExecute<T>(Func<T> action)
         {
-            int offset;
-            switch (dataBlock)
+            try
             {
-
-                case DataBlockInfo.L1L2_DBIds.ProcessData:
-                    PlcData process_Data = new L1L2_ProcessData();
-                    offset = GetOffset(dataBlock, bufferPointer);
-                    _plc.ReadClass(process_Data, dataBlock, offset);
-                    return process_Data;
-                case DataBlockInfo.L1L2_DBIds.Alarms:
-                    PlcData alarms = new L1L2_Alarms();
-                    offset = GetOffset(dataBlock, bufferPointer);
-                    _plc.ReadClass(alarms, dataBlock, offset);
-                    return alarms;
-                case DataBlockInfo.L1L2_DBIds.ControllerParams:
-                    PlcData cntparams = new L1L2_ControllerParams();
-                    offset = GetOffset(dataBlock, bufferPointer);
-                    _plc.ReadClass(cntparams, dataBlock, offset);
-                    return cntparams;
-                case DataBlockInfo.L1L2_DBIds.SystemStatus:
-                    PlcData status = new L1L2_SystemStatus();
-                    offset = GetOffset(dataBlock, bufferPointer);
-                    _plc.ReadClass(status, dataBlock, offset);
-                    return status;
-                case DataBlockInfo.L1L2_DBIds.ControlMode:
-                    PlcData cntMode = new L1L2_ControlMode();
-                    offset = GetOffset(dataBlock, bufferPointer);
-                    _plc.ReadClass(cntMode, dataBlock, offset);
-                    return cntMode;
-                default:
-                    throw new ArgumentException("Unknown data block type.");
-            }          
-        }
-
-
-        /// <summary>
-        /// Calculates offset for element inside buffer
-        /// </summary>
-        /// <returns>An offset.</returns>
-        private int GetOffset(ushort dataBlock, ushort bufferPointer)
-        {
-            switch (dataBlock)
+                return action();
+            }
+            catch (Exception ex) when (
+                   ex is PlcException or SocketException)
             {
-                case DataBlockInfo.L1L2_DBIds.ProcessData:
-                    return DataBlockInfo.DataOffset + DataBlockInfo.BufferOffsets.ProcessData * (bufferPointer - 1); // -1 in case bufferPointer starts at 1.
-                case DataBlockInfo.L1L2_DBIds.Alarms:
-                    return DataBlockInfo.DataOffset + DataBlockInfo.BufferOffsets.Alarms * (bufferPointer - 1); // -1 in case bufferPointer starts at 1.
-                case DataBlockInfo.L1L2_DBIds.ControllerParams:
-                    return DataBlockInfo.DataOffset + DataBlockInfo.BufferOffsets.ControllerParams * (bufferPointer - 1); // -1 in case bufferPointer starts at 1.
-                case DataBlockInfo.L1L2_DBIds.SystemStatus:
-                    return DataBlockInfo.DataOffset + DataBlockInfo.BufferOffsets.SystemStatus * (bufferPointer - 1); // -1 in case bufferPointer starts at 1.
-                case DataBlockInfo.L1L2_DBIds.ControlMode:
-                    return DataBlockInfo.DataOffset + DataBlockInfo.BufferOffsets.ControlMode * (bufferPointer - 1); // -1 in case bufferPointer starts at 1.
-                default:
-                    throw new ArgumentException("Unknown data block type.");
+                _connectionManager?.RefreshState();   
+                throw;                               
             }
         }
 
-        /// <summary>
-        /// Gets the default value for a specified variable type.
-        /// </summary>
-        public object GetDefaultValueForType(VarType type)
+        private void SafeExecute(Action action)
         {
-            switch (type)
+            try
             {
-                case VarType.Bit:
-                    return false;
-                case VarType.Byte:
-                case VarType.Word:
-                case VarType.DInt:
-                    return 0;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), $"Unsupported variable type: {type}");
+                action();
+            }
+            catch (Exception ex) when (ex is PlcException or SocketException)
+            {
+                _connectionManager.RefreshState();      
+                throw;
             }
         }
 
-        public ushort ReadChangeCounter(int DB)
+        private async Task<T> SafeExecuteAsync<T>(Func<Task<T>> fn)
         {
-            ushort result = (ushort)_plc.Read(DataType.DataBlock, DB, 0, VarType.Word,1);
-            return result;
-        }
-
-        public ushort ReadAuxiliaryCounter(int DB)
-        {
-            ushort result = 0;
-            switch (DB)
+            try
             {
-                case DataBlockInfo.L2L1_DBIds.SetpointDB:
-                    result = (ushort)_plc.Read(DataType.DataBlock, DB, 16, VarType.Word, 1); break;
-
-                case DataBlockInfo.L2L1_DBIds.CntParamsDB:
-                    result = (ushort)_plc.Read(DataType.DataBlock, DB, 32, VarType.Word, 1); break;
-
-                case DataBlockInfo.L2L1_DBIds.RequestCntDB:
-                    result = (ushort)_plc.Read(DataType.DataBlock, DB, 4, VarType.Word, 1); break;
+                return await fn().ConfigureAwait(false);
             }
-            return result;
-        }
-
-       public void UpdateChangeCounter(int DB,ushort result)
-        {
-            switch (DB)
+            catch (Exception ex) when (ex is PlcException or SocketException)
             {
-                case DataBlockInfo.L2L1_DBIds.SetpointDB:
-                    _plc.Write("DB255.DBD0", result); break;
-
-                case DataBlockInfo.L2L1_DBIds.CntParamsDB:
-                    _plc.Write("DB280.DBD0", result); break;
-
-                case DataBlockInfo.L2L1_DBIds.RequestCntDB:
-                    _plc.Write("DB270.DBD0", result); break;
+                _connectionManager.RefreshState();
+                throw;
             }
         }
+        private int ComputeOffset(DataBlockConfig cfg, ushort ptr)
+            => cfg.ContentStart + cfg.Offset * (ptr - 1);
 
-        public void UpdateAuxCounter(int DB, ushort result)
-        {
-            switch (DB)
+        private List<DataItem> BuildDataItem(Func<DataBlockConfig, int> offsetSelector) =>
+            _cfgs.Select(c => new DataItem
             {
-                case DataBlockInfo.L2L1_DBIds.SetpointDB:
-                    _plc.Write("DB255.DBD16", result); break;
-
-                case DataBlockInfo.L2L1_DBIds.CntParamsDB:
-                    _plc.Write("DB280.DBD32", result); break;
-
-                case DataBlockInfo.L2L1_DBIds.RequestCntDB:
-                    _plc.Write("DB270.DBD4", result); break;
-            }
-        }
-
-        public void WriteToDB(PlcData data)
-        {
-            if(data is L2L1_SetPoint setPoint)
-            {
-                _plc.WriteClass(setPoint, 255, 2);
-            }
-            else if(data is L2L1_RequestControl requestControl)
-            {
-                _plc.WriteClass(requestControl, 270, 2);
-            }
-            else if(data is L2L1_ControllerParameters controllerParameters)
-            {
-                _plc.WriteClass(controllerParameters, 280, 2);
-            }
-        }
-
-        public void TestReading()
-        {
-            TestData somedata = new TestData();
-            _plc.ReadClass(somedata, 23, 14);
-            Console.WriteLine(somedata.ToString());
-
-        }
-    }
-    public class TestData
-    {
-        //public System.DateTime _dateTtimeLong { get; set; }
-        //public byte[] DateTimeLong { get; set; } = new byte[12];
-        //public bool bool1 { get; set; }
-        //public bool bool2 { get; set; }
-        public short integer1 { get; set; }
-
-        public bool bool3 { get; set; }
-        public bool bool4 { get; set; }
-
-        public short integer2 { get; set; }
-
-
-        public System.DateTime GetDateTime()
-        {
-            // Extract year (little-endian)
-            //byte month = DateTimeLong[2];
-            //byte day = DateTimeLong[3];
-            //byte hour = DateTimeLong[5]; // Note: Skipping weekday at index 4
-            //byte minute = DateTimeLong[6];
-            //byte second = DateTimeLong[7];
-            //uint nanosecond = BitConverter.ToUInt32(DateTimeLong, 8);
-
-            // Convert nanoseconds to milliseconds (integer division by 1,000,000)
-            //int milliseconds = (int)(nanosecond / 1000000);
-
-
-            //return new System.DateTime(2024, 6, 11, hour, minute, second).AddMilliseconds(milliseconds);
-            return System.DateTime.Now;
-        }
-
-        public override string ToString()
-        {
-            return $"Integer1: {integer1}, Bool3: {bool3}, Bool4: {bool4}, Integer2: {integer2}";
-        }
+                DataType = DataType.DataBlock,
+                DB = c.Id,
+                StartByteAdr = offsetSelector(c),
+                VarType = VarType.Word,
+                Count = 1
+            }).ToList();
     }
 }

@@ -1,169 +1,169 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Diplomski\\Vodenko\\",
+  "WorkspaceRootPath": "C:\\Dev\\Vodenko\\Vodenko\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\services\\cachingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\services\\cachingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\controllers\\controlsystemapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\controllers\\controlsystemapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\controllers\\controlrequestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\controllers\\controlrequestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\lqr\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\lqr\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\lqr\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\lqr\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\rlocus\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\rlocus\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\rlocus\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\rlocus\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\sresponse\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\sresponse\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\controllers\\notificationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\controllers\\notificationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\controlleranalysis\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\services\\cachingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\services\\cachingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\controllers\\controlsystemapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\controllers\\controlsystemapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\controllers\\controlrequestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\controllers\\controlrequestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\lqr\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\lqr\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\lqr\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\lqr\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\rlocus\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\rlocus\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\rlocus\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\rlocus\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\sresponse\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\sresponse\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\controllers\\notificationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\controllers\\notificationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\controlleranalysis\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\controlleranalysis\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\controlleranalysis\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\controlleranalysis\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\controlleranalysis\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\services\\recordservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\services\\recordservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\services\\recordservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\services\\parametersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\services\\parametersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\services\\parametersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\services\\notificationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\services\\notificationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\services\\notificationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\alarms\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\alarms\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\alarms\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\alarms\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\alarms\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\alarms\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\livelog\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\livelog\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\livelog\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\model\\logbuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\model\\logbuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\model\\logbuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\services\\logmonitoringservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\services\\logmonitoringservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\services\\logmonitoringservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\hubs\\cachehub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\hubs\\cachehub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\hubs\\cachehub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\model\\dynamicdatabuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\model\\dynamicdatabuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\model\\dynamicdatabuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\model\\idatabuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\model\\idatabuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\model\\idatabuffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\services\\dynamicdatafetchservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\services\\dynamicdatafetchservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\services\\dynamicdatafetchservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\model\\externalurls.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\model\\externalurls.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\model\\externalurls.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\livelog\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\livelog\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\livelog\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\diplomski\\vodenko\\modelprovider\\models\\mathematicalmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\dev\\vodenko\\vodenko\\modelprovider\\models\\mathematicalmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|solutionrelative:modelprovider\\models\\mathematicalmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\diplomski\\vodenko\\modelprovider\\models\\mathematicalmodelwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\dev\\vodenko\\vodenko\\modelprovider\\models\\mathematicalmodelwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|solutionrelative:modelprovider\\models\\mathematicalmodelwrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\sresponse\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\sresponse\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\sresponse\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\diplomski\\vodenko\\vodenkoweb\\pages\\systemstatus\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|c:\\dev\\vodenko\\vodenko\\vodenkoweb\\pages\\systemstatus\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AB530680-2FA6-4527-90A3-B748B5DC51B5}|VodenkoWeb\\VodenkoWeb.csproj|solutionrelative:vodenkoweb\\pages\\systemstatus\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\diplomski\\vodenko\\modelprovider\\modelprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\dev\\vodenko\\vodenko\\modelprovider\\modelprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|solutionrelative:modelprovider\\modelprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\diplomski\\vodenko\\modelprovider\\models\\plcconnectionstatuswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\dev\\vodenko\\vodenko\\modelprovider\\models\\plcconnectionstatuswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|solutionrelative:modelprovider\\models\\plcconnectionstatuswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\diplomski\\vodenko\\modelprovider\\models\\plcmodewrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\dev\\vodenko\\vodenko\\modelprovider\\models\\plcmodewrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|solutionrelative:modelprovider\\models\\plcmodewrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\diplomski\\vodenko\\modelprovider\\models\\plantstatuswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\dev\\vodenko\\vodenko\\modelprovider\\models\\plantstatuswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|solutionrelative:modelprovider\\models\\plantstatuswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\diplomski\\vodenko\\modelprovider\\models\\controlparameterswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|c:\\dev\\vodenko\\vodenko\\modelprovider\\models\\controlparameterswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4FC3189E-9DB4-40FA-A425-C4F02A58F8EB}|ModelProvider\\ModelProvider.csproj|solutionrelative:modelprovider\\models\\controlparameterswrapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -174,57 +174,27 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 4,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:1:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ControlRequestController.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Controllers\\ControlRequestController.cs",
-              "RelativeDocumentMoniker": "VodenkoWeb\\Controllers\\ControlRequestController.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Controllers\\ControlRequestController.cs",
-              "RelativeToolTip": "VodenkoWeb\\Controllers\\ControlRequestController.cs",
-              "ViewState": "AQIAACwAAAAAAAAAAAAgwBQAAAAMAAAA",
+              "Title": "ControlSystemAPI.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
+              "RelativeDocumentMoniker": "VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
+              "RelativeToolTip": "VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
+              "ViewState": "AQIAACABAAAAAAAAAAAowDgAAAA9AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-24T21:54:49.8Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-16T07:14:31.019Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
-              "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
-              "RelativeToolTip": "VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
-              "ViewState": "AQIAAEAAAAAAAAAAAADwv0oAAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-24T21:52:15.741Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ControlSystemAPI.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
-              "RelativeDocumentMoniker": "VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
-              "RelativeToolTip": "VodenkoWeb\\Controllers\\ControlSystemAPI.cs",
-              "ViewState": "AQIAACABAAAAAAAAAAAowDgAAAA9AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-16T07:14:31.019Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\Index.cshtml",
               "ViewState": "AQIAAEsAAAAAAAAAAAApwFEAAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -232,11 +202,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\Index.cshtml.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Index.cshtml.cs",
               "RelativeToolTip": "VodenkoWeb\\Pages\\Index.cshtml.cs",
               "ViewState": "AQIAACcAAAAAAAAAAAAowD0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -244,24 +214,48 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "CachingService.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\CachingService.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\CachingService.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Services\\CachingService.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\CachingService.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\CachingService.cs",
               "RelativeToolTip": "VodenkoWeb\\Services\\CachingService.cs",
-              "ViewState": "AQIAAPUAAAAAAAAAAAAmwHUAAAAzAAAA",
+              "ViewState": "AgIAAPUAAAAAAAAAAAAmwHUAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-14T07:00:58.474Z",
+              "WhenOpened": "2024-08-14T07:00:58.474Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Program.cs",
+              "RelativeDocumentMoniker": "VodenkoWeb\\Program.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Program.cs",
+              "RelativeToolTip": "VodenkoWeb\\Program.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAQwCMAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-24T19:35:50.436Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
+              "Title": "Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
+              "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
+              "RelativeToolTip": "VodenkoWeb\\Pages\\LQR\\Index.cshtml.cs",
+              "ViewState": "AQIAAEAAAAAAAAAAAADwv0oAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-24T21:52:15.741Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Shared\\_Layout.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\Shared\\_Layout.cshtml",
               "ViewState": "AQIAABsAAAAAAAAAAAAwwCwAAABAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -269,11 +263,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "site.css",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\wwwroot\\css\\site.css",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "VodenkoWeb\\wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\wwwroot\\css\\site.css",
               "RelativeToolTip": "VodenkoWeb\\wwwroot\\css\\site.css",
               "ViewState": "AQIAAMQAAAAAAAAAAAAAAMwAAAAtAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -281,11 +275,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\LQR\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LQR\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\LQR\\Index.cshtml",
               "ViewState": "AQIAAHwAAAAAAAAAAAApwI4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -293,11 +287,23 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 3,
+              "Title": "ControlRequestController.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Controllers\\ControlRequestController.cs",
+              "RelativeDocumentMoniker": "VodenkoWeb\\Controllers\\ControlRequestController.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Controllers\\ControlRequestController.cs",
+              "RelativeToolTip": "VodenkoWeb\\Controllers\\ControlRequestController.cs",
+              "ViewState": "AQIAACwAAAAAAAAAAAAgwBQAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-24T21:54:49.8Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\RLocus\\Index.cshtml.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml.cs",
               "RelativeToolTip": "VodenkoWeb\\Pages\\RLocus\\Index.cshtml.cs",
               "ViewState": "AQIAADYAAAAAAAAAAAAowE0AAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -305,11 +311,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\RLocus\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\RLocus\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\RLocus\\Index.cshtml",
               "ViewState": "AQIAAGUDAAAAAAAAAAAwwIQDAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -317,11 +323,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\SResponse\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\SResponse\\Index.cshtml",
               "ViewState": "AQIAAIYCAAAAAAAAAIAwwJYCAAAUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -329,11 +335,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "NotificationsController.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Controllers\\NotificationsController.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Controllers\\NotificationsController.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Controllers\\NotificationsController.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Controllers\\NotificationsController.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Controllers\\NotificationsController.cs",
               "RelativeToolTip": "VodenkoWeb\\Controllers\\NotificationsController.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -341,23 +347,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Program.cs",
-              "RelativeDocumentMoniker": "VodenkoWeb\\Program.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Program.cs",
-              "RelativeToolTip": "VodenkoWeb\\Program.cs",
-              "ViewState": "AQIAAFUAAAAAAAAAAAAQwEAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-24T19:35:50.436Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 14,
               "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml.cs",
               "RelativeToolTip": "VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml.cs",
               "ViewState": "AQIAAAsAAAAAAAAAAAAAwAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -367,9 +361,9 @@
               "$type": "Document",
               "DocumentIndex": 15,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\ControllerAnalysis\\Index.cshtml",
               "ViewState": "AQIAADQAAAAAAAAAAAAAAEcAAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -379,9 +373,9 @@
               "$type": "Document",
               "DocumentIndex": 20,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\Alarms\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\Alarms\\Index.cshtml",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -391,9 +385,9 @@
               "$type": "Document",
               "DocumentIndex": 19,
               "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\Alarms\\Index.cshtml.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Alarms\\Index.cshtml.cs",
               "RelativeToolTip": "VodenkoWeb\\Pages\\Alarms\\Index.cshtml.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -403,9 +397,9 @@
               "$type": "Document",
               "DocumentIndex": 17,
               "Title": "ParametersService.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\ParametersService.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\ParametersService.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Services\\ParametersService.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\ParametersService.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\ParametersService.cs",
               "RelativeToolTip": "VodenkoWeb\\Services\\ParametersService.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -415,9 +409,9 @@
               "$type": "Document",
               "DocumentIndex": 16,
               "Title": "RecordService.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\RecordService.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\RecordService.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Services\\RecordService.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\RecordService.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\RecordService.cs",
               "RelativeToolTip": "VodenkoWeb\\Services\\RecordService.cs",
               "ViewState": "AQIAAFMAAAAAAAAAAAAswAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -427,9 +421,9 @@
               "$type": "Document",
               "DocumentIndex": 21,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\LiveLog\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\LiveLog\\Index.cshtml",
               "ViewState": "AQIAAEkAAAAAAAAAAAApwFoAAAAOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -439,9 +433,9 @@
               "$type": "Document",
               "DocumentIndex": 23,
               "Title": "LogMonitoringService.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\LogMonitoringService.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\LogMonitoringService.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Services\\LogMonitoringService.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\LogMonitoringService.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\LogMonitoringService.cs",
               "RelativeToolTip": "VodenkoWeb\\Services\\LogMonitoringService.cs",
               "ViewState": "AQIAAAYAAAAAAAAAAAAAwEYAAAAdAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -451,9 +445,9 @@
               "$type": "Document",
               "DocumentIndex": 22,
               "Title": "LogBuffer.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\LogBuffer.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\LogBuffer.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Model\\LogBuffer.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\LogBuffer.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\LogBuffer.cs",
               "RelativeToolTip": "VodenkoWeb\\Model\\LogBuffer.cs",
               "ViewState": "AQIAAAEAAAAAAAAAAAAqwB0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -463,9 +457,9 @@
               "$type": "Document",
               "DocumentIndex": 18,
               "Title": "NotificationService.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\NotificationService.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\NotificationService.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Services\\NotificationService.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\NotificationService.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\NotificationService.cs",
               "RelativeToolTip": "VodenkoWeb\\Services\\NotificationService.cs",
               "ViewState": "AQIAAAYAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -475,9 +469,9 @@
               "$type": "Document",
               "DocumentIndex": 28,
               "Title": "ExternalUrls.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\ExternalUrls.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\ExternalUrls.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Model\\ExternalUrls.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\ExternalUrls.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\ExternalUrls.cs",
               "RelativeToolTip": "VodenkoWeb\\Model\\ExternalUrls.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -487,9 +481,9 @@
               "$type": "Document",
               "DocumentIndex": 26,
               "Title": "IDataBuffer.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\IDataBuffer.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\IDataBuffer.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Model\\IDataBuffer.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\IDataBuffer.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\IDataBuffer.cs",
               "RelativeToolTip": "VodenkoWeb\\Model\\IDataBuffer.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAzAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -499,9 +493,9 @@
               "$type": "Document",
               "DocumentIndex": 25,
               "Title": "DynamicDataBuffer.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\DynamicDataBuffer.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\DynamicDataBuffer.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Model\\DynamicDataBuffer.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Model\\DynamicDataBuffer.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Model\\DynamicDataBuffer.cs",
               "RelativeToolTip": "VodenkoWeb\\Model\\DynamicDataBuffer.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -511,9 +505,9 @@
               "$type": "Document",
               "DocumentIndex": 24,
               "Title": "CacheHub.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Hubs\\CacheHub.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Hubs\\CacheHub.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Hubs\\CacheHub.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Hubs\\CacheHub.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Hubs\\CacheHub.cs",
               "RelativeToolTip": "VodenkoWeb\\Hubs\\CacheHub.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAA3AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -523,9 +517,9 @@
               "$type": "Document",
               "DocumentIndex": 29,
               "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\LiveLog\\Index.cshtml.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\LiveLog\\Index.cshtml.cs",
               "RelativeToolTip": "VodenkoWeb\\Pages\\LiveLog\\Index.cshtml.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -535,9 +529,9 @@
               "$type": "Document",
               "DocumentIndex": 27,
               "Title": "DynamicDataFetchService.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\DynamicDataFetchService.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\DynamicDataFetchService.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Services\\DynamicDataFetchService.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Services\\DynamicDataFetchService.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Services\\DynamicDataFetchService.cs",
               "RelativeToolTip": "VodenkoWeb\\Services\\DynamicDataFetchService.cs",
               "ViewState": "AQIAADAAAAAAAAAAAAAYwFAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -547,9 +541,9 @@
               "$type": "Document",
               "DocumentIndex": 30,
               "Title": "_ViewImports.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\_ViewImports.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\_ViewImports.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\_ViewImports.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\_ViewImports.cshtml",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -559,9 +553,9 @@
               "$type": "Document",
               "DocumentIndex": 31,
               "Title": "Error.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Error.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Error.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\Error.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\Error.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\Error.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\Error.cshtml",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -571,9 +565,9 @@
               "$type": "Document",
               "DocumentIndex": 32,
               "Title": "MathematicalModel.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\MathematicalModel.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\MathematicalModel.cs",
               "RelativeDocumentMoniker": "ModelProvider\\Models\\MathematicalModel.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\MathematicalModel.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\MathematicalModel.cs",
               "RelativeToolTip": "ModelProvider\\Models\\MathematicalModel.cs",
               "ViewState": "AQIAAAcAAAAAAAAAAAAQwBMAAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -583,9 +577,9 @@
               "$type": "Document",
               "DocumentIndex": 34,
               "Title": "Index.cshtml.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml.cs",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\SResponse\\Index.cshtml.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\SResponse\\Index.cshtml.cs",
               "RelativeToolTip": "VodenkoWeb\\Pages\\SResponse\\Index.cshtml.cs",
               "ViewState": "AQIAABsAAAAAAAAAAAAYwFEAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -595,9 +589,9 @@
               "$type": "Document",
               "DocumentIndex": 38,
               "Title": "PlcModeWrapper.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\PlcModeWrapper.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\PlcModeWrapper.cs",
               "RelativeDocumentMoniker": "ModelProvider\\Models\\PlcModeWrapper.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\PlcModeWrapper.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\PlcModeWrapper.cs",
               "RelativeToolTip": "ModelProvider\\Models\\PlcModeWrapper.cs",
               "ViewState": "AQIAAA8AAAAAAAAAAAAowCIAAAA4AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -607,9 +601,9 @@
               "$type": "Document",
               "DocumentIndex": 35,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\SystemStatus\\Index.cshtml",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\SystemStatus\\Index.cshtml",
               "RelativeDocumentMoniker": "VodenkoWeb\\Pages\\SystemStatus\\Index.cshtml",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\VodenkoWeb\\Pages\\SystemStatus\\Index.cshtml",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\VodenkoWeb\\Pages\\SystemStatus\\Index.cshtml",
               "RelativeToolTip": "VodenkoWeb\\Pages\\SystemStatus\\Index.cshtml",
               "ViewState": "AQIAAGUAAAAAAAAAAAAowIsAAAA/AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -619,9 +613,9 @@
               "$type": "Document",
               "DocumentIndex": 40,
               "Title": "ControlParametersWrapper.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\ControlParametersWrapper.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\ControlParametersWrapper.cs",
               "RelativeDocumentMoniker": "ModelProvider\\Models\\ControlParametersWrapper.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\ControlParametersWrapper.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\ControlParametersWrapper.cs",
               "RelativeToolTip": "ModelProvider\\Models\\ControlParametersWrapper.cs",
               "ViewState": "AQIAABgAAAAAAAAAAAAUwCoAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -631,9 +625,9 @@
               "$type": "Document",
               "DocumentIndex": 39,
               "Title": "PlantStatusWrapper.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\PlantStatusWrapper.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\PlantStatusWrapper.cs",
               "RelativeDocumentMoniker": "ModelProvider\\Models\\PlantStatusWrapper.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\PlantStatusWrapper.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\PlantStatusWrapper.cs",
               "RelativeToolTip": "ModelProvider\\Models\\PlantStatusWrapper.cs",
               "ViewState": "AQIAAA8AAAAAAAAAAAAowCYAAABMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -643,9 +637,9 @@
               "$type": "Document",
               "DocumentIndex": 33,
               "Title": "MathematicalModelWrapper.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\MathematicalModelWrapper.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\MathematicalModelWrapper.cs",
               "RelativeDocumentMoniker": "ModelProvider\\Models\\MathematicalModelWrapper.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\MathematicalModelWrapper.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\MathematicalModelWrapper.cs",
               "RelativeToolTip": "ModelProvider\\Models\\MathematicalModelWrapper.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAACIAAAAmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -655,9 +649,9 @@
               "$type": "Document",
               "DocumentIndex": 37,
               "Title": "PlcConnectionStatusWrapper.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\PlcConnectionStatusWrapper.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\PlcConnectionStatusWrapper.cs",
               "RelativeDocumentMoniker": "ModelProvider\\Models\\PlcConnectionStatusWrapper.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\ModelProvider\\Models\\PlcConnectionStatusWrapper.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\Models\\PlcConnectionStatusWrapper.cs",
               "RelativeToolTip": "ModelProvider\\Models\\PlcConnectionStatusWrapper.cs",
               "ViewState": "AQIAAA8AAAAAAAAAAAAowCEAAAA7AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -667,9 +661,9 @@
               "$type": "Document",
               "DocumentIndex": 36,
               "Title": "ModelProvider.cs",
-              "DocumentMoniker": "C:\\Diplomski\\Vodenko\\ModelProvider\\ModelProvider.cs",
+              "DocumentMoniker": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\ModelProvider.cs",
               "RelativeDocumentMoniker": "ModelProvider\\ModelProvider.cs",
-              "ToolTip": "C:\\Diplomski\\Vodenko\\ModelProvider\\ModelProvider.cs",
+              "ToolTip": "C:\\Dev\\Vodenko\\Vodenko\\ModelProvider\\ModelProvider.cs",
               "RelativeToolTip": "ModelProvider\\ModelProvider.cs",
               "ViewState": "AQIAACIAAAAAAAAAAADwvywAAAApAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

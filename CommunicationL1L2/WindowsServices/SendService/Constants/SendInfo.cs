@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MessageManagerService.Constants
+namespace SendManagerService.Constants
 {
     public static class SendInfo
     {

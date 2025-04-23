@@ -1,75 +1,63 @@
-﻿
-using DataMonitoringService.Constants;
-using DataMonitoringService.Services;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MessageBroker.Common;
 using MessageBroker.Common.Configurations;
 using MessageBroker.Common.Producer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using PlcCommunication;
-using System;
-using Topshelf;
-using Unity;
-using TaskLog;
+using DataMonitoringService.Services;
 using TaskLog.Contracts;
 using SharedResources;
 
 namespace DataMonitoringService
 {
-    public class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            IConfiguration configuration = ConfigurationMng.GetConfiguration();
-
-            var container = new UnityContainer();
-            var rabbitMqConfig = BindOptions<RabbitMqConfiguration>(configuration, "RabbitMqConfiguration");
-            var plcConfig = BindOptions<PlcConfiguration>(configuration, "PlcConfiguration");
-            var sendConfig = BindOptions<RabbitMqModelSettings>(configuration, "RabbitMqModelSenderConfig");
-
-            container.RegisterInstance<IOptions<PlcConfiguration>>(Options.Create(plcConfig));
-            container.RegisterInstance<IOptions<RabbitMqConfiguration>>(Options.Create(rabbitMqConfig));
-            container.RegisterInstance<IOptions<RabbitMqModelSettings>>(Options.Create(sendConfig));
-
-            container.RegisterType<PlcCommunicationService, PlcCommunicationService>();
-            container.RegisterType<IRabbitMqService, RabbitMqService>();
-            container.RegisterType<IProducerConsumer, RabbitMqProducerConsumer>();
-            container.RegisterType<ILogger,ConsoleLogger>();
-
-            container.RegisterInstance<DMService>(
-                new DMService(container.Resolve<IProducerConsumer>(), 
-                              container.Resolve<PlcCommunicationService>(),
-                              container.Resolve<ILogger>()));
-
-            var exitCode = HostFactory.Run(x =>
-            {
-
-                x.Service<DMService>(s =>
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration( cfg => ConfigurationMng.GetConfiguration())
+                .ConfigureServices((ctx, services) =>
                 {
-                    s.ConstructUsing(service => container.Resolve<DMService>());
-                    s.WhenStarted(async service => await service.Start());
-                    s.WhenStopped(service => service.Stop());
-                });
+                    IConfiguration configuration = ctx.Configuration;
 
-                x.RunAsLocalSystem();
-                x.SetServiceName(DataMonitoringServiceInfo.ServiceName);
-                x.SetDisplayName(DataMonitoringServiceInfo.DisplayName);
-                x.SetDescription(DataMonitoringServiceInfo.Description);
-                x.StartAutomatically();
+                    // 1)  PLC‑communication library
+                    services.AddPlcCommunication(
+                        plc => configuration
+                            .GetSection("PlcConfiguration")
+                            .Bind(plc),
+                        builder =>
+                        {
+                            configuration
+                                .GetSection("PlcLibrarySettings")
+                                .Bind(builder);
 
+                            //builder.DisableHeartbeat();
+                        }
+                    );
 
-            });
+                    // 2)  RabbitMQ options + abstractions
+                    services.Configure<RabbitMqConfiguration>(
+                        configuration.GetSection("RabbitMqConfiguration"));
+                    services.Configure<RabbitMqModelSettings>(
+                        configuration.GetSection("RabbitMqModelSenderConfig"));
 
-            int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode());
-            Environment.ExitCode = exitCodeValue;
-        }
+                    services.AddSingleton<IRabbitMqService, RabbitMqService>();
+                    services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
-        private static T BindOptions<T>(IConfiguration configuration, string sectionName) where T : class, new()
-        {
-            var section = configuration.GetSection(sectionName);
-            var options = new T();
-            configuration.Bind(sectionName, options);
-            return options;
+                    // 3)  Logging
+                    services.AddSingleton<ILogger, ConsoleLogger>();
+
+                    // 4)  Domain‑specific monitoring service
+                    services.AddSingleton<DataMonitoring>();
+                    services.AddHostedService<DMHostedService>();
+                })
+                .UseWindowsService()   // no‑op if not running as service
+                .UseSystemd()          // no‑op on Windows / when not under systemd
+                .UseConsoleLifetime()  // falls back to CTRL‑C friendly console when not a service
+                .Build();
+
+            await host.RunAsync();
         }
     }
 }
