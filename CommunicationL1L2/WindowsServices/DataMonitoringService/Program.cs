@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MessageBroker.Common;
-using MessageBroker.Common.Configurations;
-using MessageBroker.Common.Producer;
-using PlcCommunication;
-using DataMonitoringService.Services;
-using TaskLog.Contracts;
-using SharedResources;
-
+﻿
 namespace DataMonitoringService
 {
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using MessageBroker.Common;
+    using MessageBroker.Common.Configurations;
+    using MessageBroker.Common.Producer;
+    using PlcCommunication;
+    using TaskLog.Contracts;
+    using SharedResources;
+
     internal class Program
     {
         public static async Task Main(string[] args)
@@ -49,8 +49,7 @@ namespace DataMonitoringService
                     services.AddSingleton<ILogger, ConsoleLogger>();
 
                     // 4)  Domain‑specific monitoring service
-                    services.AddSingleton<DataMonitoring>();
-                    services.AddHostedService<DMHostedService>();
+                    services.AddHostedService<DataMonitoringService.Services.DataMonitoringService>();
                 })
                 .UseWindowsService()   // no‑op if not running as service
                 .UseSystemd()          // no‑op on Windows / when not under systemd

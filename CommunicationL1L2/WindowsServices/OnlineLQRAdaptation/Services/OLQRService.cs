@@ -1,21 +1,17 @@
 ﻿using MessageBroker.Common.Producer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using MessageModel.Model.Messages;
 using MessageModel.Utilities;
 using SharedResources.Constants;
 using SharedLibrary.Entities;
 using DataAccess.Repositories;
+using Microsoft.Extensions.Hosting;
 namespace OnlineLQRAdaptation.Services
 {
-    public class OLQRService
+    public sealed class OLQRService : BackgroundService
     {
         private readonly IProducerConsumer _producerConsumer;
         private readonly DatabaseRepositories _databaseRepositories; // Database repositories
@@ -37,7 +33,7 @@ namespace OnlineLQRAdaptation.Services
             _databaseRepositories = databaseRepos;
         }
 
-        public async Task Start()
+        protected override async Task ExecuteAsync(CancellationToken cancellation)
         {
 
             await _producerConsumer.OpenCommunication("Online LQR");
@@ -147,9 +143,10 @@ namespace OnlineLQRAdaptation.Services
             
         }
 
-        public void Stop()
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _producerConsumer.Dispose();
+            await base.StopAsync(cancellationToken);
         }
 
         private static (Matrix<double> A_aug, Matrix<double> B_aug, Matrix<double> C_aug) AugmentSystem(Matrix<double> A, Matrix<double> B, Matrix<double> C)

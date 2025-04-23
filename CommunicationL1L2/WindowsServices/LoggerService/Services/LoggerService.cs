@@ -2,13 +2,8 @@
 using MessageBroker.Common.Producer;
 using MessageModel.Model.Messages;
 using MessageModel.Utilities;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Hosting;
 using SharedResources.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskLog.Contracts;
 
 namespace LoggerService.Services
@@ -16,17 +11,17 @@ namespace LoggerService.Services
     /// <summary>
     /// Service responsible for receiving log messages from a message queue and logging them.
     /// </summary>
-    public class Service
+    public sealed class LoggerService : BackgroundService
     {
         private readonly IProducerConsumer _producerConsumer; // RabbitMQ producer-consumer interface
         private readonly ILogger _logger; // Logger interface
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Service"/> class.
+        /// Initializes a new instance of the <see cref="LoggerService"/> class.
         /// </summary>
         /// <param name="producerConsumer">The RabbitMQ producer-consumer interface.</param>
         /// <param name="logger">The logger interface.</param>
-        public Service(IProducerConsumer producerConsumer, ILogger logger)
+        public LoggerService(IProducerConsumer producerConsumer, ILogger logger)
         {
             _producerConsumer = producerConsumer;
             _logger = logger;
@@ -35,7 +30,7 @@ namespace LoggerService.Services
         /// <summary>
         /// Starts the Service, opening communication with RabbitMQ and reading messages from the queue.
         /// </summary>
-        public async Task Start()
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             await _producerConsumer.OpenCommunication(LoggerServiceInfo.ServiceName);
 
@@ -68,9 +63,10 @@ namespace LoggerService.Services
         /// <summary>
         /// Stops the Service and disposes of the RabbitMQ producer-consumer.
         /// </summary>
-        public void Stop()
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _producerConsumer.Dispose();
+            await base.StopAsync(cancellationToken);
         }
     }
 }

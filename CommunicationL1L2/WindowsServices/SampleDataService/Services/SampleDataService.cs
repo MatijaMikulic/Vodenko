@@ -1,50 +1,43 @@
 ﻿using SharedLibrary.Entities;
 using DataAccess.Repositories;
 using MessageBroker.Common.Producer;
-using MessageModel.Model.DataBlockModel;
 using MessageModel.Model.Messages;
 using MessageModel.Utilities;
 using SharedResources.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Timers;
 using SampleDataService.Constants;
+using Microsoft.Extensions.Hosting;
+using TaskLog.Contracts;
 
 namespace SampleDataService.Services
 {
     /// <summary>
     /// Service responsible for generating sample data, processing incoming messages, and storing data in the database.
     /// </summary>
-    public class SDService
+    public sealed class SampleDataService : BackgroundService
     {
         private readonly IProducerConsumer _producerConsumer;        // RabbitMQ producer-consumer interface
         private readonly DatabaseRepositories _databaseRepositories; // Database repositories
-        private readonly System.Timers.Timer _timer;                 // Timer for generating sample data
         private readonly List<L2L2_DynamicData> _dataList;           // List to store dynamic data for bulk insertion
         private const int BulkInsertThreshold = 50;                  // Threshold for bulk inserting data
-        private int _sample;                                         // Sample counter
-        private readonly Random _random;                             // Random number generator for noise generation
+        private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SDService"/> class.
+        /// Initializes a new instance of the <see cref="SampleDataService"/> class.
         /// </summary>
         /// <param name="producerConsumer">The RabbitMQ producer-consumer interface.</param>
         /// <param name="databaseRepositories">The database repositories.</param>
-        public SDService(IProducerConsumer producerConsumer, DatabaseRepositories databaseRepositories)
+        public SampleDataService(IProducerConsumer producerConsumer, DatabaseRepositories databaseRepositories, ILogger logger)
         {
             _producerConsumer = producerConsumer;
             _databaseRepositories = databaseRepositories;
             _dataList = new List<L2L2_DynamicData>();
-            _sample = 0;
-            _random = new Random();
+            _logger = logger;
         }
 
         /// <summary>
         /// Starts the SDService, establishing communication with RabbitMQ and starting the timer.
         /// </summary>
-        public async Task Start()
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             await _producerConsumer.OpenCommunication(SampleDataInfo.ServiceName);
             _producerConsumer.PurgeQueue(MessageRouting.SampleDataQueue);
@@ -145,7 +138,7 @@ namespace SampleDataService.Services
         /// <summary>
         /// Stops the SDService, performs final bulk insertion if needed, and disposes resources.
         /// </summary>
-        public void Stop()
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             lock (_dataList)
             {
@@ -192,6 +185,8 @@ namespace SampleDataService.Services
                 "Sample Data Service has exited.",
                 Severity.Warning, 1));
             _producerConsumer.Dispose();
+
+            await base.StopAsync(cancellationToken);
         }
     }
 }

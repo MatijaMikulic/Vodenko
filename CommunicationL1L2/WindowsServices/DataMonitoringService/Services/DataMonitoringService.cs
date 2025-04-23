@@ -5,6 +5,7 @@ using TaskLog.Contracts;
 using PlcCommunication.Model;
 using PlcCommunication.Interfaces;
 using SharedResources.Constants;
+using Infrastructure.HostedServices;
 
 namespace DataMonitoringService.Services
 {
@@ -12,7 +13,7 @@ namespace DataMonitoringService.Services
     ///   Polls the PLC circular buffers and publishes <see cref="L2L2_DataBlockHeader"/>
     ///   messages to Rabbit MQ. Keeps running until <see cref="CancellationToken"/> is cancelled.
     /// </summary>
-    public sealed class DataMonitoring
+    public sealed class DataMonitoringService : PollingBackgroundService
     {
         private readonly IProducerConsumer _producerConsumer;
         private readonly IConnectionManager _connectionManager;
@@ -24,16 +25,16 @@ namespace DataMonitoringService.Services
         private const int WarmupMessages = 2;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataMonitoring"/> class.
+        /// Initializes a new instance of the <see cref="DataMonitoringService"/> class.
         /// </summary>
         /// <param name="mq">The RabbitMQ producer-consumer interface.</param>
         /// <param name="conn">The PLC communication service.</param>
         /// <param name="log">The logger interface.</param>
-        public DataMonitoring(
+        public DataMonitoringService(
              IProducerConsumer mq,
              IConnectionManager conn,
              IPlcDataAccess data,
-             ILogger log)
+             ILogger log) : base(TimeSpan.FromMilliseconds(100))
         {
             _producerConsumer = mq;
             _connectionManager = conn;
@@ -41,14 +42,11 @@ namespace DataMonitoringService.Services
             _log = log;
         }
 
-        /// <inheritdoc cref="RunAsync"/>
-        public Task RunAsync(CancellationToken ct) => RunInternalAsync(ct);
-
         /// <summary>
         /// Connects to PLC & MQ, seeds state, then enters the polling loop
         /// until <paramref name="cancellationToken"/> is cancelled.
         /// </summary>
-        public async Task RunInternalAsync(CancellationToken cancellationToken)
+        protected override async Task OnStartedAsync(CancellationToken cancellationToken)
         {
             // 1) Start PLC communication
             try
@@ -84,34 +82,9 @@ namespace DataMonitoringService.Services
                 _prevStates[meta.DB] = meta;
                 _warmupCounts[meta.DB] = 0;
             }
-
-            // 4) Poll in a loop every 100 ms until cancelled
-            var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(100));
-            try
-            {
-                while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-                {
-                    try
-                    {
-                        await PollOnceAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Log(new L2L2_LogMessage(
-                            DataMonitoringServiceInfo.ServiceName,
-                            $"PollOnceAsync failed: {ex.Message}",
-                            Severity.Error,
-                            1));
-                    }
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // normal shutdown
-            }
         }
 
-        private async Task PollOnceAsync()
+        protected override async Task PollOnceAsync(CancellationToken ct)
         {
             if (!_connectionManager.IsReady)
             {
@@ -163,6 +136,21 @@ namespace DataMonitoringService.Services
                 PublishBatch(now, ready);
             }
         }
+
+        protected override Task OnStoppedAsync(CancellationToken ct)
+        {
+            _producerConsumer.SendMessage(
+                MessageRouting.LoggerRoutingKey,
+                new L2L2_LogMessage(
+                    DataMonitoringServiceInfo.ServiceName,
+                    "Data Monitoring Service stopping",
+                    Severity.Warning, 1));
+
+            _connectionManager.Close();
+            _producerConsumer.Dispose();
+            return Task.CompletedTask;
+        }
+
 
         private void PublishBatch(DataBlockMetaData meta, int count)
         {

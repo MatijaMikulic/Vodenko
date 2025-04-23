@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlcCommunication;
-using SendManagerService.Services;
 using SharedResources;
 using TaskLog.Contracts;
 
@@ -48,8 +47,7 @@ namespace SendManagerService
 
                     // 4) Core manager service
                     services.AddSingleton<ILogger, ConsoleLogger>();    
-                    services.AddSingleton<SendManager>();
-                    services.AddHostedService<SendHostedService>();
+                    services.AddHostedService<SendManagerService.Services.SendManagerService>();
                 })
                 .UseWindowsService()
                 .UseSystemd()

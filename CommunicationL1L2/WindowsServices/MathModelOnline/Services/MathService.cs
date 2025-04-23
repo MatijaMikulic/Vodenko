@@ -19,9 +19,11 @@ using MessageManagerService.Constants;
 using MathModelOnline.Utilities;
 using ClosedXML.Excel;
 using System.Timers;
+using Microsoft.Extensions.Hosting;
+using TaskLog.Contracts;
 namespace MathModelOnline.Services
 {
-    public class MathService
+    public sealed class MathService: BackgroundService
     {
         #region Readonly fields
         private readonly IProducerConsumer _producerConsumer;
@@ -29,6 +31,7 @@ namespace MathModelOnline.Services
         private readonly NonLinearModel _nonLinearModel;
         private readonly StateSpaceLinearModel _stateSpaceLinearModel;
         private readonly DCModelCalculations _dcCalculations;
+        private readonly ILogger _logger;
         #endregion
 
         #region Constants
@@ -68,8 +71,9 @@ namespace MathModelOnline.Services
         LowpassFilter filterH2 = new(10, 0.06);
         LowpassFilter filterQu = new(10, 0.06);
         #endregion
-        public MathService(IProducerConsumer producerConsumer)
+        public MathService(IProducerConsumer producerConsumer, ILogger logger)
         {
+            _logger = logger;
             _producerConsumer = producerConsumer;
             _stateSpaceLinearModel = new StateSpaceLinearModel(ModelParameters.A, ModelParameters.B, ModelParameters.C,
                                                                ModelParameters.variables, ModelParameters.initialValues,
@@ -133,7 +137,7 @@ namespace MathModelOnline.Services
                 config: config
             );
         }
-        public async Task Start()
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             await _producerConsumer.OpenCommunication(MathModelOnlineInfo.ServiceName);
             _producerConsumer.PurgeQueue(MessageRouting.ProcessDataQueue);
@@ -157,7 +161,7 @@ namespace MathModelOnline.Services
 
         }
 
-        public void Stop()
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                 new L2L2_LogMessage(MathModelOnlineInfo.ServiceName,
@@ -167,6 +171,8 @@ namespace MathModelOnline.Services
             _producerConsumer.Dispose();
             _sendTimer.Stop();
             _sendTimer.Dispose();
+
+            await base.StopAsync(cancellationToken);
         }
 
         public Task ProcessData(L2L2_ProcessData data)

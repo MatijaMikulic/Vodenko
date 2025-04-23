@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedResources", "Common\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineLQRAdaptation", "WindowsServices\OnlineLQRAdaptation\OnlineLQRAdaptation.csproj", "{55086B3D-1EE7-4219-A46C-84882105CD06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.HostedServices", "Infrastructure.HostedServices\Infrastructure.HostedServices.csproj", "{F3047A35-A8C0-4E8C-90F7-BDF0761E1DB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{55086B3D-1EE7-4219-A46C-84882105CD06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55086B3D-1EE7-4219-A46C-84882105CD06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55086B3D-1EE7-4219-A46C-84882105CD06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3047A35-A8C0-4E8C-90F7-BDF0761E1DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3047A35-A8C0-4E8C-90F7-BDF0761E1DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3047A35-A8C0-4E8C-90F7-BDF0761E1DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3047A35-A8C0-4E8C-90F7-BDF0761E1DB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{3FBFF714-4FBD-4856-9757-04412C6EE27E} = {936659D4-7F7B-4A84-8AE0-A1DE9203759B}
 		{69A7757B-424D-470C-BBB0-C6BBD91EA7A1} = {29F916F5-749A-465E-AD0F-A5AED576C864}
 		{55086B3D-1EE7-4219-A46C-84882105CD06} = {208CA0BA-21BF-428D-8AEC-C6BA433722FD}
+		{F3047A35-A8C0-4E8C-90F7-BDF0761E1DB3} = {936659D4-7F7B-4A84-8AE0-A1DE9203759B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {90892C73-AEF4-40CE-929E-FE95951F13EB}

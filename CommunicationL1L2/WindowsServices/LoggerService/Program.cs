@@ -1,70 +1,45 @@
-﻿using LoggerService.Constants;
-using LoggerService.Services;
-using MessageBroker.Common;
+﻿using MessageBroker.Common;
 using MessageBroker.Common.Configurations;
 using MessageBroker.Common.Producer;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SharedResources;
-using System;
-using TaskLog.Configurations;
 using TaskLog.Contracts;
-using Topshelf;
-using Unity;
-using Unity.Injection;
 
 namespace LoggerService
 {
-    public class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            IConfiguration configuration = ConfigurationMng.GetConfiguration();
-
-            var container = new UnityContainer();
-            var rabbitMqConfig = BindOptions<RabbitMqConfiguration>(configuration, "RabbitMqConfiguration");
-            var listenConfig = BindOptions<RabbitMqModelSettings>(configuration, "RabbitMqModelLoggerConfig");
-            var logConfig = BindOptions<FileLoggerConfiguration>(configuration, "FileLogger");
-
-            container.RegisterInstance<IOptions<RabbitMqConfiguration>>(Options.Create(rabbitMqConfig));
-            container.RegisterInstance<IOptions<RabbitMqModelSettings>>(Options.Create(listenConfig));
-            container.RegisterInstance<IOptions<FileLoggerConfiguration>>(Options.Create(logConfig));
-
-            container.RegisterType<IRabbitMqService, RabbitMqService>();
-            container.RegisterType<ILogger, FileLogger>();
-            container.RegisterType<IProducerConsumer, RabbitMqProducerConsumer>();
-            container.RegisterInstance<Service>(
-                new Service(container.Resolve<IProducerConsumer>(), container.Resolve<ILogger>()));
-
-
-            var exitCode = HostFactory.Run(x =>
-            {
-
-                x.Service<Service>(s =>
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(cfg => ConfigurationMng.GetConfiguration())
+                .ConfigureServices((ctx, services) =>
                 {
-                    s.ConstructUsing(service => container.Resolve<Service>());
-                    s.WhenStarted(async service => await service.Start());
-                    s.WhenStopped(service => service.Stop());
+                    IConfiguration configuration = ctx.Configuration;
 
+                    // 2)  RabbitMQ options + abstractions
+                    services.Configure<RabbitMqConfiguration>(
+                        configuration.GetSection("RabbitMqConfiguration"));
+                    services.Configure<RabbitMqModelSettings>(
+                        configuration.GetSection("RabbitMqModelSenderConfig"));
 
-                });
+                    services.AddSingleton<IRabbitMqService, RabbitMqService>();
+                    services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
-                x.RunAsLocalSystem();
-                x.SetServiceName(LoggerServiceInfo.ServiceName);
-                x.SetDisplayName(LoggerServiceInfo.DisplayName);
-                x.SetDescription(LoggerServiceInfo.Description);
-                x.StartAutomatically();
-            });
+                    // 3)  Logging
+                    services.AddSingleton<ILogger, ConsoleLogger>();
 
-            int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode());
-            Environment.ExitCode = exitCodeValue;
-        }
-        private static T BindOptions<T>(IConfiguration configuration, string sectionName) where T : class, new()
-        {
-            var section = configuration.GetSection(sectionName);
-            var options = new T();
-            configuration.Bind(sectionName, options);
-            return options;
+                    // 4)  Domain‑specific monitoring service
+                    services.AddHostedService<LoggerService.Services.LoggerService>();
+                })
+                .UseWindowsService()   // no‑op if not running as service
+                .UseSystemd()          // no‑op on Windows / when not under systemd
+                .UseConsoleLifetime()  // falls back to CTRL‑C friendly console when not a service
+                .Build();
+
+            await host.RunAsync();
         }
     }
 }
