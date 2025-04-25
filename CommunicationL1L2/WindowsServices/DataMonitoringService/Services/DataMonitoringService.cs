@@ -1,14 +1,15 @@
-﻿using DataMonitoringService.Constants;
-using MessageBroker.Common.Producer;
-using MessageModel.Model.Messages;
-using TaskLog.Contracts;
-using PlcCommunication.Model;
-using PlcCommunication.Interfaces;
-using SharedResources.Constants;
-using Infrastructure.HostedServices;
-
-namespace DataMonitoringService.Services
+﻿namespace DataMonitoringService.Services
 {
+    using MessageBroker.Common.Producer;
+    using MessageModel.Model.Messages;
+    using TaskLog.Contracts;
+    using PlcCommunication.Model;
+    using PlcCommunication.Interfaces;
+    using SharedResources.Constants;
+    using Infrastructure.HostedServices;
+    using System.Collections.Concurrent;
+    using global::DataMonitoringService.Constants;
+
     /// <summary>
     ///   Polls the PLC circular buffers and publishes <see cref="L2L2_DataBlockHeader"/>
     ///   messages to Rabbit MQ. Keeps running until <see cref="CancellationToken"/> is cancelled.
@@ -20,8 +21,8 @@ namespace DataMonitoringService.Services
         private readonly IPlcDataAccess _dataAccess;
         private readonly ILogger _log;
 
-        private readonly Dictionary<ushort, DataBlockMetaData> _prevStates = new();
-        private readonly Dictionary<ushort, int> _warmupCounts = new();
+        private readonly ConcurrentDictionary<ushort, DataBlockMetaData> _prevStates = new();
+        private readonly ConcurrentDictionary<ushort, int> _warmupCounts = new();
         private const int WarmupMessages = 2;
 
         /// <summary>
@@ -83,16 +84,19 @@ namespace DataMonitoringService.Services
                 _warmupCounts[meta.DB] = 0;
             }
         }
-
+        
+        ///<inheritdoc/>
         protected override async Task PollOnceAsync(CancellationToken ct)
         {
+            if(ct.IsCancellationRequested) return;
+
             if (!_connectionManager.IsReady)
             {
                 _connectionManager.Open();
                 return;
             }
 
-            List<DataBlockMetaData> current;
+            IList<DataBlockMetaData> current;
             try
             {
                 current = (await _dataAccess.ReadMetaDataAsync().ConfigureAwait(false)).ToList();
@@ -108,6 +112,8 @@ namespace DataMonitoringService.Services
 
             foreach (var now in current)
             {
+                if (ct.IsCancellationRequested) break;
+
                 if (!_prevStates.TryGetValue(now.DB, out var prev))
                 {
                      // new DB unexpectedly appeared—seed state
@@ -118,6 +124,7 @@ namespace DataMonitoringService.Services
 
                 bool hasNew = now.ChangeCounter != prev.ChangeCounter
                            || now.AuxiliaryCounter != prev.AuxiliaryCounter;
+
                 _prevStates[now.DB] = now;
                 if (!hasNew) continue;
 
@@ -127,16 +134,18 @@ namespace DataMonitoringService.Services
 
                 int ready = (now.AuxiliaryCounter - prev.AuxiliaryCounter
                            + ushort.MaxValue + 1) % (ushort.MaxValue + 1);
+
                 if (ready > now.BufferSize)
                 {
                     LogDataLoss(now, ready);
                     ready = now.BufferSize;
                 }
 
-                PublishBatch(now, ready);
+                PublishBatch(now, ready, ct);
             }
         }
 
+        ///<inheritdoc/>
         protected override Task OnStoppedAsync(CancellationToken ct)
         {
             _producerConsumer.SendMessage(
@@ -151,8 +160,13 @@ namespace DataMonitoringService.Services
             return Task.CompletedTask;
         }
 
-
-        private void PublishBatch(DataBlockMetaData meta, int count)
+        /// <summary>
+        /// Publishes all the messages in queue.
+        /// </summary>
+        /// <param name="meta"></param>
+        /// <param name="count"></param>
+        /// <param name="ct"></param>
+        private void PublishBatch(DataBlockMetaData meta, int count, CancellationToken ct)
         {
             int start = (meta.FindBufferPointer()
                          - count + meta.BufferSize)
@@ -160,6 +174,8 @@ namespace DataMonitoringService.Services
 
             for (int j = 0; j < count; j++)
             {
+                if (ct.IsCancellationRequested) break;
+
                 int ptr = (start + j + meta.BufferSize) % meta.BufferSize;
                 if (ptr == 0) ptr = meta.BufferSize;
 
@@ -178,6 +194,11 @@ namespace DataMonitoringService.Services
             }
         }
 
+        /// <summary>
+        /// Logs any data loss in data buffer.
+        /// </summary>
+        /// <param name="meta"></param>
+        /// <param name="ready"></param>
         private void LogDataLoss(DataBlockMetaData meta, int ready)
         {
             int lost = ready - meta.BufferSize;
@@ -193,6 +214,11 @@ namespace DataMonitoringService.Services
             _log.Log(msg);
         }
 
+        /// <summary>
+        /// Logs plc connectivity changes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="isUp"></param>
         private void OnPlcConnectionChanged(object? sender, bool isUp)
         {
             var sev = isUp ? Severity.Info : Severity.Warning;

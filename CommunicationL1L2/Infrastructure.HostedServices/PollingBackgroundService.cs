@@ -4,18 +4,21 @@ namespace Infrastructure.HostedServices
 {
     public abstract class PollingBackgroundService : BackgroundService 
     {
+        private readonly PeriodicTimer _timer;
         private readonly TimeSpan _interval;
 
-        protected PollingBackgroundService(TimeSpan interval) => _interval = interval;
+        protected PollingBackgroundService(TimeSpan interval)
+        {
+            _interval = interval;
+            _timer = new PeriodicTimer(_interval);
+        }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             await OnStartedAsync(cancellationToken).ConfigureAwait(false);
-
-            var timer = new PeriodicTimer(_interval);
             try
             {
-                while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
+                while (await _timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false) && !cancellationToken.IsCancellationRequested)
                 {
                     try
                     {
@@ -25,15 +28,20 @@ namespace Infrastructure.HostedServices
                     {
                         break;
                     }
-                    catch(Exception ex)
+                    catch (Exception)
                     {
-
+                        throw;
                     }
                 }
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                timer.Dispose();
+                // expected shutdown
+            }
+            finally
+            {
+                _timer.Dispose();
+                await OnStoppedAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -52,6 +60,12 @@ namespace Infrastructure.HostedServices
         /// Called once, after the loop finishes.
         /// </summary>
         protected virtual Task OnStoppedAsync(CancellationToken ct) => Task.CompletedTask;
+
+        protected async ValueTask DisposeAsync()
+        {
+            await OnStoppedAsync(CancellationToken.None).ConfigureAwait(false);
+            _timer.Dispose();
+        }
 
     }
 }
