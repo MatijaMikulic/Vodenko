@@ -23,7 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\SharedResources\SharedResources.csproj" />
     <ProjectReference Include="..\..\Libraries\MessageBroker.Common\MessageBroker.Common.csproj" />
-    <ProjectReference Include="..\..\Libraries\TaskLog\TaskLog.csproj" />
   </ItemGroup>
 
 </Project>

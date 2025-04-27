@@ -3,8 +3,8 @@ using MessageBroker.Common.Producer;
 using MessageModel.Model.Messages;
 using MessageModel.Utilities;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SharedResources.Constants;
-using TaskLog.Contracts;
 
 namespace LoggerService.Services
 {
@@ -14,14 +14,14 @@ namespace LoggerService.Services
     public sealed class LoggerService : BackgroundService
     {
         private readonly IProducerConsumer _producerConsumer; // RabbitMQ producer-consumer interface
-        private readonly ILogger _logger; // Logger interface
+        private readonly ILogger<LoggerService> _logger; // Logger interface
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggerService"/> class.
         /// </summary>
         /// <param name="producerConsumer">The RabbitMQ producer-consumer interface.</param>
         /// <param name="logger">The logger interface.</param>
-        public LoggerService(IProducerConsumer producerConsumer, ILogger logger)
+        public LoggerService(IProducerConsumer producerConsumer, ILogger<LoggerService> logger)
         {
             _producerConsumer = producerConsumer;
             _logger = logger;
@@ -55,7 +55,6 @@ namespace LoggerService.Services
                 var logMessage = MessageDeserializationUtilities.DeserializeMessage(body);
                 if (logMessage is L2L2_LogMessage l)
                 {
-                    await _logger.LogAsync(l); // Log the message asynchronously
                 }
             });
         }

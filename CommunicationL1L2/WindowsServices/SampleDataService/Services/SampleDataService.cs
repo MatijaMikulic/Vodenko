@@ -6,7 +6,7 @@ using MessageModel.Utilities;
 using SharedResources.Constants;
 using SampleDataService.Constants;
 using Microsoft.Extensions.Hosting;
-using TaskLog.Contracts;
+using Microsoft.Extensions.Logging;
 
 namespace SampleDataService.Services
 {
@@ -19,14 +19,14 @@ namespace SampleDataService.Services
         private readonly DatabaseRepositories _databaseRepositories; // Database repositories
         private readonly List<L2L2_DynamicData> _dataList;           // List to store dynamic data for bulk insertion
         private const int BulkInsertThreshold = 50;                  // Threshold for bulk inserting data
-        private readonly ILogger _logger;
+        private readonly ILogger<SampleDataService> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SampleDataService"/> class.
         /// </summary>
         /// <param name="producerConsumer">The RabbitMQ producer-consumer interface.</param>
         /// <param name="databaseRepositories">The database repositories.</param>
-        public SampleDataService(IProducerConsumer producerConsumer, DatabaseRepositories databaseRepositories, ILogger logger)
+        public SampleDataService(IProducerConsumer producerConsumer, DatabaseRepositories databaseRepositories, ILogger<SampleDataService> logger)
         {
             _producerConsumer = producerConsumer;
             _databaseRepositories = databaseRepositories;

@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SharedResources;
 using System.Threading.Tasks;
-using TaskLog.Contracts;
 
 namespace MathModelOnline
 {
@@ -33,7 +32,7 @@ namespace MathModelOnline
                     services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
                     // 3)  Logging
-                    services.AddSingleton<ILogger, ConsoleLogger>();
+                    services.AddLogging();
 
                     // 4)  Domain‑specific monitoring service
                     services.AddHostedService<MathService>();

@@ -8,7 +8,6 @@ namespace DataMonitoringService
     using MessageBroker.Common.Configurations;
     using MessageBroker.Common.Producer;
     using PlcCommunication;
-    using TaskLog.Contracts;
     using SharedResources;
 
     internal class Program
@@ -46,7 +45,7 @@ namespace DataMonitoringService
                     services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
                     // 3)  Logging
-                    services.AddSingleton<ILogger, ConsoleLogger>();
+                    services.AddLogging();
 
                     // 4)  Domain‑specific monitoring service
                     services.AddHostedService<DataMonitoringService.Services.DataMonitoringService>();

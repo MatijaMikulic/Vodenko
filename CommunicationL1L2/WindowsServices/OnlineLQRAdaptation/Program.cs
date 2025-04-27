@@ -2,14 +2,11 @@
 using MessageBroker.Common.Configurations;
 using MessageBroker.Common.Producer;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using OnlineLQRAdaptation.Services;
 using SharedResources;
 using DataAccess.Repositories;
-using DataAccess.Configurations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using TaskLog.Contracts;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace OnlineLQRAdaptation
@@ -37,7 +34,7 @@ namespace OnlineLQRAdaptation
                     services.TryAddSingleton<DatabaseRepositories>();
 
                     // 4)  Logging
-                    services.TryAddSingleton<ILogger, ConsoleLogger>();
+                    services.AddLogging();
 
                     // 5)  Domain‑specific monitoring service
                     services.AddHostedService<OLQRService>();

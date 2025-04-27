@@ -2,13 +2,13 @@
 {
     using MessageBroker.Common.Producer;
     using MessageModel.Model.Messages;
-    using TaskLog.Contracts;
     using PlcCommunication.Model;
     using PlcCommunication.Interfaces;
     using SharedResources.Constants;
     using Infrastructure.HostedServices;
     using System.Collections.Concurrent;
     using global::DataMonitoringService.Constants;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     ///   Polls the PLC circular buffers and publishes <see cref="L2L2_DataBlockHeader"/>
@@ -19,7 +19,7 @@
         private readonly IProducerConsumer _producerConsumer;
         private readonly IConnectionManager _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
-        private readonly ILogger _log;
+        private readonly ILogger<DataMonitoringService> _logger;
 
         private readonly ConcurrentDictionary<ushort, DataBlockMetaData> _prevStates = new();
         private readonly ConcurrentDictionary<ushort, int> _warmupCounts = new();
@@ -35,12 +35,12 @@
              IProducerConsumer mq,
              IConnectionManager conn,
              IPlcDataAccess data,
-             ILogger log) : base(TimeSpan.FromMilliseconds(100))
+             ILogger<DataMonitoringService> logger) : base(TimeSpan.FromMilliseconds(100))
         {
             _producerConsumer = mq;
             _connectionManager = conn;
             _dataAccess = data;
-            _log = log;
+            _logger = logger;
         }
 
         /// <summary>
@@ -56,10 +56,10 @@
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogCritical(new L2L2_LogMessage(
                     DataMonitoringServiceInfo.ServiceName,
                     $"Initial PLC open failed: {ex.Message}",
-                    Severity.Warning, 1));
+                    Severity.Fatal, 1).ToString());
             }
             _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
 
@@ -103,10 +103,10 @@
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogError(new L2L2_LogMessage(
                    DataMonitoringServiceInfo.ServiceName,
                    $"PLC metadata read failed: {ex.Message}",
-                   Severity.Warning, 1));
+                   Severity.Error, 1).ToString());
                 return;
             }
 
@@ -186,10 +186,10 @@
                 }
                 catch (Exception ex)
                 {
-                    _log.Log(new L2L2_LogMessage(
+                    _logger.LogCritical(new L2L2_LogMessage(
                         DataMonitoringServiceInfo.ServiceName,
                         $"Failed to send data header: {ex.Message}",
-                        Severity.Error, 1));
+                        Severity.Fatal, 1).ToString());
                 }
             }
         }
@@ -211,7 +211,7 @@
             {
                 _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey, msg);
             }
-            _log.Log(msg);
+            _logger.LogWarning(msg.ToString());
         }
 
         /// <summary>
@@ -230,9 +230,9 @@
                     MessageRouting.GeneralDataRoutingKey,
                     new L2L2_PlcConnectionStatus(isUp, 1));
             }
-            _log.Log(new L2L2_LogMessage(
+            _logger.LogInformation(new L2L2_LogMessage(
                 DataMonitoringServiceInfo.ServiceName,
-                text, sev, 1));
+                text, sev, 1).ToString());
         }
     }
 }

@@ -6,9 +6,9 @@ namespace MessageManagerService.Services
     using MessageModel.Model.Messages;
     using MessageModel.Utilities;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
     using PlcCommunication.Interfaces;
     using SharedResources.Constants;
-    using TaskLog.Contracts;
 
     /// <summary>
     /// Service responsible for managing messages from PLC and routing them via RabbitMQ.
@@ -18,8 +18,8 @@ namespace MessageManagerService.Services
         private readonly IProducerConsumer _producerConsumer;            
         private readonly IConnectionManager _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
-        private readonly ILogger _log;
-
+        private readonly ILogger<MessageManagerService> _logger;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageManagerService"/> class.
         /// </summary>
@@ -30,12 +30,12 @@ namespace MessageManagerService.Services
             IProducerConsumer producerConsumer, 
             IConnectionManager connectionManager, 
             IPlcDataAccess plcDataAccess,
-            ILogger log)
+            ILogger<MessageManagerService> logger)
         {
             this._producerConsumer = producerConsumer;
             this._connectionManager = connectionManager;
             this._dataAccess = plcDataAccess;
-            this._log = log;    
+            this._logger = logger;    
         }
 
         /// <summary>
@@ -50,10 +50,10 @@ namespace MessageManagerService.Services
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogCritical(new L2L2_LogMessage(
                     MessageManagerInfo.ServiceName,
                     $"Initial PLC open failed: {ex.Message}",
-                    Severity.Warning, 1));
+                    Severity.Fatal, 1).ToString());
             }
             _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
 
@@ -172,9 +172,9 @@ namespace MessageManagerService.Services
                     MessageRouting.GeneralDataRoutingKey,
                     new L2L2_PlcConnectionStatus(isUp, 1));
             }
-            _log.Log(new L2L2_LogMessage(
+            _logger.LogInformation(new L2L2_LogMessage(
                 MessageManagerInfo.ServiceName,
-                text, sev, 1));
+                text, sev, 1).ToString());
         }
     }
 }

@@ -1,26 +1,16 @@
 ﻿using MessageBroker.Common.Producer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
-using SharedResources;
 using SharedResources.Constants;
 using MessageModel.Model.Messages;
-using MessageModel.Model.DataBlockModel;
 using MessageModel.Utilities;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
 using MathModelOnline.Algorithm;
 using MathModelOnline.Model;
 using MathModelOnline.Constants;
 using MessageManagerService.Constants;
 using MathModelOnline.Utilities;
-using ClosedXML.Excel;
 using System.Timers;
 using Microsoft.Extensions.Hosting;
-using TaskLog.Contracts;
+using Microsoft.Extensions.Logging;
 namespace MathModelOnline.Services
 {
     public sealed class MathService: BackgroundService
@@ -31,7 +21,7 @@ namespace MathModelOnline.Services
         private readonly NonLinearModel _nonLinearModel;
         private readonly StateSpaceLinearModel _stateSpaceLinearModel;
         private readonly DCModelCalculations _dcCalculations;
-        private readonly ILogger _logger;
+        private readonly ILogger<MathService> _logger;
         #endregion
 
         #region Constants
@@ -71,7 +61,7 @@ namespace MathModelOnline.Services
         LowpassFilter filterH2 = new(10, 0.06);
         LowpassFilter filterQu = new(10, 0.06);
         #endregion
-        public MathService(IProducerConsumer producerConsumer, ILogger logger)
+        public MathService(IProducerConsumer producerConsumer, ILogger<MathService> logger)
         {
             _logger = logger;
             _producerConsumer = producerConsumer;

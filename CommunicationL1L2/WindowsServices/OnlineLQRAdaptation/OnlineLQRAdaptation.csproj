@@ -30,6 +30,5 @@
 
     <ProjectReference Include="..\..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\..\Libraries\MessageBroker.Common\MessageBroker.Common.csproj" />
-    <ProjectReference Include="..\..\Libraries\TaskLog\TaskLog.csproj" />
   </ItemGroup>
 </Project>

@@ -6,9 +6,9 @@ using S7.Net;
 using SharedResources.Constants;
 using System.ComponentModel;
 using PlcCommunication.Interfaces;
-using TaskLog.Contracts;
 using SendManagerService.Constants;
 using Infrastructure.HostedServices;
+using Microsoft.Extensions.Logging;
 
 namespace SendManagerService.Services
 {
@@ -21,7 +21,7 @@ namespace SendManagerService.Services
         private readonly IConnectionManager _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
         private readonly DatabaseRepositories _databaseRepositories; // Database repositories
-        private readonly ILogger _log;
+        private readonly ILogger<SendManagerService> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SendManagerService"/> class.
@@ -35,13 +35,13 @@ namespace SendManagerService.Services
             IConnectionManager connectionManager,
             IPlcDataAccess dataAccess,
             DatabaseRepositories databaseRepositories,
-            ILogger logger) : base(TimeSpan.FromSeconds(1))
+            ILogger<SendManagerService> logger) : base(TimeSpan.FromSeconds(1))
         {
             _producerConsumer = producerConsumer;
             _connectionManager = connectionManager;
             _databaseRepositories = databaseRepositories;
             _dataAccess = dataAccess;
-            _log = logger;
+            _logger = logger;
 
         }
 
@@ -58,10 +58,10 @@ namespace SendManagerService.Services
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogCritical(new L2L2_LogMessage(
                     SendInfo.ServiceName,
                     $"Initial PLC open failed: {ex.Message}",
-                    Severity.Warning, 1));
+                    Severity.Fatal, 1).ToString());
             }
             _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
 
@@ -113,7 +113,6 @@ namespace SendManagerService.Services
                                 $"{l2L1_SetPoint.Mode}",
                                 Severity.Info, 1));
                         }
-                        Console.WriteLine($"Wrote: {l2L1_SetPoint.pvInitialValue}, {l2L1_SetPoint.pvFinalValue}, {l2L1_SetPoint.Mode}, {l2L1_SetPoint.TargetH2Level}");
                     }
                     catch (PlcException ex)
                     {
@@ -292,9 +291,9 @@ namespace SendManagerService.Services
                     MessageRouting.GeneralDataRoutingKey,
                     new L2L2_PlcConnectionStatus(isUp, 1));
             }
-            _log.Log(new L2L2_LogMessage(
+            _logger.LogInformation(new L2L2_LogMessage(
                 SendInfo.ServiceName,
-                text, sev, 1));
+                text, sev, 1).ToString());
         }
     }
 }

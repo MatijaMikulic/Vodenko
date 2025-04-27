@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlcCommunication;
 using SharedResources;
-using TaskLog.Contracts;
 
 namespace SendManagerService
 {
@@ -43,10 +42,10 @@ namespace SendManagerService
                     services.AddSingleton<DatabaseRepositories>();
                     services.AddSingleton<IRabbitMqService, RabbitMqService>();
                     services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
-                    
+
 
                     // 4) Core manager service
-                    services.AddSingleton<ILogger, ConsoleLogger>();    
+                    services.AddLogging(); 
                     services.AddHostedService<SendManagerService.Services.SendManagerService>();
                 })
                 .UseWindowsService()

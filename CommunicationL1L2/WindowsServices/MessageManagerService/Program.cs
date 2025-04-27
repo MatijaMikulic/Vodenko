@@ -8,7 +8,6 @@
     using Microsoft.Extensions.Hosting;
     using PlcCommunication;
     using SharedResources;
-    using TaskLog.Contracts;
     internal class Program
     {
         public static async Task Main(string[] args)
@@ -44,7 +43,7 @@
                     services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
                     // 3)  Logging
-                    services.AddSingleton<ILogger, ConsoleLogger>();
+                    services.AddLogging();
                     services.AddHostedService<MessageManagerService.Services.MessageManagerService>();
                 })
                 .UseWindowsService()   // no‑op if not running as service

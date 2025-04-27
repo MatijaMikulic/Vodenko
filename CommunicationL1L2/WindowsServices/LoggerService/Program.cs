@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SharedResources;
-using TaskLog.Contracts;
 
 namespace LoggerService
 {
@@ -29,7 +28,7 @@ namespace LoggerService
                     services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
                     // 3)  Logging
-                    services.AddSingleton<ILogger, ConsoleLogger>();
+                    services.AddLogging();
 
                     // 4)  Domain‑specific monitoring service
                     services.AddHostedService<LoggerService.Services.LoggerService>();

@@ -7,7 +7,6 @@ using DataAccess.Repositories;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using TaskLog.Contracts;
 
 namespace SampleDataService
 {
@@ -34,7 +33,7 @@ namespace SampleDataService
                     services.TryAddSingleton<DatabaseRepositories>();
 
                     // 4)  Logging
-                    services.TryAddSingleton<ILogger, ConsoleLogger>();
+                    services.AddLogging();
 
                     // 5)  Domain‑specific monitoring service
                     services.AddHostedService<SampleDataService.Services.SampleDataService>();
