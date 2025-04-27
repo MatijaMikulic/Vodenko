@@ -15,8 +15,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
     <PackageReference Include="S7netplus" Version="0.20.0" />
-    <PackageReference Include="Topshelf" Version="4.3.0" />
-    <PackageReference Include="Unity" Version="5.11.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\SharedLibrary\Entities\Entities.csproj" />

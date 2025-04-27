@@ -1,27 +1,19 @@
 ﻿using MessageBroker.Common.Producer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
-using SharedResources;
 using SharedResources.Constants;
 using MessageModel.Model.Messages;
-using MessageModel.Model.DataBlockModel;
 using MessageModel.Utilities;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
 using MathModelOnline.Algorithm;
 using MathModelOnline.Model;
 using MathModelOnline.Constants;
 using MessageManagerService.Constants;
 using MathModelOnline.Utilities;
-using ClosedXML.Excel;
 using System.Timers;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 namespace MathModelOnline.Services
 {
-    public class MathService
+    public sealed class MathService: BackgroundService
     {
         #region Readonly fields
         private readonly IProducerConsumer _producerConsumer;
@@ -29,6 +21,7 @@ namespace MathModelOnline.Services
         private readonly NonLinearModel _nonLinearModel;
         private readonly StateSpaceLinearModel _stateSpaceLinearModel;
         private readonly DCModelCalculations _dcCalculations;
+        private readonly ILogger<MathService> _logger;
         #endregion
 
         #region Constants
@@ -68,8 +61,9 @@ namespace MathModelOnline.Services
         LowpassFilter filterH2 = new(10, 0.06);
         LowpassFilter filterQu = new(10, 0.06);
         #endregion
-        public MathService(IProducerConsumer producerConsumer)
+        public MathService(IProducerConsumer producerConsumer, ILogger<MathService> logger)
         {
+            _logger = logger;
             _producerConsumer = producerConsumer;
             _stateSpaceLinearModel = new StateSpaceLinearModel(ModelParameters.A, ModelParameters.B, ModelParameters.C,
                                                                ModelParameters.variables, ModelParameters.initialValues,
@@ -133,7 +127,7 @@ namespace MathModelOnline.Services
                 config: config
             );
         }
-        public async Task Start()
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             await _producerConsumer.OpenCommunication(MathModelOnlineInfo.ServiceName);
             _producerConsumer.PurgeQueue(MessageRouting.ProcessDataQueue);
@@ -157,7 +151,7 @@ namespace MathModelOnline.Services
 
         }
 
-        public void Stop()
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                 new L2L2_LogMessage(MathModelOnlineInfo.ServiceName,
@@ -167,6 +161,8 @@ namespace MathModelOnline.Services
             _producerConsumer.Dispose();
             _sendTimer.Stop();
             _sendTimer.Dispose();
+
+            await base.StopAsync(cancellationToken);
         }
 
         public Task ProcessData(L2L2_ProcessData data)

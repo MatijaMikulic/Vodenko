@@ -5,13 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.4" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\MessageModel\MessageModel.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
   </ItemGroup>
 
 </Project>

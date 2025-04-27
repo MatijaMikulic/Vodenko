@@ -1,54 +1,53 @@
-﻿using DataMonitoringService.Constants;
-using MessageBroker.Common.Producer;
-using MessageModel.Model.Messages;
-using TaskLog.Contracts;
-using PlcCommunication.Model;
-using PlcCommunication.Interfaces;
-using SharedResources.Constants;
-
-namespace DataMonitoringService.Services
+﻿namespace DataMonitoringService.Services
 {
+    using MessageBroker.Common.Producer;
+    using MessageModel.Model.Messages;
+    using PlcCommunication.Model;
+    using PlcCommunication.Interfaces;
+    using SharedResources.Constants;
+    using Infrastructure.HostedServices;
+    using System.Collections.Concurrent;
+    using global::DataMonitoringService.Constants;
+    using Microsoft.Extensions.Logging;
+
     /// <summary>
     ///   Polls the PLC circular buffers and publishes <see cref="L2L2_DataBlockHeader"/>
     ///   messages to Rabbit MQ. Keeps running until <see cref="CancellationToken"/> is cancelled.
     /// </summary>
-    public sealed class DataMonitoring
+    public sealed class DataMonitoringService : PollingBackgroundService
     {
         private readonly IProducerConsumer _producerConsumer;
         private readonly IConnectionManager _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
-        private readonly ILogger _log;
+        private readonly ILogger<DataMonitoringService> _logger;
 
-        private readonly Dictionary<ushort, DataBlockMetaData> _prevStates = new();
-        private readonly Dictionary<ushort, int> _warmupCounts = new();
+        private readonly ConcurrentDictionary<ushort, DataBlockMetaData> _prevStates = new();
+        private readonly ConcurrentDictionary<ushort, int> _warmupCounts = new();
         private const int WarmupMessages = 2;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataMonitoring"/> class.
+        /// Initializes a new instance of the <see cref="DataMonitoringService"/> class.
         /// </summary>
         /// <param name="mq">The RabbitMQ producer-consumer interface.</param>
         /// <param name="conn">The PLC communication service.</param>
         /// <param name="log">The logger interface.</param>
-        public DataMonitoring(
+        public DataMonitoringService(
              IProducerConsumer mq,
              IConnectionManager conn,
              IPlcDataAccess data,
-             ILogger log)
+             ILogger<DataMonitoringService> logger) : base(TimeSpan.FromMilliseconds(100))
         {
             _producerConsumer = mq;
             _connectionManager = conn;
             _dataAccess = data;
-            _log = log;
+            _logger = logger;
         }
-
-        /// <inheritdoc cref="RunAsync"/>
-        public Task RunAsync(CancellationToken ct) => RunInternalAsync(ct);
 
         /// <summary>
         /// Connects to PLC & MQ, seeds state, then enters the polling loop
         /// until <paramref name="cancellationToken"/> is cancelled.
         /// </summary>
-        public async Task RunInternalAsync(CancellationToken cancellationToken)
+        protected override async Task OnStartedAsync(CancellationToken cancellationToken)
         {
             // 1) Start PLC communication
             try
@@ -57,10 +56,10 @@ namespace DataMonitoringService.Services
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogCritical(new L2L2_LogMessage(
                     DataMonitoringServiceInfo.ServiceName,
                     $"Initial PLC open failed: {ex.Message}",
-                    Severity.Warning, 1));
+                    Severity.Fatal, 1).ToString());
             }
             _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
 
@@ -84,57 +83,37 @@ namespace DataMonitoringService.Services
                 _prevStates[meta.DB] = meta;
                 _warmupCounts[meta.DB] = 0;
             }
-
-            // 4) Poll in a loop every 100 ms until cancelled
-            var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(100));
-            try
-            {
-                while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-                {
-                    try
-                    {
-                        await PollOnceAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Log(new L2L2_LogMessage(
-                            DataMonitoringServiceInfo.ServiceName,
-                            $"PollOnceAsync failed: {ex.Message}",
-                            Severity.Error,
-                            1));
-                    }
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // normal shutdown
-            }
         }
-
-        private async Task PollOnceAsync()
+        
+        ///<inheritdoc/>
+        protected override async Task PollOnceAsync(CancellationToken ct)
         {
+            if(ct.IsCancellationRequested) return;
+
             if (!_connectionManager.IsReady)
             {
                 _connectionManager.Open();
                 return;
             }
 
-            List<DataBlockMetaData> current;
+            IList<DataBlockMetaData> current;
             try
             {
                 current = (await _dataAccess.ReadMetaDataAsync().ConfigureAwait(false)).ToList();
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogError(new L2L2_LogMessage(
                    DataMonitoringServiceInfo.ServiceName,
                    $"PLC metadata read failed: {ex.Message}",
-                   Severity.Warning, 1));
+                   Severity.Error, 1).ToString());
                 return;
             }
 
             foreach (var now in current)
             {
+                if (ct.IsCancellationRequested) break;
+
                 if (!_prevStates.TryGetValue(now.DB, out var prev))
                 {
                      // new DB unexpectedly appeared—seed state
@@ -145,6 +124,7 @@ namespace DataMonitoringService.Services
 
                 bool hasNew = now.ChangeCounter != prev.ChangeCounter
                            || now.AuxiliaryCounter != prev.AuxiliaryCounter;
+
                 _prevStates[now.DB] = now;
                 if (!hasNew) continue;
 
@@ -154,17 +134,39 @@ namespace DataMonitoringService.Services
 
                 int ready = (now.AuxiliaryCounter - prev.AuxiliaryCounter
                            + ushort.MaxValue + 1) % (ushort.MaxValue + 1);
+
                 if (ready > now.BufferSize)
                 {
                     LogDataLoss(now, ready);
                     ready = now.BufferSize;
                 }
 
-                PublishBatch(now, ready);
+                PublishBatch(now, ready, ct);
             }
         }
 
-        private void PublishBatch(DataBlockMetaData meta, int count)
+        ///<inheritdoc/>
+        protected override Task OnStoppedAsync(CancellationToken ct)
+        {
+            _producerConsumer.SendMessage(
+                MessageRouting.LoggerRoutingKey,
+                new L2L2_LogMessage(
+                    DataMonitoringServiceInfo.ServiceName,
+                    "Data Monitoring Service stopping",
+                    Severity.Warning, 1));
+
+            _connectionManager.Close();
+            _producerConsumer.Dispose();
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Publishes all the messages in queue.
+        /// </summary>
+        /// <param name="meta"></param>
+        /// <param name="count"></param>
+        /// <param name="ct"></param>
+        private void PublishBatch(DataBlockMetaData meta, int count, CancellationToken ct)
         {
             int start = (meta.FindBufferPointer()
                          - count + meta.BufferSize)
@@ -172,6 +174,8 @@ namespace DataMonitoringService.Services
 
             for (int j = 0; j < count; j++)
             {
+                if (ct.IsCancellationRequested) break;
+
                 int ptr = (start + j + meta.BufferSize) % meta.BufferSize;
                 if (ptr == 0) ptr = meta.BufferSize;
 
@@ -182,14 +186,19 @@ namespace DataMonitoringService.Services
                 }
                 catch (Exception ex)
                 {
-                    _log.Log(new L2L2_LogMessage(
+                    _logger.LogCritical(new L2L2_LogMessage(
                         DataMonitoringServiceInfo.ServiceName,
                         $"Failed to send data header: {ex.Message}",
-                        Severity.Error, 1));
+                        Severity.Fatal, 1).ToString());
                 }
             }
         }
 
+        /// <summary>
+        /// Logs any data loss in data buffer.
+        /// </summary>
+        /// <param name="meta"></param>
+        /// <param name="ready"></param>
         private void LogDataLoss(DataBlockMetaData meta, int ready)
         {
             int lost = ready - meta.BufferSize;
@@ -202,9 +211,14 @@ namespace DataMonitoringService.Services
             {
                 _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey, msg);
             }
-            _log.Log(msg);
+            _logger.LogWarning(msg.ToString());
         }
 
+        /// <summary>
+        /// Logs plc connectivity changes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="isUp"></param>
         private void OnPlcConnectionChanged(object? sender, bool isUp)
         {
             var sev = isUp ? Severity.Info : Severity.Warning;
@@ -216,9 +230,9 @@ namespace DataMonitoringService.Services
                     MessageRouting.GeneralDataRoutingKey,
                     new L2L2_PlcConnectionStatus(isUp, 1));
             }
-            _log.Log(new L2L2_LogMessage(
+            _logger.LogInformation(new L2L2_LogMessage(
                 DataMonitoringServiceInfo.ServiceName,
-                text, sev, 1));
+                text, sev, 1).ToString());
         }
     }
 }

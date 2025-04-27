@@ -1,80 +1,49 @@
 ﻿using MessageBroker.Common.Configurations;
 using MessageBroker.Common.Producer;
 using MessageBroker.Common;
-using MessageModel.Model.DataBlockModel;
-using MessageModel.Model.Messages;
-using MessageModel.Utilities;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using SharedResources;
-using SharedResources.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unity;
-using SampleDataService.Services;
-using Topshelf;
-using DataAccess.Configurations;
 using DataAccess.Repositories;
-using SampleDataService.Constants;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace SampleDataService
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            IConfiguration configuration = ConfigurationMng.GetConfiguration();
-
-            var container = new UnityContainer();
-            var rabbitMqConfig = BindOptions<RabbitMqConfiguration>(configuration, "RabbitMqConfiguration");
-            var sendConfig = BindOptions<RabbitMqModelSettings>(configuration, "RabbitMqModelSenderConfig");
-            var db = BindOptions<DBConfiguration>(configuration, "Dapper");
-
-
-            container.RegisterInstance<IOptions<RabbitMqConfiguration>>(Options.Create(rabbitMqConfig));
-            container.RegisterInstance<IOptions<RabbitMqModelSettings>>(Options.Create(sendConfig));
-            container.RegisterInstance<IOptions<DBConfiguration>>(Options.Create(db));
-
-
-            container.RegisterType<IRabbitMqService, RabbitMqService>();
-            container.RegisterType<IProducerConsumer, RabbitMqProducerConsumer>();
-            container.RegisterType<DatabaseRepositories, DatabaseRepositories>();
-
-            container.RegisterInstance<SDService>(
-                new SDService(container.Resolve<IProducerConsumer>(),container.Resolve<DatabaseRepositories>()));
-
-
-            var exitCode = HostFactory.Run(x =>
-            {
-
-                x.Service<SDService>(s =>
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(cfg => ConfigurationMng.GetConfiguration())
+                .ConfigureServices((ctx, services) =>
                 {
-                    s.ConstructUsing(service => container.Resolve<SDService>());
-                    s.WhenStarted(async service => await service.Start());
-                    s.WhenStopped(service => service.Stop());
+                    IConfiguration configuration = ctx.Configuration;
 
+                    // 2)  RabbitMQ options + abstractions
+                    services.Configure<RabbitMqConfiguration>(
+                        configuration.GetSection("RabbitMqConfiguration"));
+                    services.Configure<RabbitMqModelSettings>(
+                        configuration.GetSection("RabbitMqModelSenderConfig"));
 
-                });
+                    services.TryAddSingleton<IRabbitMqService, RabbitMqService>();
+                    services.TryAddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
-                x.RunAsLocalSystem();
-                x.SetServiceName(SampleDataInfo.ServiceName);
-                x.SetDisplayName(SampleDataInfo.DisplayName);
-                x.SetDescription(SampleDataInfo.Description);
-                x.StartAutomatically();
-            });
+                    // 3) Database repository
+                    services.TryAddSingleton<DatabaseRepositories>();
 
-            int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode());
-            Environment.ExitCode = exitCodeValue;
-        }
-        private static T BindOptions<T>(IConfiguration configuration, string sectionName) where T : class, new()
-        {
-            var section = configuration.GetSection(sectionName);
-            var options = new T();
-            configuration.Bind(sectionName, options);
-            return options;
+                    // 4)  Logging
+                    services.AddLogging();
+
+                    // 5)  Domain‑specific monitoring service
+                    services.AddHostedService<SampleDataService.Services.SampleDataService>();
+                })
+                .UseWindowsService()   // no‑op if not running as service
+                .UseSystemd()          // no‑op on Windows / when not under systemd
+                .UseConsoleLifetime()  // falls back to CTRL‑C friendly console when not a service
+                .Build();
+
+            await host.RunAsync();
         }
     }
 }

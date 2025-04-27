@@ -5,53 +5,50 @@ using MessageModel.Model.Messages;
 using S7.Net;
 using SharedResources.Constants;
 using System.ComponentModel;
-using System.Timers;
 using PlcCommunication.Interfaces;
-using TaskLog.Contracts;
 using SendManagerService.Constants;
+using Infrastructure.HostedServices;
+using Microsoft.Extensions.Logging;
 
 namespace SendManagerService.Services
 {
     /// <summary>
     /// Service responsible for managing messages from the database, writing them to the PLC, and logging activities.
     /// </summary>
-    public class SendManager
+    public sealed class SendManagerService : PollingBackgroundService
     {
         private readonly IProducerConsumer _producerConsumer; // RabbitMQ producer-consumer interface
         private readonly IConnectionManager _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
         private readonly DatabaseRepositories _databaseRepositories; // Database repositories
-        private readonly ILogger _log;
+        private readonly ILogger<SendManagerService> _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SendManager"/> class.
+        /// Initializes a new instance of the <see cref="SendManagerService"/> class.
         /// </summary>
         /// <param name="producerConsumer">The RabbitMQ producer-consumer interface</param>
         /// <param name="connectionManager">An interface for plc communication</param>
         /// <param name="dataAccess">An interface for retrieving/sending data to plc</param>
         /// <param name="databaseRepositories">The database repositories.</param>
-        public SendManager(
+        public SendManagerService(
             IProducerConsumer producerConsumer,
             IConnectionManager connectionManager,
             IPlcDataAccess dataAccess,
             DatabaseRepositories databaseRepositories,
-            ILogger logger)
+            ILogger<SendManagerService> logger) : base(TimeSpan.FromSeconds(1))
         {
             _producerConsumer = producerConsumer;
             _connectionManager = connectionManager;
             _databaseRepositories = databaseRepositories;
             _dataAccess = dataAccess;
-            _log = logger;
+            _logger = logger;
 
         }
 
-        /// <inheritdoc cref="RunAsync"/>
-        public Task RunAsync(CancellationToken ct) => RunInternalAsync(ct);
-
         /// <summary>
-        /// Handles the timer elapsed event to process new messages from the database.
+        /// 
         /// </summary>
-        private async Task RunInternalAsync(CancellationToken cancellationToken)
+        protected override async Task OnStartedAsync(CancellationToken cancellationToken)
         {
 
             // 1) Start PLC communication
@@ -61,10 +58,10 @@ namespace SendManagerService.Services
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogCritical(new L2L2_LogMessage(
                     SendInfo.ServiceName,
                     $"Initial PLC open failed: {ex.Message}",
-                    Severity.Warning, 1));
+                    Severity.Fatal, 1).ToString());
             }
             _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
 
@@ -80,33 +77,9 @@ namespace SendManagerService.Services
                         "Data Monitoring Service started",
                         Severity.Info, 1));
             }
-
-            var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
-            try
-            {
-                while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
-                {
-                    try
-                    {
-                        await ProcessBatchAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Log(new L2L2_LogMessage(
-                            SendInfo.ServiceName,
-                            $"PollOnceAsync failed: {ex.Message}",
-                            Severity.Error,
-                            1));
-                    }
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // normal shutdown
-            }  
         }
 
-        private async Task ProcessBatchAsync()
+        protected override async Task PollOnceAsync(CancellationToken cancellationToken)
         {
             var result = await _databaseRepositories.MessageRepository.GetNewMessages(0).ConfigureAwait(false);
 
@@ -140,7 +113,6 @@ namespace SendManagerService.Services
                                 $"{l2L1_SetPoint.Mode}",
                                 Severity.Info, 1));
                         }
-                        Console.WriteLine($"Wrote: {l2L1_SetPoint.pvInitialValue}, {l2L1_SetPoint.pvFinalValue}, {l2L1_SetPoint.Mode}, {l2L1_SetPoint.TargetH2Level}");
                     }
                     catch (PlcException ex)
                     {
@@ -253,7 +225,7 @@ namespace SendManagerService.Services
         /// <summary>
         /// Stops the SService, sending a stop message to RabbitMQ and disposing resources.
         /// </summary>
-        public void Stop()
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
                 new L2L2_LogMessage(SendInfo.ServiceName,
@@ -261,6 +233,8 @@ namespace SendManagerService.Services
                 Severity.Warning, 1));
 
             _producerConsumer.Dispose();
+
+            await base.StopAsync(cancellationToken);
         }
 
         /// <summary>
@@ -317,9 +291,9 @@ namespace SendManagerService.Services
                     MessageRouting.GeneralDataRoutingKey,
                     new L2L2_PlcConnectionStatus(isUp, 1));
             }
-            _log.Log(new L2L2_LogMessage(
+            _logger.LogInformation(new L2L2_LogMessage(
                 SendInfo.ServiceName,
-                text, sev, 1));
+                text, sev, 1).ToString());
         }
     }
 }

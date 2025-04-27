@@ -2,72 +2,50 @@
 using MessageBroker.Common.Configurations;
 using MessageBroker.Common.Producer;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using OnlineLQRAdaptation.Services;
 using SharedResources;
-using System;
-using Topshelf;
-using Unity;
-using Unity.Injection;
 using DataAccess.Repositories;
-using DataAccess.Configurations;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace OnlineLQRAdaptation
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            IConfiguration configuration = ConfigurationMng.GetConfiguration();
-
-            var container = new UnityContainer();
-            var rabbitMqConfig = BindOptions<RabbitMqConfiguration>(configuration, "RabbitMqConfiguration");
-            var listenConfig = BindOptions<RabbitMqModelSettings>(configuration, "RabbitMqModelSenderConfig");
-            var db = BindOptions<DBConfiguration>(configuration, "Dapper");
-
-
-            container.RegisterInstance<IOptions<RabbitMqConfiguration>>(Options.Create(rabbitMqConfig));
-            container.RegisterInstance<IOptions<RabbitMqModelSettings>>(Options.Create(listenConfig));
-            container.RegisterInstance<IOptions<DBConfiguration>>(Options.Create(db));
-
-
-
-            container.RegisterType<IRabbitMqService, RabbitMqService>();
-            container.RegisterType<IProducerConsumer, RabbitMqProducerConsumer>();
-            container.RegisterType<DatabaseRepositories, DatabaseRepositories>();
-
-            container.RegisterInstance<OLQRService>(
-                new OLQRService(container.Resolve<IProducerConsumer>(),container.Resolve<DatabaseRepositories>()));
-
-
-            var exitCode = HostFactory.Run(x =>
-            {
-
-                x.Service<OLQRService>(s =>
+            var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(cfg => ConfigurationMng.GetConfiguration())
+                .ConfigureServices((ctx, services) =>
                 {
-                    s.ConstructUsing(service => container.Resolve<OLQRService>());
-                    s.WhenStarted(async service => await service.Start());
-                    s.WhenStopped(service => service.Stop());
+                    IConfiguration configuration = ctx.Configuration;
 
+                    // 2)  RabbitMQ options + abstractions
+                    services.Configure<RabbitMqConfiguration>(
+                        configuration.GetSection("RabbitMqConfiguration"));
+                    services.Configure<RabbitMqModelSettings>(
+                        configuration.GetSection("RabbitMqModelSenderConfig"));
 
-                });
+                    services.TryAddSingleton<IRabbitMqService, RabbitMqService>();
+                    services.TryAddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
+                    
+                    // 3) Database repository
+                    services.TryAddSingleton<DatabaseRepositories>();
 
-                x.RunAsLocalSystem();
-                x.SetServiceName("MathModelOnlineInfo.ServiceName");
-                x.SetDisplayName("MathModelOnlineInfo.DisplayName");
-                x.SetDescription("MathModelOnlineInfo.Description");
-                x.StartAutomatically();
-            });
+                    // 4)  Logging
+                    services.AddLogging();
 
-            int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode());
-            Environment.ExitCode = exitCodeValue;
-        }
-        private static T BindOptions<T>(IConfiguration configuration, string sectionName) where T : class, new()
-        {
-            var section = configuration.GetSection(sectionName);
-            var options = new T();
-            configuration.Bind(sectionName, options);
-            return options;
+                    // 5)  Domain‑specific monitoring service
+                    services.AddHostedService<OLQRService>();
+                })
+                .UseWindowsService()   // no‑op if not running as service
+                .UseSystemd()          // no‑op on Windows / when not under systemd
+                .UseConsoleLifetime()  // falls back to CTRL‑C friendly console when not a service
+                .Build();
+                
+            await host.RunAsync();
+                
         }
     }
 }

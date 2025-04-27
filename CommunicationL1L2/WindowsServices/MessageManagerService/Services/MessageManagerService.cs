@@ -5,42 +5,43 @@ namespace MessageManagerService.Services
     using MessageModel.Model.DataBlockModel;
     using MessageModel.Model.Messages;
     using MessageModel.Utilities;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
     using PlcCommunication.Interfaces;
     using SharedResources.Constants;
-    using TaskLog.Contracts;
 
     /// <summary>
     /// Service responsible for managing messages from PLC and routing them via RabbitMQ.
     /// </summary>
-    public class MessageManager
+    public sealed class MessageManagerService: BackgroundService
     {
         private readonly IProducerConsumer _producerConsumer;            
         private readonly IConnectionManager _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
-        private readonly ILogger _log;
-
+        private readonly ILogger<MessageManagerService> _logger;
+        
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageManager"/> class.
+        /// Initializes a new instance of the <see cref="MessageManagerService"/> class.
         /// </summary>
         /// <param name="producerConsumer">The RabbitMQ producer-consumer interface.</param>
         /// <param name="connectionManager">The plc communication interface.</param>
         /// <param name="plcDataAccess">The data access interface.</param>
-        public MessageManager(
+        public MessageManagerService(
             IProducerConsumer producerConsumer, 
             IConnectionManager connectionManager, 
             IPlcDataAccess plcDataAccess,
-            ILogger log)
+            ILogger<MessageManagerService> logger)
         {
             this._producerConsumer = producerConsumer;
             this._connectionManager = connectionManager;
             this._dataAccess = plcDataAccess;
-            this._log = log;    
+            this._logger = logger;    
         }
 
         /// <summary>
         /// Starts the MMService, establishing communication with the PLC and RabbitMQ.
         /// </summary>
-        public async Task RunAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             // 1) Start PLC communication
             try
@@ -49,10 +50,10 @@ namespace MessageManagerService.Services
             }
             catch (Exception ex)
             {
-                _log.Log(new L2L2_LogMessage(
+                _logger.LogCritical(new L2L2_LogMessage(
                     MessageManagerInfo.ServiceName,
                     $"Initial PLC open failed: {ex.Message}",
-                    Severity.Warning, 1));
+                    Severity.Fatal, 1).ToString());
             }
             _connectionManager.ConnectionStatusChanged += OnPlcConnectionChanged;
 
@@ -80,6 +81,24 @@ namespace MessageManagerService.Services
                 }
             });
 
+        }
+
+        /// <summary>
+        /// Stops the MMService and disposes of the RabbitMQ producer-consumer and PLC communication service.
+        /// </summary>
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            // Send stop message to RabbitMQ
+            _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
+                new L2L2_LogMessage(MessageManagerInfo.ServiceName,
+                "Message Manager Service has exited!",
+                Severity.Warning, 1));
+
+            // Dispose services
+            _connectionManager.Close();
+            _producerConsumer.Dispose();
+
+            await base.StopAsync(cancellationToken);
         }
 
         /// <summary>
@@ -141,20 +160,6 @@ namespace MessageManagerService.Services
             }
         }
 
-        /// <summary>
-        /// Stops the MMService and disposes of the RabbitMQ producer-consumer and PLC communication service.
-        /// </summary>
-        public void Stop()
-        {
-            // Send stop message to RabbitMQ
-            _producerConsumer.SendMessage(MessageRouting.LoggerRoutingKey,
-                new L2L2_LogMessage(MessageManagerInfo.ServiceName,
-                "Message Manager Service has exited!",
-                Severity.Warning, 1));
-
-            // Dispose services
-            _producerConsumer.Dispose();
-        }
 
         private void OnPlcConnectionChanged(object? sender, bool isUp)
         {
@@ -167,9 +172,9 @@ namespace MessageManagerService.Services
                     MessageRouting.GeneralDataRoutingKey,
                     new L2L2_PlcConnectionStatus(isUp, 1));
             }
-            _log.Log(new L2L2_LogMessage(
+            _logger.LogInformation(new L2L2_LogMessage(
                 MessageManagerInfo.ServiceName,
-                text, sev, 1));
+                text, sev, 1).ToString());
         }
     }
 }

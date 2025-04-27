@@ -1,16 +1,13 @@
-﻿using MessageBroker.Common;
-using MessageBroker.Common.Configurations;
-using MessageBroker.Common.Producer;
-using MessageManagerService.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using PlcCommunication;
-using SharedResources;
-using TaskLog.Contracts;
-
-namespace MessageManagerService
+﻿namespace MessageManagerService
 {
+    using MessageBroker.Common;
+    using MessageBroker.Common.Configurations;
+    using MessageBroker.Common.Producer;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using PlcCommunication;
+    using SharedResources;
     internal class Program
     {
         public static async Task Main(string[] args)
@@ -46,9 +43,8 @@ namespace MessageManagerService
                     services.AddSingleton<IProducerConsumer, RabbitMqProducerConsumer>();
 
                     // 3)  Logging
-                    services.AddSingleton<ILogger, ConsoleLogger>();
-                    services.AddSingleton<MessageManager>();
-                    services.AddHostedService<MMHostedService>();
+                    services.AddLogging();
+                    services.AddHostedService<MessageManagerService.Services.MessageManagerService>();
                 })
                 .UseWindowsService()   // no‑op if not running as service
                 .UseSystemd()          // no‑op on Windows / when not under systemd
