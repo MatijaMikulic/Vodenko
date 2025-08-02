@@ -6,7 +6,7 @@ using MessageBroker.Common.Producer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PlcCommunication;
+using PlcCommunication.DependancyInjection;
 using SharedResources;
 
 namespace SendManagerService

@@ -17,7 +17,7 @@
     public sealed class DataMonitoringService : PollingBackgroundService
     {
         private readonly IProducerConsumer _producerConsumer;
-        private readonly IConnectionManager _connectionManager;
+        private readonly IPlcConnection _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
         private readonly ILogger<DataMonitoringService> _logger;
 
@@ -33,7 +33,7 @@
         /// <param name="log">The logger interface.</param>
         public DataMonitoringService(
              IProducerConsumer mq,
-             IConnectionManager conn,
+             IPlcConnection conn,
              IPlcDataAccess data,
              ILogger<DataMonitoringService> logger) : base(TimeSpan.FromMilliseconds(100))
         {

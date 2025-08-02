@@ -6,7 +6,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using PlcCommunication;
+    using PlcCommunication.DependancyInjection;
     using SharedResources;
     internal class Program
     {

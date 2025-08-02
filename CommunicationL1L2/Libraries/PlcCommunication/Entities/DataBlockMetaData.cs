@@ -1,4 +1,4 @@
-﻿namespace PlcCommunication.Model
+﻿namespace V3.S7Plc.Communication.Model
 {
     /// <summary>
     /// Class represeting Runtime snapshot of header/footer counters for one DB.
@@ -25,7 +25,5 @@
             this.DB = dB;
             this.BufferSize = bufferSize;
         }
-
-        public int FindBufferPointer() => (AuxiliaryCounter % BufferSize) + 1;
     }
 }

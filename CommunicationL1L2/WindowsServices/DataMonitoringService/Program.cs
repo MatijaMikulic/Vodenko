@@ -7,8 +7,8 @@ namespace DataMonitoringService
     using MessageBroker.Common;
     using MessageBroker.Common.Configurations;
     using MessageBroker.Common.Producer;
-    using PlcCommunication;
     using SharedResources;
+    using V3.S7Plc.Communication.DependancyInjection;
 
     internal class Program
     {
@@ -21,7 +21,7 @@ namespace DataMonitoringService
                     IConfiguration configuration = ctx.Configuration;
 
                     // 1)  PLC‑communication library
-                    services.AddPlcCommunication(
+                    services.AddPlcClient(
                         plc => configuration
                             .GetSection("PlcConfiguration")
                             .Bind(plc),

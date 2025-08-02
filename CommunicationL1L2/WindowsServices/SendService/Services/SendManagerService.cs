@@ -18,7 +18,7 @@ namespace SendManagerService.Services
     public sealed class SendManagerService : PollingBackgroundService
     {
         private readonly IProducerConsumer _producerConsumer; // RabbitMQ producer-consumer interface
-        private readonly IConnectionManager _connectionManager;
+        private readonly IPlcConnection _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
         private readonly DatabaseRepositories _databaseRepositories; // Database repositories
         private readonly ILogger<SendManagerService> _logger;
@@ -32,7 +32,7 @@ namespace SendManagerService.Services
         /// <param name="databaseRepositories">The database repositories.</param>
         public SendManagerService(
             IProducerConsumer producerConsumer,
-            IConnectionManager connectionManager,
+            IPlcConnection connectionManager,
             IPlcDataAccess dataAccess,
             DatabaseRepositories databaseRepositories,
             ILogger<SendManagerService> logger) : base(TimeSpan.FromSeconds(1))

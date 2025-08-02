@@ -16,7 +16,7 @@ namespace MessageManagerService.Services
     public sealed class MessageManagerService: BackgroundService
     {
         private readonly IProducerConsumer _producerConsumer;            
-        private readonly IConnectionManager _connectionManager;
+        private readonly IPlcConnection _connectionManager;
         private readonly IPlcDataAccess _dataAccess;
         private readonly ILogger<MessageManagerService> _logger;
         
@@ -28,7 +28,7 @@ namespace MessageManagerService.Services
         /// <param name="plcDataAccess">The data access interface.</param>
         public MessageManagerService(
             IProducerConsumer producerConsumer, 
-            IConnectionManager connectionManager, 
+            IPlcConnection connectionManager, 
             IPlcDataAccess plcDataAccess,
             ILogger<MessageManagerService> logger)
         {

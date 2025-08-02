@@ -25,7 +25,7 @@
     <ProjectReference Include="..\..\Common\SharedResources\SharedResources.csproj" />
     <ProjectReference Include="..\..\Infrastructure.HostedServices\Infrastructure.HostedServices.csproj" />
     <ProjectReference Include="..\..\Libraries\MessageBroker.Common\MessageBroker.Common.csproj" />
-    <ProjectReference Include="..\..\Libraries\PlcCommunication\PlcCommunication.csproj" />
+    <ProjectReference Include="..\..\Libraries\PlcCommunication\V3.S7Plc.Communication.csproj" />
   </ItemGroup>
 
 </Project>

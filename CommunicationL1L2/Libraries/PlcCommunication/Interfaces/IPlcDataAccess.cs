@@ -1,6 +1,6 @@
-﻿namespace PlcCommunication.Interfaces
+﻿namespace V3.S7Plc.Communication.Interfaces
 {
-    using PlcCommunication.Model;
+    using V3.S7Plc.Communication.Model;
 
     /// <summary>
     /// Reads both content and metadata from the PLC data blocks.
